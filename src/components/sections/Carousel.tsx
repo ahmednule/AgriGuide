@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import { ImagesSlider } from "../ui/ImagesSlider";
 import { Button } from "@nextui-org/react";
+import ModalUI from "../ui/ModalUI";
 
 const Carousel = () => {
   const images = [
@@ -40,9 +41,7 @@ const Carousel = () => {
             >
               Learn More
             </Button>
-            <Button className="md:px-4 md:py-5 md:text-lg backdrop-blur-sm border bg-emerald-400/20 border-emerald-500/20 text-white rounded-full">
-              Start Diagnosis
-            </Button>
+            <ModalUI />
           </div>
         </motion.div>
       </ImagesSlider>
