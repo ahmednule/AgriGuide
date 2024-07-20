@@ -1,9 +1,9 @@
-import { Button } from "@nextui-org/react";
+import Carousel from "@/components/sections/Carousel";
 
 const Home = () => {
   return (
     <main>
-      <Button>Hello World</Button>
+      <Carousel />
     </main>
   );
 };

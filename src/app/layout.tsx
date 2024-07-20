@@ -12,6 +12,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 
 // Get the configuration object
 import { config } from "@fortawesome/fontawesome-svg-core";
+import Header from "@/components/ui/Header";
 
 // Prevent Font Awesome from adding its CSS since we did it manually above
 config.autoAddCss = false;
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <Toaster />
+          <Header />
           {children}
+          {/* <Footer /> */}
         </Providers>
       </body>
     </html>
