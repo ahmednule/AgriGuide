@@ -5,7 +5,7 @@ import SectionHeader from "../ui/SectionHeader";
 
 const Testimonials = () => {
   return (
-    <section>
+    <section id="testimonials">
       <SectionHeader>Testimonials</SectionHeader>
       <InfiniteMovingCards
         items={TESTIMONIALS}

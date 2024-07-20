@@ -58,9 +58,9 @@ const Features = () => {
     },
   ];
   return (
-    <section>
+    <section id="features">
       <SectionHeader>Features</SectionHeader>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10 px-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10 px-10 lg:px-20">
         {features.map((feature, index) => (
           <Feature key={feature.title} {...feature} index={index} />
         ))}

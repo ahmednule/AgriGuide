@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const Partnerships = () => {
   return (
-    <section>
+    <section id='partnerships'>
       <SectionHeader>Partnerships</SectionHeader>
       <div className="flex flex-col md:flex-row gap-8 md:gap-0 mx-10 justify-between items-center py-10 rounded-lg">
         <div className="flex flex-col items-center justify-center w-full gap-2 md:gap-5">
