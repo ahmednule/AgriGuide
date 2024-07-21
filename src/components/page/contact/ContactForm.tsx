@@ -7,6 +7,8 @@ import { sendEmail } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { initialFormState } from "@/lib/constants";
 import SubmitButton from "@/components/ui/SubmitButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const ContactForm = () => {
   const [{ db, email, message, name }, formAction] = useFormState(
@@ -26,9 +28,9 @@ const ContactForm = () => {
     <form
       ref={formRef}
       action={formAction}
-      className="max-w-xl mx-auto mt-14 space-y-6"
+      className="max-w-xl mx-auto mt-14 space-y-6 px-10 md:px-0"
     >
-      <div className="flex gap-6">
+      <div className="flex flex-col md:flex-row gap-6">
         <Input
           isRequired
           name="name"
@@ -70,7 +72,9 @@ const ContactForm = () => {
         variant="bordered"
       />
       <div className="flex justify-center pt-5">
-        <SubmitButton />
+        <SubmitButton endContent={<FontAwesomeIcon icon={faEnvelope} />}>
+          Send
+        </SubmitButton>
       </div>
     </form>
   );
