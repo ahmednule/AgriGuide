@@ -95,7 +95,7 @@ const ModalUI = () => {
                       Response
                     </h3>
                     <pre className="bg-emerald-200 text-wrap p-5 rounded-xl">
-                     {formState}
+                      {formState}
                     </pre>
                   </div>
                 )}
