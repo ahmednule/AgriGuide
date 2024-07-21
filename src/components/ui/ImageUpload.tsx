@@ -24,7 +24,7 @@ const ImageUpload = ({ name }: {name: string}) => {
   return (
     <div className="cursor-pointer">
       <FilePond
-        className="h-60"
+        className="h-64 md:mx-20"
         allowReorder={false}
         acceptedFileTypes={["image/*"]}
         name={name} // Set the field name for the file

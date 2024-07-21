@@ -13,9 +13,10 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@nextui-org/navbar";
-import { Avatar, Button, cn, Tooltip } from "@nextui-org/react";
+import { Avatar, Button, cn, Spinner, Tooltip } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import AvatarDropdown from "./AvatarDropdown";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,6 +27,7 @@ const Header = () => {
   const { data, status } = useSession();
   const user = data?.user;
   const isLoading = status === "loading";
+  console.log(data)
 
   return (
     <Navbar
@@ -68,16 +70,9 @@ const Header = () => {
               Sign in
             </Button>
           )}
+          {isLoading && <Spinner color="success"/>}
           {user && (
-            <Tooltip content={isLoading ? "Loading..." : user.name}>
-              <Link href={`/users/${user.id}`}>
-                <Avatar
-                  name={user.name || ""}
-                  src={user.image || ""}
-                  showFallback
-                />
-              </Link>
-            </Tooltip>
+            <AvatarDropdown email={user.email || ''} image={user.image || ''} name={user.name || ''}/>
           )}
         </NavbarItem>
       </NavbarContent>
