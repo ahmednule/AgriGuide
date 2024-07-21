@@ -30,7 +30,7 @@ const Carousel = () => {
         >
           <h1 className="text-2xl -mt-20 md:mt-0 px-10 md:px-0 md:text-4xl max-w-3xl mx-auto text-center font-bold text-white">
             Transform Your Plant Care with Agri
-            <span className="text-emerald-500">Guard</span>, an{" "}
+            <span className="text-emerald-500">Guide</span>, an{" "}
             <span className="underline decoration-emerald-500">AI-powered</span>{" "}
             web app.
           </h1>

@@ -17,10 +17,10 @@ const FAQ = () => {
       >
         <AccordionItem
           key="1"
-          aria-label="How does AgriGuard work?"
-          title="How does AgriGuard work?"
+          aria-label="How does AgriGuide work?"
+          title="How does AgriGuide work?"
         >
-          AgriGuard uses AI image recognition to help African farmers identify
+          AgriGuide uses AI image recognition to help African farmers identify
           and manage crop pests and diseases accurately and efficiently. Farmers
           upload pictures of their crops showing potential issues, and the AI
           analyzes the images to identify the specific pest or disease,
