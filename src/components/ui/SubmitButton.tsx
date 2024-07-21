@@ -11,9 +11,9 @@ const SubmitButton = () => {
       type="submit"
       isLoading={pending}
       size="lg"
-      className={cn("bg-slate-400 font-bold animate-slideInFromBottom opacity-0 delay-1000 shadow-[0_8px_16px_rgb(0_0_0/0.3)] hover:!opacity-80", {
-        "!opacity-80": pending,
-      })}
+      className={cn(
+        "bg-emerald-400 font-bold shadow-[0_8px_16px_rgb(0_0_0/0.3)]"
+      )}
       endContent={<FontAwesomeIcon icon={faEnvelope} />}
     >
       Send

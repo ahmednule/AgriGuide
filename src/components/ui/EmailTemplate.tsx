@@ -15,13 +15,13 @@ export const EmailTemplate: React.FC<
   <Tailwind>
     <Html>
       <Head />
-      <Body className="bg-[#262c35]">
+      <Body className="bg-emerald-900">
         <Container className="max-w-2xl mx-auto p-8 bg-white shadow-lg rounded-lg">
           <Heading className="text-2xl font-bold text-[#0a0e14]">
-            Contact Form Submission
+            AgriGuide Contact Form Submission
           </Heading>
           <Text className="mt-4 text-slate-600">
-            You have a new contact form submission from your portfolio:
+            You have a new contact form submission:
           </Text>
           <Text className="font-bold text-slate-800 mt-6">Name:</Text>
           <Text className="text-slate-600">{name}</Text>

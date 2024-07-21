@@ -34,18 +34,16 @@ const ContactForm = () => {
           name="name"
           label="Name"
           variant="bordered"
-          className="animate-slideInFromLeft opacity-0"
           isInvalid={!!name}
           errorMessage={name}
           classNames={{
             inputWrapper:
-              "border-slate-400 focus-within:!border-slate-300 shadow-[0_8px_16px_rgb(0_0_0/0.3)]",
-            input: "text-slate-300",
+              "border-emerald-400 focus-within:!border-emerald-300 shadow-[0_8px_16px_rgb(0_0_0/0.3)]",
+            input: "text-emerald-950",
           }}
         />
         <Input
           isRequired
-          className="animate-slideInFromRight opacity-0"
           isInvalid={!!email}
           errorMessage={email}
           name="email"
@@ -53,13 +51,12 @@ const ContactForm = () => {
           variant="bordered"
           classNames={{
             inputWrapper:
-              "border-slate-400 focus-within:!border-slate-300 shadow-[0_8px_16px_rgb(0_0_0/0.3)]",
-            input: "text-slate-300",
+              "border-emerald-400 focus-within:!border-emerald-300 shadow-[0_8px_16px_rgb(0_0_0/0.3)]",
+            input: "text-emerald-950",
           }}
         />
       </div>
       <Textarea
-        className="animate-slideInFromBottom opacity-0"
         isInvalid={!!message}
         errorMessage={message}
         isRequired
@@ -67,8 +64,8 @@ const ContactForm = () => {
         label="Message"
         classNames={{
           inputWrapper:
-            "border-slate-400 focus-within:!border-slate-300 !h-56 shadow-[0_8px_16px_rgb(0_0_0/0.3)]",
-          input: "text-slate-300",
+            "border-emerald-400 focus-within:!border-emerald-300 !h-56 shadow-[0_8px_16px_rgb(0_0_0/0.3)]",
+          input: "text-emerald-950",
         }}
         variant="bordered"
       />
