@@ -27,7 +27,9 @@ const ModalUI = () => {
       ? true
       : formState === ScanStatus.ERROR
       ? false
-      : undefined;
+      : formState === ""
+      ? false
+      : true;
 
   const { data, status } = useSession();
   const user = data?.user;
@@ -35,11 +37,11 @@ const ModalUI = () => {
 
   const handleErrorToast = () => {
     toast.error("You need to sign in to use this feature");
-  }
+  };
   return (
     <>
       <Button
-        onPress={user? onOpen : handleErrorToast}
+        onPress={user ? onOpen : handleErrorToast}
         className="md:px-4 md:py-5 md:text-lg backdrop-blur-sm border bg-emerald-400/20 border-emerald-500/20 text-white rounded-full"
       >
         Start Diagnosis
@@ -62,7 +64,7 @@ const ModalUI = () => {
               </ModalHeader>
               <ModalBody>
                 <p className="text-emerald-700">
-                  Upload an image of your plant or insect to start the diagnosis
+                  Upload an image of your plant or pest to start the diagnosis
                   process.
                 </p>
                 <form action={formAction} className="flex flex-col">
@@ -84,7 +86,7 @@ const ModalUI = () => {
                     color={isScanSuccess ? "success" : "danger"}
                     className="text-white self-center"
                   >
-                    {isScanSuccess ? "Success" : "Failed"}
+                    {isScanSuccess ? "Success" : formState}
                   </Chip>
                 )}
                 {isScanSuccess && (
@@ -92,19 +94,9 @@ const ModalUI = () => {
                     <h3 className="text-lg font-bold mb-4 text-emerald-950">
                       Response
                     </h3>
-                    <p className="bg-emerald-200 p-5 rounded-xl">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Consequuntur voluptatem totam debitis. Amet impedit
-                      debitis expedita, et quos tenetur pariatur sequi magni
-                      ducimus, reiciendis sed eos vel in? Fugit, qui.
-                    </p>
-                    <br />
-                    <p className="bg-emerald-200 p-5 rounded-xl">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Consequuntur voluptatem totam debitis. Amet impedit
-                      debitis expedita, et quos tenetur pariatur sequi magni
-                      ducimus, reiciendis sed eos vel in? Fugit, qui.
-                    </p>
+                    <pre className="bg-emerald-200 text-wrap p-5 rounded-xl">
+                     {formState}
+                    </pre>
                   </div>
                 )}
               </ModalBody>
