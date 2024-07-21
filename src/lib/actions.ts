@@ -1,10 +1,30 @@
 "use server";
 
 import { contactFormSchema } from "./schemas";
-import { initialFormState } from "./constants";
+import { initialFormState, ScanStatus } from "./constants";
 import type { ContactForm } from "./types";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/ui/EmailTemplate";
+
+export const scanImage = async (
+  formState: string,
+  formData: FormData
+): Promise<string> => {
+  const image = formData.get("image") as File;
+
+  if (image.size === 0) {
+    return ScanStatus.ERROR;
+  }
+  console.log(image);
+  try {
+    // Simulate AI scan
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    return ScanStatus.SUCCESS;
+  } catch (error) {
+    if (error instanceof Error) console.log(error.message);
+    return ScanStatus.ERROR;
+  }
+};
 
 export const sendEmail = async (
   formState: ContactForm,
