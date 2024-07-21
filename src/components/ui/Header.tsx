@@ -27,7 +27,6 @@ const Header = () => {
   const { data, status } = useSession();
   const user = data?.user;
   const isLoading = status === "loading";
-  console.log(data)
 
   return (
     <Navbar
