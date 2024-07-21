@@ -59,3 +59,8 @@ export const TESTIMONIALS = [
     title: "Agribusiness Manager",
   },
 ];
+
+export enum ScanStatus {
+  SUCCESS = "success",
+  ERROR = "error",
+}
