@@ -1,5 +1,4 @@
 import React from "react";
-import SectionHeader from "../ui/SectionHeader";
 import { cn } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,9 +9,10 @@ import {
   faUserDoctor,
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const Features = () => {
-  const features = [
+  const FEATURES = [
     {
       title: "Instant Diagnosis",
       description:
@@ -61,7 +61,7 @@ const Features = () => {
     <section id="features">
       <SectionHeader>Features</SectionHeader>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10 px-10 lg:px-20">
-        {features.map((feature, index) => (
+        {FEATURES.map((feature, index) => (
           <Feature key={feature.title} {...feature} index={index} />
         ))}
       </div>
@@ -99,9 +99,9 @@ const Feature = ({
       <div className="mb-4 relative z-10 px-10 text-emerald-900">{icon}</div>
       <div className="text-lg font-bold mb-2 relative z-10 px-10">
         <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-emerald-400  group-hover/feature:bg-emerald-500 transition-all duration-200 origin-center" />
-        <span className="group-hover/feature:translate-x-2 transition duration-200 inline-block text-emerald-900">
+        <h3 className="group-hover/feature:translate-x-2 transition duration-200 inline-block text-emerald-900">
           {title}
-        </span>
+        </h3>
       </div>
       <p className="text-sm text-neutral-600 group-hover/feature:text-black max-w-xs relative z-10 px-10">
         {description}

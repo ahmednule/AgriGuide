@@ -60,7 +60,7 @@ const Header = () => {
         ))}
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem>
           {!user && !isLoading && (
             <Button
               className="text-white bg-emerald-900"
@@ -90,17 +90,8 @@ const Header = () => {
             </Link>
           </NavbarMenuItem>
         ))}
-        <Divider className="my-2" />
-        <NavbarMenuItem>
-          {!user && !isLoading && (
-            <Button
-              className="text-white bg-emerald-900"
-              onPress={() => signIn()}
-            >
-              Sign in
-            </Button>
-          )}
-        </NavbarMenuItem>
+        {/* <Divider className="my-2" /> */}
+       
       </NavbarMenu>
     </Navbar>
   );

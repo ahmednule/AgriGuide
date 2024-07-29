@@ -61,6 +61,6 @@ export const TESTIMONIALS = [
 ];
 
 export enum ScanStatus {
-  SUCCESS = "success",
-  ERROR = "error",
+  SUCCESS = "Success",
+  ERROR = "Something unexpected happened",
 }

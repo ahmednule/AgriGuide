@@ -1,6 +1,6 @@
+import ContactForm from '@/components/ui/ContactForm';
+import SectionHeader from '@/components/ui/SectionHeader';
 import React from 'react'
-import SectionHeader from '../ui/SectionHeader'
-import ContactForm from '../page/contact/ContactForm';
 
 const Contact = () => {
   return (

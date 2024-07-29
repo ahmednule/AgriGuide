@@ -1,7 +1,7 @@
 import React from "react";
-import { InfiniteMovingCards } from "../ui/InfiniteMovingCards";
 import { TESTIMONIALS } from "@/lib/constants";
-import SectionHeader from "../ui/SectionHeader";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { InfiniteMovingCards } from "@/components/ui/InfiniteMovingCards";
 
 const Testimonials = () => {
   return (

@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import SectionHeader from "../ui/SectionHeader";
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const FAQ = () => {
   return (

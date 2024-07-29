@@ -1,9 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import React from "react";
-import { ImagesSlider } from "../ui/ImagesSlider";
 import { Button } from "@nextui-org/react";
-import ModalUI from "../ui/ModalUI";
+import { ImagesSlider } from "@/components/ui/ImagesSlider";
+import ModalUI from "@/components/ui/ModalUI";
 
 const Carousel = () => {
   const images = [

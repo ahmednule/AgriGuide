@@ -1,6 +1,6 @@
 import React from 'react'
-import SectionHeader from '../ui/SectionHeader'
 import Image from 'next/image';
+import SectionHeader from '@/components/ui/SectionHeader';
 
 const Partnerships = () => {
   return (

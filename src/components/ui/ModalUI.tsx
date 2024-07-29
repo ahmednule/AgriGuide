@@ -1,6 +1,5 @@
 import {
   Button,
-  Chip,
   Modal,
   ModalBody,
   ModalContent,
@@ -10,14 +9,14 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import ImageUpload from "./ImageUpload";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faQrcode, faXmark } from "@fortawesome/free-solid-svg-icons";
-import SubmitButton from "./SubmitButton";
 import { useFormState } from "react-dom";
 import { scanImage } from "@/lib/actions";
 import { ScanStatus } from "@/lib/constants";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import ChipUI from "./ChipUI";
+import ScanResponse from "./ScanResponse";
+import ScanButton from "./ScanButton";
 
 const ModalUI = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -31,9 +30,8 @@ const ModalUI = () => {
       ? false
       : true;
 
-  const { data, status } = useSession();
+  const { data } = useSession();
   const user = data?.user;
-  // const isLoading = status === "loading";
 
   const handleErrorToast = () => {
     toast.error("You need to sign in to use this feature");
@@ -60,45 +58,22 @@ const ModalUI = () => {
           {(onClose) => (
             <section>
               <ModalHeader as="header">
-                <h2 className="text-emerald-950 text-xl font-bold">AI SCAN</h2>
+                <h2 className="text-emerald-900 text-xl font-bold">AI SCAN</h2>
               </ModalHeader>
               <ModalBody>
                 <p className="text-emerald-700">
-                  Upload an image of your plant or pest to start the diagnosis
+                  Upload an image of a plant or pest to start the diagnosis
                   process.
                 </p>
                 <form action={formAction} className="flex flex-col">
                   <ImageUpload name="image" />
-                  <SubmitButton
-                    endContent={<FontAwesomeIcon icon={faQrcode} />}
-                  >
-                    Scan
-                  </SubmitButton>
+                  <ScanButton />
+                  <ChipUI formState={formState} isScanSuccess={isScanSuccess} />
+                  <ScanResponse
+                    isScanSuccess={isScanSuccess}
+                    response={formState}
+                  />
                 </form>
-                {formState && (
-                  <Chip
-                    endContent={
-                      <FontAwesomeIcon
-                        className="m-1"
-                        icon={isScanSuccess ? faCheck : faXmark}
-                      />
-                    }
-                    color={isScanSuccess ? "success" : "danger"}
-                    className="text-white self-center"
-                  >
-                    {isScanSuccess ? "Success" : formState}
-                  </Chip>
-                )}
-                {isScanSuccess && (
-                  <div>
-                    <h3 className="text-lg font-bold mb-4 text-emerald-950">
-                      Response
-                    </h3>
-                    <pre className="bg-emerald-200 text-wrap p-5 rounded-xl">
-                      {formState}
-                    </pre>
-                  </div>
-                )}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

@@ -1,8 +1,8 @@
 import React from "react";
-import SectionHeader from "../ui/SectionHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const HowItWorks = () => {
   return (

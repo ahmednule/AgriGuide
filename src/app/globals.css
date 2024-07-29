@@ -9,3 +9,19 @@ body {
 html {
   @apply scroll-smooth
 }
+
+/* Add this CSS to your stylesheet */
+.markdown-content {
+  @apply text-emerald-900
+}
+.markdown-content h3 {
+  @apply my-8
+}
+.markdown-content a {
+  @apply underline text-blue-500
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  @apply my-4
+}

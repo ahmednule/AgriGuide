@@ -11,20 +11,22 @@ import FilePondPluginFileEncode from "filepond-plugin-file-encode";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 
 // Register the plugins
 registerPlugin(
   FilePondPluginImageExifOrientation,
   FilePondPluginImagePreview,
   FilePondPluginFileValidateType,
-  FilePondPluginFileEncode
+  FilePondPluginFileEncode,
+  FilePondPluginFileValidateSize
 );
 
-const ImageUpload = ({ name }: {name: string}) => {
+const ImageUpload = ({ name }: { name: string }) => {
   return (
     <div className="cursor-pointer">
       <FilePond
-        className="h-80 md:mx-20"
+        required
         allowReorder={false}
         acceptedFileTypes={["image/*"]}
         name={name} // Set the field name for the file
@@ -32,6 +34,7 @@ const ImageUpload = ({ name }: {name: string}) => {
         allowMultiple={false}
         labelFileProcessingError="An error occurred during processing"
         labelIdle="Drag & Drop or Browse your desired profile image"
+        maxFileSize="1MB"
       />
     </div>
   );

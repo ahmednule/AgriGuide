@@ -1,10 +1,11 @@
-import Carousel from "@/components/sections/Carousel";
-import Contact from "@/components/sections/Contact";
-import FAQ from "@/components/sections/FAQ";
-import Features from "@/components/sections/Features";
-import HowItWorks from "@/components/sections/HowItWorks";
-import Partnerships from "@/components/sections/Partnerships";
-import Testimonials from "@/components/sections/Testimonials";
+import Carousel from "@/components/page/home-page/Carousel";
+import Contact from "@/components/page/home-page/Contact";
+import FAQ from "@/components/page/home-page/FAQ";
+import Features from "@/components/page/home-page/Features";
+import HowItWorks from "@/components/page/home-page/HowItWorks";
+import Partnerships from "@/components/page/home-page/Partnerships";
+import Testimonials from "@/components/page/home-page/Testimonials";
+
 
 const Home = () => {
   return (
