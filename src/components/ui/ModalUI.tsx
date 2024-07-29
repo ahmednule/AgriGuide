@@ -1,5 +1,6 @@
 import {
   Button,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -73,6 +74,10 @@ const ModalUI = () => {
                     isScanSuccess={isScanSuccess}
                     response={formState}
                   />
+                  <p className="text-emerald-800 mt-4">
+                    Not what you are looking for? <Link>Book a session</Link>{" "}
+                    with an expert or view our free comprehensive <Link href="/resources">resource</Link> to learn more.
+                  </p>
                 </form>
               </ModalBody>
               <ModalFooter>
