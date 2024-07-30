@@ -64,3 +64,8 @@ export enum ScanStatus {
   SUCCESS = "Success",
   ERROR = "Something unexpected happened",
 }
+
+export enum ResourceType {
+  PESTS = "Pests",
+  DISEASES = "Diseases",
+}

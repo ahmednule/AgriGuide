@@ -8,16 +8,45 @@ datasource db {
   url      = env("DATABASE_URL") // uses connection pooling
 }
 
+model Pest {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  damage      String
+  slug        String   @unique
+  control     String
+  image       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("pests")
+}
+
+model Disease {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  cause     String
+  symptoms  String
+  impact    String
+  control   String
+  image     String?
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("diseases")
+}
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  role          Role @default(USER)
-  isConsultantVerified    Boolean?  @default(false) @map("is_verified")
-  accounts      Account[]
-  sessions      Session[]
+  id                   String    @id @default(cuid())
+  name                 String?
+  email                String?   @unique
+  emailVerified        DateTime? @map("email_verified")
+  image                String?
+  role                 Role      @default(USER)
+  isConsultantVerified Boolean?  @default(false) @map("is_verified")
+  accounts             Account[]
+  sessions             Session[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
