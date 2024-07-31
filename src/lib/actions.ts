@@ -6,6 +6,10 @@ import type { ContactForm } from "./types";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/ui/EmailTemplate";
 import OpenAI from "openai";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import prisma from "./prisma";
+import { Role } from "@prisma/client";
 
 export const scanImage = async (
   formState: string,
@@ -95,4 +99,51 @@ export const sendEmail = async (
       db: "Error sending email, please try again",
     };
   }
+};
+
+
+export const makeAdmin = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user) throw new Error("You must be logged in to make yourself an admin");
+
+  try {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role: Role.ADMIN,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to make user an admin" + error.message);
+  }
+
+  revalidatePath("/", "layout");
+};
+
+export const removeAdmin = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user) throw new Error("You must be logged in to remove admin status");
+
+  try {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role: Role.USER,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to remove admin status" + error.message);
+  }
+
+  revalidatePath("/", "layout");
 };
