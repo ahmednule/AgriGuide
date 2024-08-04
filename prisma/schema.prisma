@@ -43,16 +43,40 @@ model User {
   email                String?   @unique
   emailVerified        DateTime? @map("email_verified")
   image                String?
-  role                 Role      @default(USER)
-  isConsultantVerified Boolean?  @default(false) @map("is_verified")
   accounts             Account[]
   sessions             Session[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  role                 Role      @default(CUSTOMER)
+  
+  // customer             Customer?
+  // consultant           Consultant?
+  // admin                Admin?
 
   @@map("users")
 }
+
+// model Customer {
+//   user   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+//   customerId String @unique @map("customer_id")
+
+//   @@map("customers")
+// }
+
+// model Consultant {
+//   user   User   @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+//   consultantId String @unique @map("consultant_id")
+//   isConsultantVerified Boolean?  @default(false) @map("is_verified")
+
+//   @@map("consultants")
+// }
+
+// model Admin {
+//   user   User   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+//   adminId String @unique @map("admin_id")
+
+//   @@map("admins")
+// }
 
 model Account {
   userId            String  @map("user_id")
@@ -98,6 +122,7 @@ model VerificationToken {
 }
 
 enum Role {
-  USER
+  CUSTOMER
   ADMIN
+  CONSULTANT
 }
