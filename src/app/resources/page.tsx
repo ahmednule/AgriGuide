@@ -16,10 +16,18 @@ const ResourcesPage = () => {
         prevention tips and much more providing essential information for
         maintaining plant health.
       </p>
-      <Button as={Link} href="/resources/pests" className="!bg-emerald-600 mt-5 text-white">
+      <Button
+        as={Link}
+        href="/resources/pests"
+        className="!bg-emerald-600 mt-5 text-white"
+      >
         Explore Pests
       </Button>
-      <Button as={Link} href="/resources/diseases" className="!bg-emerald-600 ml-3 text-white">
+      <Button
+        as={Link}
+        href="/resources/diseases"
+        className="!bg-emerald-600 ml-3 text-white"
+      >
         Explore Diseases
       </Button>
     </>
