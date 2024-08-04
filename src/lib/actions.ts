@@ -101,7 +101,6 @@ export const sendEmail = async (
   }
 };
 
-
 export const makeAdmin = async (id: string) => {
   const session = await auth();
   const user = session?.user;
@@ -137,7 +136,7 @@ export const removeAdmin = async (id: string) => {
         id,
       },
       data: {
-        role: Role.USER,
+        role: Role.CUSTOMER,
       },
     });
   } catch (error) {
@@ -147,3 +146,23 @@ export const removeAdmin = async (id: string) => {
 
   revalidatePath("/", "layout");
 };
+
+export const deleteUser = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to delete a user");
+
+  try {
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete user" + error.message);
+  }
+
+  revalidatePath("/", "layout");
+}
