@@ -1,3 +1,5 @@
+import { faHouse, faMessage, faUser, faUserDoctor, faUserTie } from "@fortawesome/free-solid-svg-icons";
+
 export const initialFormState = {
   name: "",
   email: "",
@@ -69,3 +71,31 @@ export enum ResourceType {
   PESTS = "Pests",
   DISEASES = "Diseases",
 }
+
+export const ADMIN_ROUTES = [
+  {
+    path: "/admin/dashboard",
+    value: "Dashboard",
+    icon: faHouse
+  },
+  {
+    path: "/admin/customers",
+    value: "Customers",
+    icon: faUser
+  },
+  {
+    path: "/admin/consultants",
+    value: "Consultants",
+    icon: faUserDoctor
+  },
+  {
+    path: "/admin/admins",
+    value: "Admins",
+    icon: faUserTie
+  },
+  {
+    path: "/admin/chat",
+    value: "Chat",
+    icon: faMessage
+  },
+];
