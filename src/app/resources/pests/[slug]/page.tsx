@@ -29,9 +29,21 @@ const PestPage = async ({ params }: { params: { slug: string } }) => {
         </p>
       </div>
       <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
-        <Image src="/assets/images/pests/Aphid.jpeg" alt="" className="h-72" />
-        <Image src="/assets/images/pests/Aphid2.jpeg" alt="" className="h-72" />
-        <Image src="/assets/images/pests/Aphid3.jpeg" alt="" className="h-72" />
+        <Image
+          src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/pests/aphids/Aphid.jpeg?t=2024-07-30T13%3A30%3A39.357Z"
+          alt=""
+          className="h-72"
+        />
+        <Image
+          src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/pests/aphids/Aphid.jpeg?t=2024-07-30T13%3A30%3A39.357Z"
+          alt=""
+          className="h-72"
+        />
+        <Image
+          src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/pests/aphids/Aphid.jpeg?t=2024-07-30T13%3A30%3A39.357Z"
+          alt=""
+          className="h-72"
+        />
       </div>
     </>
   );
