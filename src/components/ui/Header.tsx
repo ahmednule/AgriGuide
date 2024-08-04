@@ -125,7 +125,7 @@ const Header = () => {
           )}
         </NavbarItem>
         <NavbarItem>
-          {!isAdmin && (
+          {!isAdmin && user && (
             <Popover placement="right">
               <PopoverTrigger>
                 <Button
@@ -138,9 +138,10 @@ const Header = () => {
               <PopoverContent>
                 <form onSubmit={handleAdminSubmit} className="px-1 py-2">
                   <Input
+                    required
                     isRequired
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter admin password"
+                    label="Enter admin password"
                   />
                   <Button className="mt-2" isLoading={isLoading} type="submit">
                     Submit
