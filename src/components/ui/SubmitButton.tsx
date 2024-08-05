@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, cn } from "@nextui-org/react";
 import React from "react";
 import { useFormStatus } from "react-dom";
