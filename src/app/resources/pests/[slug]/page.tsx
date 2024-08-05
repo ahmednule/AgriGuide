@@ -12,7 +12,7 @@ const PestPage = async ({ params }: { params: { slug: string } }) => {
     },
   });
   if (!pest) notFound();
-  const { name, description, control, damage, slug } = pest;
+  const { name, description, control, damage, slug, image } = pest;
   return (
     <>
       <ResourceNav type={ResourceType.PESTS} name={name} slug={slug} />
@@ -28,23 +28,11 @@ const PestPage = async ({ params }: { params: { slug: string } }) => {
           <strong>Control:</strong> {control}
         </p>
       </div>
-      <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
-        <Image
-          src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/pests/aphids/Aphid.jpeg?t=2024-07-30T13%3A30%3A39.357Z"
-          alt=""
-          className="h-72"
-        />
-        <Image
-          src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/pests/aphids/Aphid.jpeg?t=2024-07-30T13%3A30%3A39.357Z"
-          alt=""
-          className="h-72"
-        />
-        <Image
-          src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/pests/aphids/Aphid.jpeg?t=2024-07-30T13%3A30%3A39.357Z"
-          alt=""
-          className="h-72"
-        />
-      </div>
+      {image && (
+        <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
+          <Image src={image} alt="" className="h-72 w-80" />
+        </div>
+      )}
     </>
   );
 };

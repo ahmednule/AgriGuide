@@ -12,7 +12,7 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
     },
   });
   if (!disease) notFound();
-  const { name, cause, control, symptoms, impact, slug } = disease;
+  const { name, cause, control, symptoms, impact, slug, image } = disease;
   return (
     <>
       <ResourceNav type={ResourceType.DISEASES} name={name} slug={slug} />
@@ -31,11 +31,11 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
           <strong>Control:</strong> {control}
         </p>
       </div>
-      <div className="flex flex-col lg:flex-row mt-10 gap-5">
-        <Image src="/assets/images/pests/Aphid.jpeg" alt="" className="h-72" />
-        <Image src="/assets/images/pests/Aphid2.jpeg" alt="" className="h-72" />
-        <Image src="/assets/images/pests/Aphid3.jpeg" alt="" className="h-72" />
-      </div>
+      {image && (
+        <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
+          <Image src={image} alt="" className="h-72 w-80 object-cover" />
+        </div>
+      )}
     </>
   );
 };
