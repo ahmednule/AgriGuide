@@ -156,7 +156,7 @@ const UserTable = ({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={rows}>
+      <TableBody emptyContent="No content to display" items={rows}>
         {(item) => (
           <TableRow key={item.key}>
             {(columnKey) => (
