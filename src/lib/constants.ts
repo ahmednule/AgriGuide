@@ -1,9 +1,36 @@
-import { faHouse, faMessage, faUser, faUserDoctor, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBug,
+  faHouse,
+  faMessage,
+  faUser,
+  faUserDoctor,
+  faUserTie,
+  faVirus,
+} from "@fortawesome/free-solid-svg-icons";
 
 export const initialFormState = {
   name: "",
   email: "",
   message: "",
+  db: "",
+};
+
+export const initialAddPestFormState = {
+  name: "",
+  description: "",
+  control: "",
+  damage: "",
+  image: "",
+  db: "",
+};
+
+export const initialDiseaseFormState = {
+  name: "",
+  cause: "",
+  symptoms: "",
+  impact: "",
+  control: "",
+  image: "",
   db: "",
 };
 
@@ -33,7 +60,6 @@ export const MENU = [
     value: "Contact",
   },
 ];
-
 
 export const TESTIMONIALS = [
   {
@@ -76,26 +102,36 @@ export const ADMIN_ROUTES = [
   {
     path: "/admin/dashboard",
     value: "Dashboard",
-    icon: faHouse
+    icon: faHouse,
   },
   {
     path: "/admin/customers",
     value: "Customers",
-    icon: faUser
+    icon: faUser,
   },
   {
     path: "/admin/consultants",
     value: "Consultants",
-    icon: faUserDoctor
+    icon: faUserDoctor,
   },
   {
     path: "/admin/admins",
     value: "Admins",
-    icon: faUserTie
+    icon: faUserTie,
   },
   {
     path: "/admin/chat",
     value: "Chat",
-    icon: faMessage
+    icon: faMessage,
+  },
+  {
+    path: "/admin/add-pest",
+    value: "Add Pest",
+    icon: faBug,
+  },
+  {
+    path: "/admin/add-disease",
+    value: "Add Disease",
+    icon: faVirus,
   },
 ];
