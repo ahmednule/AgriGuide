@@ -1,8 +1,13 @@
 "use server";
 
-import { contactFormSchema } from "./schemas";
-import { initialFormState, ScanStatus } from "./constants";
-import type { ContactForm } from "./types";
+import { addDiseaseFormSchema, addPestFormSchema, contactFormSchema } from "./schemas";
+import {
+  initialAddPestFormState,
+  initialDiseaseFormState,
+  initialFormState,
+  ScanStatus,
+} from "./constants";
+import type { AddDiseaseForm, AddPestForm, ContactForm } from "./types";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/ui/EmailTemplate";
 import OpenAI from "openai";
@@ -10,6 +15,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import prisma from "./prisma";
 import { Role } from "@prisma/client";
+import { supabase } from "./supabase";
 
 export const scanImage = async (
   formState: string,
@@ -151,7 +157,8 @@ export const deleteUser = async (id: string) => {
   const session = await auth();
   const user = session?.user;
 
-  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to delete a user");
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to delete a user");
 
   try {
     await prisma.user.delete({
@@ -165,4 +172,141 @@ export const deleteUser = async (id: string) => {
   }
 
   revalidatePath("/", "layout");
-}
+};
+
+export const addPest = async (
+  formState: AddPestForm,
+  formData: FormData
+): Promise<AddPestForm> => {
+  const name = formData.get("name") as string;
+  const description = formData.get("description") as string;
+  const control = formData.get("control") as string;
+  const damage = formData.get("damage") as string;
+  const image = formData.get("image") as any;
+
+  const { success, data, error } = addPestFormSchema.safeParse({
+    name,
+    description,
+    control,
+    damage,
+    image,
+  });
+
+  if (!success) {
+    return {
+      ...initialFormState,
+      name: error.flatten().fieldErrors.name?.[0] ?? "",
+      description: error.flatten().fieldErrors.description?.[0] ?? "",
+      control: error.flatten().fieldErrors.control?.[0] ?? "",
+      damage: error.flatten().fieldErrors.damage?.[0] ?? "",
+      image: error.flatten().fieldErrors.image?.[0] ?? "",
+    };
+  }
+
+  const parsedImage = JSON.parse(image);
+  const imageBuffer = Buffer.from(parsedImage.data, "base64");
+
+  try {
+    const folderName = `pests/${name}`;
+    const fileName = `${folderName}/${Date.now()}_${parsedImage.name}`;
+    const { data: imageData, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, imageBuffer, {
+        contentType: parsedImage.type,
+      });
+
+    if (error) {
+      throw error;
+    }
+    await prisma.pest.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        control: data.control,
+        damage: data.damage,
+        slug: data.name.toLowerCase().replace(/\s/g, "-"),
+        image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`,
+      },
+    });
+    return {
+      ...initialAddPestFormState,
+      db: "success",
+    };
+  } catch (error) {
+    return {
+      ...initialAddPestFormState,
+      db: "Error adding pest, please try again",
+    };
+  }
+};
+
+export const addDisease = async (
+  formState: AddDiseaseForm,
+  formData: FormData
+): Promise<AddDiseaseForm> => {
+
+  const name = formData.get("name") as string;
+  const cause = formData.get("cause") as string;
+  const symptoms = formData.get("symptoms") as string;
+  const impact = formData.get("impact") as string;
+  const control = formData.get("control") as string;
+  const image = formData.get("image") as any;
+
+  const { success, data, error } = addDiseaseFormSchema.safeParse({
+    name,
+    cause,
+    symptoms,
+    impact,
+    control,
+    image,
+  });
+
+  if (!success) {
+    return {
+      ...initialDiseaseFormState,
+      name: error.flatten().fieldErrors.name?.[0] ?? "",
+      cause: error.flatten().fieldErrors.control?.[0] ?? "",
+      symptoms: error.flatten().fieldErrors.symptoms?.[0] ?? "",
+      impact: error.flatten().fieldErrors.impact?.[0] ?? "",
+      control: error.flatten().fieldErrors.control?.[0] ?? "",
+      image: error.flatten().fieldErrors.image?.[0] ?? "",
+    };
+  }
+
+  const parsedImage = JSON.parse(image);
+  const imageBuffer = Buffer.from(parsedImage.data, "base64");
+
+  try {
+    const folderName = `diseases/${name}`;
+    const fileName = `${folderName}/${Date.now()}_${parsedImage.name}`;
+    const { data: imageData, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, imageBuffer, {
+        contentType: parsedImage.type,
+      });
+
+    if (error) {
+      throw error;
+    }
+    await prisma.disease.create({
+      data: {
+        name: data.name,
+        cause: data.cause,
+        symptoms: data.symptoms,
+        impact: data.impact,
+        control: data.control,
+        slug: data.name.toLowerCase().replace(/\s/g, "-"),
+        image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`,
+      },
+    });
+    return {
+      ...initialDiseaseFormState,
+      db: "success",
+    };
+  } catch (error) {
+    return {
+      ...initialDiseaseFormState,
+      db: "Error adding disease, please try again",
+    };
+  }  
+};
