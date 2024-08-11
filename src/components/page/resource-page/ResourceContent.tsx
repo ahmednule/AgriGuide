@@ -72,13 +72,11 @@ const ResourceContent = ({
           </div>
         )}
       </div>
-      <div className="">
         {isEditing ? (
           <ReactQuill value={content} onChange={setContent} theme="snow" />
         ) : (
           <div className="edit-cont" dangerouslySetInnerHTML={{ __html: content }} />
         )}
-      </div>
     </div>
   );
 };
