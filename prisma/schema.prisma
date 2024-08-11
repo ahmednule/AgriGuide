@@ -11,10 +11,8 @@ datasource db {
 model Pest {
   id          String   @id @default(cuid())
   name        String   @unique
-  description String
-  damage      String
   slug        String   @unique
-  control     String
+  text        String
   image       String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -25,11 +23,8 @@ model Pest {
 model Disease {
   id        String   @id @default(cuid())
   name      String   @unique
-  cause     String
-  symptoms  String
-  impact    String
-  control   String
   image     String?
+  text      String
   slug      String   @unique
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -38,45 +33,60 @@ model Disease {
 }
 
 model User {
-  id                   String    @id @default(cuid())
-  name                 String?
-  email                String?   @unique
-  emailVerified        DateTime? @map("email_verified")
-  image                String?
-  accounts             Account[]
-  sessions             Session[]
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
-  role                 Role      @default(CUSTOMER)
-  
-  // customer             Customer?
-  // consultant           Consultant?
-  // admin                Admin?
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  role          Role?
+
+  customer   Customer?
+  consultant Consultant?
+  // admin       Admin?
+  Admin      Admin?
 
   @@map("users")
 }
 
-// model Customer {
-//   user   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
-//   customerId String @unique @map("customer_id")
+model Customer {
+  // id     String @id @default(cuid())
+  user User   @relation(fields: [id], references: [id], onDelete: Cascade)
+  id   String @unique @map("customer_id")
 
-//   @@map("customers")
-// }
+  scan Scan[]
 
-// model Consultant {
-//   user   User   @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-//   consultantId String @unique @map("consultant_id")
-//   isConsultantVerified Boolean?  @default(false) @map("is_verified")
+  @@map("customers")
+}
 
-//   @@map("consultants")
-// }
+model Scan {
+  id         String   @id @default(cuid())
+  description String?
+  url        String   @unique
+  createdAt  DateTime @default(now()) @map("created_at")
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String   @map("customer_id")
 
-// model Admin {
-//   user   User   @relation(fields: [adminId], references: [id], onDelete: Cascade)
-//   adminId String @unique @map("admin_id")
+  @@map("scans")
+}
 
-//   @@map("admins")
-// }
+model Consultant {
+  user                 User     @relation(fields: [id], references: [id], onDelete: Cascade)
+  id                   String   @unique @map("consultant_id")
+  isConsultantVerified Boolean? @default(false) @map("is_verified")
+
+  @@map("consultants")
+}
+
+model Admin {
+  user User   @relation(fields: [id], references: [id], onDelete: Cascade)
+  id   String @id @unique @map("admin_id")
+
+  @@map("admins")
+}
 
 model Account {
   userId            String  @map("user_id")
