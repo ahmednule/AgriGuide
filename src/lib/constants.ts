@@ -1,6 +1,9 @@
 import {
   faBug,
+  faClockRotateLeft,
+  faCog,
   faHouse,
+  faLineChart,
   faMessage,
   faUser,
   faUserDoctor,
@@ -12,6 +15,11 @@ export const initialFormState = {
   name: "",
   email: "",
   message: "",
+  db: "",
+};
+
+export const initialEditPestFormState = {
+  content: "",
   db: "",
 };
 
@@ -91,6 +99,8 @@ export const TESTIMONIALS = [
 export enum ScanStatus {
   SUCCESS = "Success",
   ERROR = "Something unexpected happened",
+  IMAGENOTPEST = "Image is not a pest",
+  IMAGENOTDISEASE = "Image is not a disease",
 }
 
 export enum ResourceType {
@@ -133,5 +143,33 @@ export const ADMIN_ROUTES = [
     path: "/admin/add-disease",
     value: "Add Disease",
     icon: faVirus,
+  },
+];
+
+export const CUSTOMER_ROUTES = [
+  {
+    path: "/customer/scan-history",
+    value: "Scan History",
+    icon: faClockRotateLeft,
+  },
+  {
+    path: "/customers/progress-tracker",
+    value: "Progress Tracker",
+    icon: faLineChart,
+  },
+  {
+    path: "/customer/consultants-chat",
+    value: "Consultants Chat",
+    icon: faMessage,
+  },
+  {
+    path: "/consultants",
+    value: "Consultants",
+    icon: faUserDoctor,
+  },
+  {
+    path: "/customer/settings",
+    value: "Settings",
+    icon: faCog,
   },
 ];
