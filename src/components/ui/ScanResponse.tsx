@@ -20,7 +20,7 @@ const ScanResponse = ({
               Response
             </h3>
               <div
-                className="edit-cont text-emerald-800 bg-green-50 p-4 rounded-lg"
+                className="text-emerald-800 bg-green-50 p-4 rounded-lg"
                 dangerouslySetInnerHTML={{
                   __html: convertMarkdownToHtml(response),
                 }}
