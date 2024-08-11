@@ -25,3 +25,8 @@ export const addDiseaseFormSchema = z.object({
   image: z.any(),
   db: z.string().optional(),
 });
+
+export const editPestFormSchema = z.object({
+  content: z.string().min(1, "Content is required"),
+  db: z.string().optional(),
+});
