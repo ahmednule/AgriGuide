@@ -1,13 +1,19 @@
 "use server";
 
-import { addDiseaseFormSchema, addPestFormSchema, contactFormSchema } from "./schemas";
+import {
+  addDiseaseFormSchema,
+  addPestFormSchema,
+  contactFormSchema,
+  editPestFormSchema,
+} from "./schemas";
 import {
   initialAddPestFormState,
   initialDiseaseFormState,
+  initialEditPestFormState,
   initialFormState,
   ScanStatus,
 } from "./constants";
-import type { AddDiseaseForm, AddPestForm, ContactForm } from "./types";
+import type { AddDiseaseForm, AddPestForm, ContactForm, EditPestForm } from "./types";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/ui/EmailTemplate";
 import OpenAI from "openai";
@@ -16,8 +22,9 @@ import { auth } from "@/auth";
 import prisma from "./prisma";
 import { Role } from "@prisma/client";
 import { supabase } from "./supabase";
+import removeMarkdown from "remove-markdown";
 
-export const scanImage = async (
+export const scanPestImage = async (
   formState: string,
   formData: FormData
 ): Promise<string> => {
@@ -28,7 +35,13 @@ export const scanImage = async (
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API,
   });
+  const session = await auth();
+  const user = session?.user;
   const parsedImage = JSON.parse(image);
+
+  // text: "The image is a scan of a plant pest. Generate a response that includes: The name of the pest in singular form as the first word, Description: Provide a brief description of the pest, Damage: Describe the damage the pest causes to plants, Control: Outline the control measures for managing the pest, Treatment: Provide treatment options for the pest, including the medicine name and dosage. Ensure each section is very detailed in its own paragraph with the section headings bolded.",
+
+  // Fetching AI scan response
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -38,7 +51,7 @@ export const scanImage = async (
           content: [
             {
               type: "text",
-              text: "The image comprises of a pest or a disease of a crop. Identify the image in the first sentence then in the next paragraph give targeted treatment recommendations, if it's a pest give treatment for the illness it causes on plants and if it is an ill plant, give treatment for it. Includes the steps of the treatment, the medicine, dosage and exact links to kenyan supplier shops to buy those plant medication.",
+              text: "The image is a scan of a plant pest. Generate a response that includes: The name of the pest in singular form as the first word, Description: Provide a brief description of the pest, Damage: Describe the damage the pest causes to plants, Control: Outline the control measures for managing the pest, Treatment: Provide treatment options for the pest, including the medicine name and dosage. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. If the image given is not a pest, the response should be the text 'Error: This is not a pest'",
             },
             {
               type: "image_url",
@@ -51,9 +64,156 @@ export const scanImage = async (
         },
       ],
     });
-    return response.choices[0].message.content as string;
+    const res = response.choices[0].message.content as string;
+
+    // Handle image not pest
+    if (res.startsWith("Error: This is not a pest"))
+      return ScanStatus.IMAGENOTPEST;
+
+    if (user?.role !== Role.CUSTOMER) return res;
+
+    // Upload image to Supabase
+    const imageBuffer = Buffer.from(parsedImage.data, "base64");
+    const folderName = `customer/${user!.id}/pests`;
+    const fileName = `${folderName}/${Date.now()}_${parsedImage.name}`;
+    const { data: imageData, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, imageBuffer, {
+        contentType: parsedImage.type,
+      });
+
+    // Store scan in database
+    await prisma.scan.create({
+      data: {
+        description: removeMarkdown(res),
+        customerId: user!.id!,
+        url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+      },
+    });
+
+    // Store pest in database
+
+    const match = res.match(/\*\*(.*?)\*\*/);
+    const firstWord = match ? match[1] : "";
+    const restOfText = res.replace(/\*\*.*?\*\*/, "").trim();
+
+    const isPestStored = await prisma.pest.findFirst({
+      where: {
+        slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+      },
+    });
+
+    // TODO: Upload image to its own folder later and not use customer scan reference
+
+    if (!isPestStored)
+      await prisma.pest.create({
+        data: {
+          name: firstWord,
+          text: restOfText,
+          image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+          slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+        },
+      });
+
+    return res;
   } catch (error) {
-    console.error(error instanceof Error ? error.message : error);
+    return ScanStatus.ERROR;
+  }
+};
+
+export const scanDiseaseImage = async (
+  formState: string,
+  formData: FormData
+): Promise<string> => {
+  const image = formData.get("image") as any;
+  if (image.size === 0) {
+    return ScanStatus.ERROR;
+  }
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API,
+  });
+  const session = await auth();
+  const user = session?.user;
+  const parsedImage = JSON.parse(image);
+
+  // text: "The image is a scan of a plant pest. Generate a response that includes: The name of the pest in singular form as the first word, Description: Provide a brief description of the pest, Damage: Describe the damage the pest causes to plants, Control: Outline the control measures for managing the pest, Treatment: Provide treatment options for the pest, including the medicine name and dosage. Ensure each section is very detailed in its own paragraph with the section headings bolded.",
+
+  // Fetching AI scan response
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "The image is a scan of a plant disease. Generate a response that includes: The name of the disease in singular form and bold as the first word, Cause, symptoms, impact and treatment. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. Separate content with a br tag. If the image given is not a disease, the response should be the text 'Error: This is not a disease' in plain text",
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${parsedImage.data}`,
+                detail: "high",
+              },
+            },
+          ],
+        },
+      ],
+    });
+    const res = response.choices[0].message.content as string;
+
+    // Handle image not pest
+    if (res.startsWith("Error: This is not a disease"))
+      return ScanStatus.IMAGENOTDISEASE;
+
+    if (user?.role !== Role.CUSTOMER) return res;
+
+    // Upload image to Supabase
+    const imageBuffer = Buffer.from(parsedImage.data, "base64");
+    const folderName = `customer/${user!.id}/diseases`;
+    const fileName = `${folderName}/${Date.now()}_${parsedImage.name}`;
+    const { data: imageData, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, imageBuffer, {
+        contentType: parsedImage.type,
+      });
+
+    // Store scan in database
+    await prisma.scan.create({
+      data: {
+        description: removeMarkdown(res),
+        customerId: user!.id!,
+        url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+      },
+    });
+
+    // Store disease in database
+
+    const match = res.match(/\*\*(.*?)\*\*/);
+    const firstWord = match ? match[1] : "";
+    const restOfText = res.replace(/\*\*.*?\*\*/, "").trim();
+
+    const isDiseaseStored = await prisma.disease.findFirst({
+      where: {
+        slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+      },
+    });
+
+    // TODO: Upload image to its own folder later and not use customer scan reference
+
+    if (!isDiseaseStored)
+      await prisma.disease.create({
+        data: {
+          name: firstWord,
+          text: restOfText,
+          image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+          slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+        },
+      });
+
+    return res;
+  } catch (error) {
     return ScanStatus.ERROR;
   }
 };
@@ -122,6 +282,16 @@ export const makeAdmin = async (id: string) => {
         role: Role.ADMIN,
       },
     });
+    await prisma.customer.delete({
+      where: {
+        id,
+      },
+    });
+    await prisma.admin.create({
+      data: {
+        id,
+      },
+    });
   } catch (error) {
     if (error instanceof Error)
       throw new Error("Failed to make user an admin" + error.message);
@@ -174,6 +344,27 @@ export const deleteUser = async (id: string) => {
   revalidatePath("/", "layout");
 };
 
+export const deleteScan = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.CUSTOMER)
+    throw new Error("You must be a customer to delete your previous scan");
+
+  try {
+    await prisma.scan.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete scan" + error.message);
+  }
+
+  revalidatePath("/scan-history");
+};
+
 export const addPest = async (
   formState: AddPestForm,
   formData: FormData
@@ -218,16 +409,16 @@ export const addPest = async (
     if (error) {
       throw error;
     }
-    await prisma.pest.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        control: data.control,
-        damage: data.damage,
-        slug: data.name.toLowerCase().replace(/\s/g, "-"),
-        image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`,
-      },
-    });
+    // await prisma.pest.create({
+    //   data: {
+    //     name: data.name,
+    //     description: data.description,
+    //     control: data.control,
+    //     damage: data.damage,
+    //     slug: data.name.toLowerCase().replace(/\s/g, "-"),
+    //     image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`,
+    //   },
+    // });
     return {
       ...initialAddPestFormState,
       db: "success",
@@ -244,7 +435,6 @@ export const addDisease = async (
   formState: AddDiseaseForm,
   formData: FormData
 ): Promise<AddDiseaseForm> => {
-
   const name = formData.get("name") as string;
   const cause = formData.get("cause") as string;
   const symptoms = formData.get("symptoms") as string;
@@ -288,17 +478,17 @@ export const addDisease = async (
     if (error) {
       throw error;
     }
-    await prisma.disease.create({
-      data: {
-        name: data.name,
-        cause: data.cause,
-        symptoms: data.symptoms,
-        impact: data.impact,
-        control: data.control,
-        slug: data.name.toLowerCase().replace(/\s/g, "-"),
-        image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`,
-      },
-    });
+    // await prisma.disease.create({
+    //   data: {
+    //     name: data.name,
+    //     cause: data.cause,
+    //     symptoms: data.symptoms,
+    //     impact: data.impact,
+    //     control: data.control,
+    //     slug: data.name.toLowerCase().replace(/\s/g, "-"),
+    //     image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`,
+    //   },
+    // });
     return {
       ...initialDiseaseFormState,
       db: "success",
@@ -308,5 +498,52 @@ export const addDisease = async (
       ...initialDiseaseFormState,
       db: "Error adding disease, please try again",
     };
-  }  
+  }
 };
+
+
+export const editPest = async ({id, content}: {id: string; content: string}) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to edit a pest");
+
+  try {
+    await prisma.pest.update({
+      where: {
+        id: id,
+      },
+      data: {
+        text: content,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to edit pest" + error.message);
+  }
+
+  revalidatePath(`/resources/pests/${id}`);
+}
+
+export const editDisease = async ({id, content}: {id: string; content: string}) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to edit a disease");
+
+  try {
+    await prisma.disease.update({
+      where: {
+        id: id,
+      },
+      data: {
+        text: content,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to edit disease" + error.message);
+  }
+
+  revalidatePath(`/resources/diseases/${id}`);
+}
