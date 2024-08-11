@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import SubmitButton from "@/components/ui/SubmitButton";
-import { initialEditPestFormState } from "@/lib/constants";
-import { Button, cn, Textarea } from "@nextui-org/react";
+import { convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
+import { Button } from "@nextui-org/react";
 import React, { useState } from "react";
-import { useFormState } from "react-dom";
 import toast from "react-hot-toast";
-import ReactMarkdown from "react-markdown";
+import ReactQuill from "react-quill";
+
+import "react-quill/dist/quill.snow.css";
 
 const ResourceContent = ({
   name,
@@ -21,9 +21,10 @@ const ResourceContent = ({
   id: string;
   isAdmin: boolean;
   type: "Pest" | "Disease";
-  editFn: ({id, content}:{id: string, content: string}) => Promise<void>;
-}) => {
-  const [content, setContent] = useState(text);
+  editFn: ({ id, content }: { id: string; content: string }) => Promise<void>;
+}) => { 
+
+  const [content, setContent] = useState(convertMarkdownToHtml(text));
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,11 +32,12 @@ const ResourceContent = ({
     setIsEditing((prev) => !prev);
   };
 
+
   const handleApply = async () => {
-    if (content === text) return setIsEditing(false);
     try {
       setIsLoading(true);
-      await editFn({ id, content });
+      const markdownContent = convertHtmlToMarkdown(content);
+      await editFn({ id, content: markdownContent });
       toast.success(`${type} edited successfully`);
     } catch (e) {
       toast.error(`Failed to edit ${type.toLowerCase()}`);
@@ -43,10 +45,6 @@ const ResourceContent = ({
       setIsLoading(false);
       setIsEditing(false);
     }
-  };
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContent(e.target.value);
   };
 
   return (
@@ -61,7 +59,7 @@ const ResourceContent = ({
             >
               {isEditing ? "Stop Editing" : "Edit"}
             </Button>
-            {content !== text && (
+            {isEditing && (
               <Button
                 className="text-white"
                 isLoading={isLoading}
@@ -74,18 +72,13 @@ const ResourceContent = ({
           </div>
         )}
       </div>
-      {!isEditing ? (
-        <ReactMarkdown className=" whitespace-pre-wrap">
-          {content}
-        </ReactMarkdown>
-      ) : (
-        <Textarea
-          size="lg"
-          maxRows={20}
-          value={content}
-          onChange={handleTextChange}
-        />
-      )}
+      <div className="">
+        {isEditing ? (
+          <ReactQuill value={content} onChange={setContent} theme="snow" />
+        ) : (
+          <div className="edit-cont" dangerouslySetInnerHTML={{ __html: content }} />
+        )}
+      </div>
     </div>
   );
 };
