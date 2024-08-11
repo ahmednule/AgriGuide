@@ -39,7 +39,7 @@ const ImageUpload = forwardRef(({ name }: { name: string }, ref?) => {
         labelFileTypeNotAllowed="Invalid file type. Please upload an image"
         allowMultiple={false}
         labelFileProcessingError="An error occurred during processing"
-        labelIdle="Drag & Drop or Browse your desired profile image"
+        labelIdle="Drag & Drop or Browse your desired image"
         maxFileSize="1MB"
       />
     </div>
