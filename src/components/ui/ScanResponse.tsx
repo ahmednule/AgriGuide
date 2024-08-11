@@ -1,8 +1,14 @@
+import { convertMarkdownToHtml } from "@/lib/utils";
 import React from "react";
 import { useFormStatus } from "react-dom";
-import ReactMarkdown from "react-markdown";
 
-const ScanResponse = ({ response, isScanSuccess }: { response: string, isScanSuccess: boolean }) => {
+const ScanResponse = ({
+  response,
+  isScanSuccess,
+}: {
+  response: string;
+  isScanSuccess: boolean;
+}) => {
   const { pending } = useFormStatus();
 
   return (
@@ -13,11 +19,12 @@ const ScanResponse = ({ response, isScanSuccess }: { response: string, isScanSuc
             <h3 className="text-lg font-bold mb-4 text-emerald-950">
               Response
             </h3>
-            <div className="markdown-content">
-              <ReactMarkdown className="bg-emerald-200 text-wrap p-5 rounded-xl">
-                {response}
-              </ReactMarkdown>
-            </div>
+              <div
+                className="edit-cont text-emerald-800 bg-green-50 p-4 rounded-lg"
+                dangerouslySetInnerHTML={{
+                  __html: convertMarkdownToHtml(response),
+                }}
+              />
           </div>
         ) : null)}
     </>
