@@ -26,9 +26,9 @@ import {
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import AvatarDropdown from "./AvatarDropdown";
-import { Role } from "@prisma/client";
 import { makeAdmin, removeAdmin } from "@/lib/actions";
 import toast from "react-hot-toast";
+import { Role } from "@prisma/client";
 
 const Header = () => {
   const [password, setPassword] = useState("");
@@ -108,12 +108,38 @@ const Header = () => {
       <NavbarContent justify="end">
         <NavbarItem>
           {!user && !isLoading && (
-            <Button
-              className="text-white bg-emerald-900"
-              onPress={() => signIn()}
-            >
-              Sign in
-            </Button>
+            <>
+              <Button
+                className="text-white bg-emerald-900"
+                onPress={() =>
+                  signIn("google", {
+                    callbackUrl: "/user/customer/login",
+                  })
+                }
+              >
+                Customer Login
+              </Button>
+              <Button
+                className="text-white ml-3 bg-emerald-900"
+                onPress={() =>
+                  signIn("google", {
+                    callbackUrl: "/user/consultant/login",
+                  })
+                }
+              >
+                Consultant Login
+              </Button>
+              <Button
+                className="text-white ml-3 bg-emerald-900"
+                onPress={() =>
+                  signIn("google", {
+                    callbackUrl: "/user/admin/login",
+                  })
+                }
+              >
+                Admin Login
+              </Button>
+            </>
           )}
           {isLoading && <Spinner color="success" />}
           {user && !isLoading && (
@@ -124,7 +150,7 @@ const Header = () => {
             />
           )}
         </NavbarItem>
-        <NavbarItem>
+        {/* <NavbarItem>
           {!isAdmin && user && (
             <Popover placement="right">
               <PopoverTrigger>
@@ -150,7 +176,7 @@ const Header = () => {
               </PopoverContent>
             </Popover>
           )}
-          {isAdmin && (
+           {isAdmin && (
             <Button
               isLoading={isLoading}
               className="!bg-red-700 text-white"
@@ -158,8 +184,8 @@ const Header = () => {
             >
               Remove Admin
             </Button>
-          )}
-        </NavbarItem>
+          )} 
+        </NavbarItem> */}
       </NavbarContent>
       <NavbarMenu>
         {MENU.map((item) => (
