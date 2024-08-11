@@ -8,10 +8,10 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import React from "react";
+import React, { useState } from "react";
 import ImageUpload from "./ImageUpload";
 import { useFormState } from "react-dom";
-import { scanImage } from "@/lib/actions";
+import { scanPestImage, scanDiseaseImage } from "@/lib/actions";
 import { ScanStatus } from "@/lib/constants";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -21,13 +21,27 @@ import ScanButton from "./ScanButton";
 
 const ModalUI = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [formState, formAction] = useFormState(scanImage, "");
-  const isScanSuccess =
-    formState === ScanStatus.SUCCESS
+  const [pestFormState, pestFormAction] = useFormState(scanPestImage, "");
+  const [diseaseFormState, diseaseFormAction] = useFormState(
+    scanDiseaseImage,
+    ""
+  );
+
+  const isPestScanSuccess =
+    pestFormState === ScanStatus.SUCCESS
       ? true
-      : formState === ScanStatus.ERROR
+      : pestFormState === ScanStatus.ERROR ||
+        pestFormState === ScanStatus.IMAGENOTPEST
       ? false
-      : formState === ""
+      : pestFormState === ""
+      ? false
+      : true;
+
+  const isDiseaseScanSuccess =
+    diseaseFormState === ScanStatus.ERROR ||
+    diseaseFormState === ScanStatus.IMAGENOTDISEASE
+      ? false
+      : diseaseFormState === ""
       ? false
       : true;
 
@@ -37,6 +51,9 @@ const ModalUI = () => {
   const handleErrorToast = () => {
     toast.error("You need to sign in to use this feature");
   };
+
+  const [choice, setChoice] = useState("");
+
   return (
     <>
       <Button
@@ -62,25 +79,72 @@ const ModalUI = () => {
                 <h2 className="text-emerald-900 text-xl font-bold">AI SCAN</h2>
               </ModalHeader>
               <ModalBody>
-                <p className="text-emerald-700">
-                  Upload an image of a plant or pest to start the diagnosis
-                  process.
-                </p>
-                <form action={formAction} className="flex flex-col">
-                  <ImageUpload name="image" />
-                  <ScanButton />
-                  <ChipUI formState={formState} isScanSuccess={isScanSuccess} />
-                  <ScanResponse
-                    isScanSuccess={isScanSuccess}
-                    response={formState}
-                  />
-                  <p className="text-emerald-800 mt-4">
-                    Not what you are looking for? <Link>Book a session</Link>{" "}
-                    with an expert or view our free comprehensive <Link href="/resources">resource</Link> to learn more.
-                  </p>
-                </form>
+                {!choice && (
+                  <>
+                    <p>Do you wish to scan for a pest or a disease?</p>
+                    <Button className="mx-10" onPress={() => setChoice("pest")}>Pest</Button>
+                    <Button className="mx-10" onPress={() => setChoice("disease")}>
+                      Disease
+                    </Button>
+                  </>
+                )}
+                {choice === "pest" && (
+                  <>
+                    <p className="text-emerald-700">
+                      Upload an image of a pest start the diagnosis process.
+                    </p>
+                    <form action={pestFormAction} className="flex flex-col">
+                      <ImageUpload name="image" />
+                      <ScanButton />
+                      <ChipUI
+                        formState={pestFormState}
+                        isScanSuccess={isPestScanSuccess}
+                      />
+                      <ScanResponse
+                        isScanSuccess={isPestScanSuccess}
+                        response={pestFormState}
+                      />
+                      {diseaseFormState && (
+                        <p className="text-emerald-800 mt-4">
+                          Not what you are looking for?{" "}
+                          <Link>Book a session</Link> with an expert or view our
+                          free comprehensive{" "}
+                          <Link href="/resources">resource</Link> to learn more.
+                        </p>
+                      )}
+                    </form>
+                  </>
+                )}
+                {choice === "disease" && (
+                  <>
+                    <p className="text-emerald-700">
+                      Upload an image of a disease start the diagnosis process.
+                    </p>
+                    <form action={diseaseFormAction} className="flex flex-col">
+                      <ImageUpload name="image" />
+                      <ScanButton />
+                      <ChipUI
+                        formState={diseaseFormState}
+                        isScanSuccess={isDiseaseScanSuccess}
+                      />
+                      <ScanResponse
+                        isScanSuccess={isDiseaseScanSuccess}
+                        response={diseaseFormState}
+                      />
+                      {diseaseFormState && (
+                        <p className="text-emerald-800 mt-4">
+                          Not what you are looking for?{" "}
+                          <Link>Book a session</Link> with an expert or view our
+                          free comprehensive{" "}
+                          <Link href="/resources">resource</Link> to learn more.
+                        </p>
+                      )}
+                    </form>
+                  </>
+                )}
               </ModalBody>
               <ModalFooter>
+                {choice && <Button onPress={() => setChoice("")}>Back</Button>}
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
