@@ -25,7 +25,7 @@ const ChipUI = ({
             color={isScanSuccess ? "success" : "danger"}
             className="text-white self-center mt-4"
           >
-            {isScanSuccess ? ScanStatus.SUCCESS : ScanStatus.ERROR}
+            {isScanSuccess ? ScanStatus.SUCCESS : formState}
           </Chip>
         ) : null)}
     </>
