@@ -9,13 +9,21 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import { Avatar, Button, Chip, User as NextUser } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  Chip,
+  User as NextUser,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 import { deleteScan } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { convertMarkdownToHtml } from "@/lib/utils";
+import { ScanType } from "@prisma/client";
 
 type ScanColumnKey = "id" | "description" | "createdAt" | "image" | "actions";
 
@@ -30,6 +38,7 @@ const CustomerScansTable = ({
           url: string;
           createdAt: Date;
           customerId: string;
+          type: ScanType;
         }[];
       } & {
         id: string;
@@ -41,14 +50,23 @@ const CustomerScansTable = ({
     { key: "createdAt", label: "Created At" },
     { key: "image", label: "Image" },
     { key: "description", label: "Description" },
+    { key: "type", label: "Type" },
     { key: "actions", label: "Actions" },
   ];
 
-  const rows = scanData?.scan?.map((scan, index) => ({
+  const [filterType, setFilterType] = useState<any>(new Set([]));
+
+  let filteredScan =
+    filterType.size > 0
+      ? scanData?.scan?.filter((scan) => scan.type === Array.from(filterType)[0])
+      : scanData?.scan;
+
+  const rows = filteredScan?.map((scan, index) => ({
     id: scan.id,
     createdAt: scan.createdAt.toLocaleDateString(),
     image: scan.url,
     description: scan.description!,
+    type: scan.type,
     index: index + 1,
   }));
 
@@ -73,6 +91,7 @@ const CustomerScansTable = ({
         image: string;
         description: string;
         createdAt: string;
+        type: ScanType;
       },
       columnKey: ScanColumnKey
     ) => {
@@ -108,7 +127,9 @@ const CustomerScansTable = ({
           return (
             <div
               className="whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(cellValue) }}
+              dangerouslySetInnerHTML={{
+                __html: convertMarkdownToHtml(cellValue),
+              }}
             />
           );
         default:
@@ -119,29 +140,43 @@ const CustomerScansTable = ({
   );
 
   return (
-    <Table isStriped aria-label="Example table with custom cells">
-      <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn
-            key={column.key}
-            align={column.key === "actions" ? "center" : "start"}
-          >
-            {column.label}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent="No content to display" items={rows}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>
-                {renderCell(item, columnKey as ScanColumnKey)}
-              </TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Select
+        selectedKeys={filterType}
+        onSelectionChange={setFilterType}
+        label="Filter scan"
+        color="success"
+        variant="bordered"
+        className="max-w-40 mb-4"
+      >
+        <SelectItem key={ScanType.PEST}>Pest</SelectItem>
+        <SelectItem key={ScanType.DISEASE}>Disease</SelectItem>
+      </Select>
+
+      <Table isStriped aria-label="Example table with custom cells">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn
+              key={column.key}
+              align={column.key === "actions" ? "center" : "start"}
+            >
+              {column.label}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent="No content to display" items={rows}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>
+                  {renderCell(item, columnKey as ScanColumnKey)}
+                </TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 };
 
