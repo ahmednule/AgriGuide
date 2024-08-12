@@ -9,6 +9,7 @@ const SubmitButton = ({
   endContent,
   color,
   onPress,
+  size = "lg"
 }: {
   children: React.ReactNode;
   endContent?: React.ReactNode;
@@ -20,6 +21,7 @@ const SubmitButton = ({
     | "warning"
     | "danger";
   onPress?: () => void;
+  size?: "sm" | "md" | "lg";
 }) => {
   const { pending } = useFormStatus();
   return (
@@ -28,7 +30,7 @@ const SubmitButton = ({
       type="submit"
       isLoading={pending}
       color={color}
-      size="lg"
+      size={size}
       className={cn(
         {"bg-emerald-400 self-center font-bold shadow-[0_4px_8px_rgb(0_0_0/0.2)]": !color}
       )}
