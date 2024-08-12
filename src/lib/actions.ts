@@ -20,7 +20,7 @@ import OpenAI from "openai";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import prisma from "./prisma";
-import { Role } from "@prisma/client";
+import { Role, ScanType } from "@prisma/client";
 import { supabase } from "./supabase";
 import removeMarkdown from "remove-markdown";
 
@@ -51,7 +51,7 @@ export const scanPestImage = async (
           content: [
             {
               type: "text",
-              text: "The image is a scan of a plant pest. Generate a response that includes: The name of the pest in singular form as the first word, Description: Provide a brief description of the pest, Damage: Describe the damage the pest causes to plants, Control: Outline the control measures for managing the pest, Treatment: Provide treatment options for the pest, including the medicine name and dosage. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. If the image given is not a pest, the response should be the text 'Error: This is not a pest'",
+              text: "The image is a scan of a plant pest. Generate a response that includes: 1. The name of the pest in singular form and bold as the first word, 2. Description, 3. Damage, 4. Control and 5. Treatment. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. Separate content with a br tag. If the image given is not a pest, the response should be the text 'Error: This is not a pest' in plain text",
             },
             {
               type: "image_url",
@@ -88,6 +88,7 @@ export const scanPestImage = async (
         description: removeMarkdown(res),
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+        type: ScanType.PEST,
       },
     });
 
@@ -148,7 +149,7 @@ export const scanDiseaseImage = async (
           content: [
             {
               type: "text",
-              text: "The image is a scan of a plant disease. Generate a response that includes: The name of the disease in singular form and bold as the first word, Cause, symptoms, impact and treatment. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. Separate content with a br tag. If the image given is not a disease, the response should be the text 'Error: This is not a disease' in plain text",
+              text: "The image is a scan of a plant disease. Generate a response that includes: 1. The name of the disease in singular form and bold as the first word, 2. Cause, 3. symptoms, 4. impact and 5. treatment. Ensure each section is very detailed in its own paragraph separated with a html br tag and the section headings bolded. If the image given is not a disease, the response should be the text 'Error: This is not a disease' in plain text",
             },
             {
               type: "image_url",
@@ -185,6 +186,7 @@ export const scanDiseaseImage = async (
         description: removeMarkdown(res),
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+        type: ScanType.DISEASE,
       },
     });
 
@@ -546,4 +548,25 @@ export const editDisease = async ({id, content}: {id: string; content: string}) 
   }
 
   revalidatePath(`/resources/diseases/${id}`);
+}
+
+export const deleteAllScans = async () => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.CUSTOMER)
+    throw new Error("You must be logged in as a customer to delete your previous scans");
+
+  try {
+    await prisma.scan.deleteMany({
+      where: {
+        customerId: user!.id!,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete scans" + error.message);
+  }
+
+  revalidatePath("/scan-history");
 }
