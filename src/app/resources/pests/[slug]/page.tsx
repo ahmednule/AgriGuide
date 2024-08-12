@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import ResourceContent from "@/components/page/resource-page/ResourceContent";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
-import { editPest } from "@/lib/actions";
+import { deletePest, editPest } from "@/lib/actions";
 
 const PestPage = async ({ params }: { params: { slug: string } }) => {
   const pest = await prisma.pest.findUnique({
@@ -24,7 +24,7 @@ const PestPage = async ({ params }: { params: { slug: string } }) => {
   return (
     <>
       <ResourceNav type={ResourceType.PESTS} name={name} slug={slug} />
-      <ResourceContent type="Pest" editFn={editPest} name={name} text={text} id = {id} isAdmin={isAdmin}/>
+      <ResourceContent deleteResource={deletePest} type="Pest" editFn={editPest} name={name} text={text} id = {id} isAdmin={isAdmin}/>
       {image && (
         <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
           <Image src={image} alt="" className="h-72 w-80" />

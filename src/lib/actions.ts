@@ -149,7 +149,7 @@ export const scanDiseaseImage = async (
           content: [
             {
               type: "text",
-              text: "The image is a scan of a plant disease. Generate a response that includes: 1. The name of the disease in singular form and bold as the first word, 2. Cause, 3. symptoms, 4. impact and 5. treatment. Ensure each section is very detailed in its own paragraph separated with a html br tag and the section headings bolded. If the image given is not a disease, the response should be the text 'Error: This is not a disease' in plain text",
+              text: "The image is a scan of a plant disease. Generate a response that includes: 1. The name of the disease in singular form and bold as the first word, 2. Cause, 3. symptoms, 4. impact and 5. treatment. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. Separate content with a br tag. If the image given is not a disease, the response should be the text 'Error: This is not a disease' in plain text",
             },
             {
               type: "image_url",
@@ -502,6 +502,26 @@ export const addDisease = async (
     };
   }
 };
+
+export const deletePest = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to delete a pest");
+
+  try {
+    await prisma.pest.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete pest" + error.message);
+  }
+
+  revalidatePath("/resources/pests");
+}
 
 
 export const editPest = async ({id, content}: {id: string; content: string}) => {

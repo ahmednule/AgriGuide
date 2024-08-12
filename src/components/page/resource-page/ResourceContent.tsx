@@ -1,7 +1,8 @@
-'use client'
+"use client";
 
 import { convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
 import { Button } from "@nextui-org/react";
+import { redirect, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
@@ -15,6 +16,7 @@ const ResourceContent = ({
   isAdmin,
   type,
   editFn,
+  deleteResource,
 }: {
   name: string;
   text: string;
@@ -22,16 +24,16 @@ const ResourceContent = ({
   isAdmin: boolean;
   type: "Pest" | "Disease";
   editFn: ({ id, content }: { id: string; content: string }) => Promise<void>;
-}) => { 
-
+  deleteResource: (id: string) => Promise<void>;
+}) => {
   const [content, setContent] = useState(convertMarkdownToHtml(text));
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
 
   const handleEdit = async () => {
     setIsEditing((prev) => !prev);
   };
-
 
   const handleApply = async () => {
     try {
@@ -47,18 +49,41 @@ const ResourceContent = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      setIsLoading(true);
+      await deleteResource(id);
+      toast.success(`${type} deleted successfully`);
+      router.replace(`/resources/${type.toLowerCase()}s`);
+    } catch (e) {
+      toast.error(`Failed to delete ${type.toLowerCase()}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold mb-6">{name}</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">{name}</h1>
         {isAdmin && (
           <div className="space-x-4">
             <Button
+              variant="bordered"
               color={!isEditing ? "danger" : "primary"}
               onPress={handleEdit}
             >
               {isEditing ? "Stop Editing" : "Edit"}
             </Button>
+            {!isEditing && (
+              <Button
+                color="danger"
+                isLoading={isLoading}
+                onPress={handleDelete}
+              >
+                Delete
+              </Button>
+            )}
             {isEditing && (
               <Button
                 className="text-white"
@@ -72,11 +97,14 @@ const ResourceContent = ({
           </div>
         )}
       </div>
-        {isEditing ? (
-          <ReactQuill value={content} onChange={setContent} theme="snow" />
-        ) : (
-          <div className="edit-cont" dangerouslySetInnerHTML={{ __html: content }} />
-        )}
+      {isEditing ? (
+        <ReactQuill value={content} onChange={setContent} theme="snow" />
+      ) : (
+        <div
+          className="edit-cont"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+      )}
     </div>
   );
 };
