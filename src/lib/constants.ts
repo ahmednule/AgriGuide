@@ -153,7 +153,7 @@ export const CUSTOMER_ROUTES = [
     icon: faClockRotateLeft,
   },
   {
-    path: "/customers/progress-tracker",
+    path: "/customer/progress-tracker",
     value: "Progress Tracker",
     icon: faLineChart,
   },
