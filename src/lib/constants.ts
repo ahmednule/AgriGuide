@@ -64,9 +64,13 @@ export const MENU = [
     value: "Partnerships",
   },
   {
+    route: "/market",
+    value: "market",
+  },
+  {
     route: "#contact",
     value: "Contact",
-  },
+  }
 ];
 
 export const TESTIMONIALS = [

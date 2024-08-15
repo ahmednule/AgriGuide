@@ -23,6 +23,7 @@
     "@react-email/components": "^0.0.21",
     "@react-email/tailwind": "^0.0.18",
     "@supabase/supabase-js": "^2.45.0",
+    "axios": "^1.7.4",
     "chart.js": "^4.4.3",
     "filepond-plugin-file-encode": "^2.1.14",
     "filepond-plugin-file-validate-size": "^2.2.8",
