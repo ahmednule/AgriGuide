@@ -13,7 +13,12 @@ import {
   initialFormState,
   ScanStatus,
 } from "./constants";
-import type { AddDiseaseForm, AddPestForm, ContactForm, EditPestForm } from "./types";
+import type {
+  AddDiseaseForm,
+  AddPestForm,
+  ContactForm,
+  EditPestForm,
+} from "./types";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/ui/EmailTemplate";
 import OpenAI from "openai";
@@ -23,6 +28,7 @@ import prisma from "./prisma";
 import { Role, ScanType } from "@prisma/client";
 import { supabase } from "./supabase";
 import removeMarkdown from "remove-markdown";
+import { getResourceName } from "./utils";
 
 export const scanPestImage = async (
   formState: string,
@@ -94,13 +100,12 @@ export const scanPestImage = async (
 
     // Store pest in database
 
-    const match = res.match(/\*\*(.*?)\*\*/);
-    const firstWord = match ? match[1] : "";
+    const pestName = getResourceName(res);
     const restOfText = res.replace(/\*\*.*?\*\*/, "").trim();
 
     const isPestStored = await prisma.pest.findFirst({
       where: {
-        slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+        slug: pestName.toLowerCase().replace(/\s/g, "-"),
       },
     });
 
@@ -109,10 +114,10 @@ export const scanPestImage = async (
     if (!isPestStored)
       await prisma.pest.create({
         data: {
-          name: firstWord,
+          name: pestName,
           text: restOfText,
           image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
-          slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+          slug: pestName.toLowerCase().replace(/\s/g, "-"),
         },
       });
 
@@ -192,13 +197,12 @@ export const scanDiseaseImage = async (
 
     // Store disease in database
 
-    const match = res.match(/\*\*(.*?)\*\*/);
-    const firstWord = match ? match[1] : "";
+    const diseaseName = getResourceName(res);
     const restOfText = res.replace(/\*\*.*?\*\*/, "").trim();
 
     const isDiseaseStored = await prisma.disease.findFirst({
       where: {
-        slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+        slug: diseaseName.toLowerCase().replace(/\s/g, "-"),
       },
     });
 
@@ -207,10 +211,10 @@ export const scanDiseaseImage = async (
     if (!isDiseaseStored)
       await prisma.disease.create({
         data: {
-          name: firstWord,
+          name: diseaseName,
           text: restOfText,
           image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
-          slug: firstWord.toLowerCase().replace(/\s/g, "-"),
+          slug: diseaseName.toLowerCase().replace(/\s/g, "-"),
         },
       });
 
@@ -507,7 +511,8 @@ export const deletePest = async (id: string) => {
   const session = await auth();
   const user = session?.user;
 
-  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to delete a pest");
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to delete a pest");
 
   try {
     await prisma.pest.delete({
@@ -521,14 +526,20 @@ export const deletePest = async (id: string) => {
   }
 
   revalidatePath("/resources/pests");
-}
+};
 
-
-export const editPest = async ({id, content}: {id: string; content: string}) => {
+export const editPest = async ({
+  id,
+  content,
+}: {
+  id: string;
+  content: string;
+}) => {
   const session = await auth();
   const user = session?.user;
 
-  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to edit a pest");
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to edit a pest");
 
   try {
     await prisma.pest.update({
@@ -545,13 +556,20 @@ export const editPest = async ({id, content}: {id: string; content: string}) => 
   }
 
   revalidatePath(`/resources/pests/${id}`);
-}
+};
 
-export const editDisease = async ({id, content}: {id: string; content: string}) => {
+export const editDisease = async ({
+  id,
+  content,
+}: {
+  id: string;
+  content: string;
+}) => {
   const session = await auth();
   const user = session?.user;
 
-  if (user?.role !== Role.ADMIN) throw new Error("You must be an admin to edit a disease");
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to edit a disease");
 
   try {
     await prisma.disease.update({
@@ -568,14 +586,16 @@ export const editDisease = async ({id, content}: {id: string; content: string}) 
   }
 
   revalidatePath(`/resources/diseases/${id}`);
-}
+};
 
 export const deleteAllScans = async () => {
   const session = await auth();
   const user = session?.user;
 
   if (user?.role !== Role.CUSTOMER)
-    throw new Error("You must be logged in as a customer to delete your previous scans");
+    throw new Error(
+      "You must be logged in as a customer to delete your previous scans"
+    );
 
   try {
     await prisma.scan.deleteMany({
@@ -589,4 +609,70 @@ export const deleteAllScans = async () => {
   }
 
   revalidatePath("/scan-history");
-}
+};
+
+// a function which receives 2 image ids, fetches the url of the image by use of the id from the scan prisma model and converts the 2 supabase bucket url to a form that open ai image api can understand the image and pass the 2 images to the api with a text of stating how the progress is and returning the response
+export const trackProgress = async ({
+  image1,
+  image2,
+}: {
+  image1: string;
+  image2: string;
+}) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user) throw new Error("You must be logged in to track progress");
+
+  const image1Url = await prisma.scan.findFirst({
+    where: {
+      id: image1,
+    },
+  });
+
+  const image2Url = await prisma.scan.findFirst({
+    where: {
+      id: image2,
+    },
+  });
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API,
+  });
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "You are an agricultural AI assistant. You have been given the 2 images, track the progress of the plant disease over time. The first image is the initial scan of the plant disease and the second image is the latest scan of the plant disease. Provide a detailed response on how the plant disease has progressed over time. If the progress has not improved or has become worse, then notify the user about it as well. If the images are of different diseases or are just different plants altogether, notify the user with a response of one sentence. Do not give a response like feel free to ask because it's a one way input",
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: image1Url!.url,
+                detail: "high",
+              },
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: image2Url!.url,
+                detail: "high",
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    console.log(response.choices[0].message)
+    return response.choices[0].message.content as string;
+  } catch (error) {
+    return ScanStatus.ERROR;
+  }
+};
