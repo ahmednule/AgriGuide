@@ -23,7 +23,7 @@ const AdminsPage = async () => {
   return (
     <>
       <h1 className="text-3xl font-bold text-emerald-900 mb-8">Admins</h1>
-      <UserTable users={newAdmins}/>
+      {/* <UserTable Users ={newAdmins}/> */}
     </>
   );
 };
