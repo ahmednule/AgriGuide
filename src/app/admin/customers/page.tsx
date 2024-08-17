@@ -23,7 +23,7 @@ const CustomersPage = async () => {
   return (
     <>
       <h1 className="text-3xl font-bold text-emerald-900 mb-8">Customers</h1>
-      <UserTable users={newCustomer}/>
+      {/* <UserTable users={newCustomer}/> */}
     </>
   );
 };
