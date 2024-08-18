@@ -15,6 +15,7 @@ Key benefits of using AI for plant disease and pest identification:
 - **Speed**: AI rapidly analyzes plant images, reducing the time needed to identify the problem.
 - **Accuracy**: Trained on thousands of images, AI can accurately detect diseases and pests that might be difficult for the human eye to spot.
 - **Efficiency**: By automating the identification process, AI helps users make faster decisions, improving crop management and yield.
+- **Progress**: Shows the progress of the plant after a certain period.
 
 ## Getting Started
 
