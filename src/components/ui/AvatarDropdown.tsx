@@ -6,10 +6,13 @@ import {
   DropdownItem,
   Avatar,
   DropdownSection,
+  Link,
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { auth } from "@/auth";
+import { Role } from "@prisma/client";
 
 const AvatarDropdown = ({
   name,
@@ -20,6 +23,8 @@ const AvatarDropdown = ({
   email: string;
   image: string;
 }) => {
+  const { data, status, update } = useSession();
+  const user = data?.user;
   return (
     <Dropdown showArrow>
       <DropdownTrigger>
@@ -44,15 +49,26 @@ const AvatarDropdown = ({
         </DropdownSection>
         <DropdownSection showDivider aria-label="Dropdown Actions">
           <DropdownItem key="profile">My Profile</DropdownItem>
-          <DropdownItem key="analytics">Analytics</DropdownItem>
-          <DropdownItem key="system">System</DropdownItem>
+          {user?.role === Role.CUSTOMER ? (
+            <DropdownItem key="user-panel" href="/customer">
+              User panel
+            </DropdownItem>
+          ) : (
+            <DropdownItem key="admin-panel" href="/admin">
+              Admin panel
+            </DropdownItem>
+          )}
         </DropdownSection>
         <DropdownSection aria-label="logout">
           <DropdownItem
             endContent={<FontAwesomeIcon icon={faSignOut} />}
             key="logout"
             color="danger"
-            onPress={() => signOut()}
+            onPress={() =>
+              signOut({
+                callbackUrl: "/",
+              })
+            }
             className="text-red-500"
           >
             Sign Out
