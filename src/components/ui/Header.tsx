@@ -245,58 +245,8 @@ const Header = () => {
             />
           )}
         </NavbarItem>
-        {/* <NavbarItem>
-          {!isAdmin && user && (
-            <Popover placement="right">
-              <PopoverTrigger>
-                <Button
-                  isLoading={isLoading}
-                  className="!bg-emerald-600 text-white"
-                >
-                  Admin
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <form onSubmit={handleAdminSubmit} className="px-1 py-2">
-                  <Input
-                    required
-                    isRequired
-                    onChange={(e) => setPassword(e.target.value)}
-                    label="Enter admin password"
-                  />
-                  <Button className="mt-2" isLoading={isLoading} type="submit">
-                    Submit
-                  </Button>
-                </form>
-              </PopoverContent>
-            </Popover>
-          )}
-           {isAdmin && (
-            <Button
-              isLoading={isLoading}
-              className="!bg-red-700 text-white"
-              onPress={handleRemoveAdminClick}
-            >
-              Remove Admin
-            </Button>
-          )} 
-        </NavbarItem> */}
       </NavbarContent>
       <NavbarMenu>
-        {/* {MENU.map((item) => (
-          <NavbarMenuItem key={item.route}>
-            <Link
-              color="foreground"
-              className={cn("text-black", {
-                "text-emerald-500": isActive(item.route),
-              })}
-              href={item.route}
-              size="lg"
-            >
-              {item.value}
-            </Link>
-          </NavbarMenuItem>
-        ))} */}
         <Link
           className={cn("text-black", {
             "text-emerald-500": isActive("/"),
