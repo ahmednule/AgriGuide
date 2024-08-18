@@ -73,7 +73,7 @@ export const scanPestImage = async (
     const res = response.choices[0].message.content as string;
 
     // Handle image not pest
-    if (res.startsWith("Error: This is not a pest"))
+    if (res.includes("Error: This is not a pest"))
       return ScanStatus.IMAGENOTPEST;
 
     if (user?.role !== Role.CUSTOMER) return res;
@@ -141,6 +141,11 @@ export const scanDiseaseImage = async (
   const session = await auth();
   const user = session?.user;
   const parsedImage = JSON.parse(image);
+  const fieldTag = formData.get("tag") as string;
+  const selectTag = formData.get("selectTag") as string;
+
+  const tag = fieldTag || selectTag;
+
 
   // text: "The image is a scan of a plant pest. Generate a response that includes: The name of the pest in singular form as the first word, Description: Provide a brief description of the pest, Damage: Describe the damage the pest causes to plants, Control: Outline the control measures for managing the pest, Treatment: Provide treatment options for the pest, including the medicine name and dosage. Ensure each section is very detailed in its own paragraph with the section headings bolded.",
 
@@ -154,7 +159,7 @@ export const scanDiseaseImage = async (
           content: [
             {
               type: "text",
-              text: "The image is a scan of a plant disease. Generate a response that includes: 1. The name of the disease in singular form and bold as the first word, 2. Cause, 3. symptoms, 4. impact and 5. treatment. Ensure each section is very detailed in its own paragraph with the section headings bolded and no spacing between a specific paragraph. Separate content with a br tag. If the image given is not a disease, the response should be the text 'Error: This is not a disease' in plain text",
+              text: "The image given should be of a plant disease. Generate a response that comprises of: 1. The name of the disease in singular form first word, 2. Cause, 3. Symptoms, 4. Impact and 5. Treatment each in their own paragraphs with heading bold and separated with a br tagnpm. If the image given is not a disease, the response should be the text 'Error: This is not a disease'",
             },
             {
               type: "image_url",
@@ -170,7 +175,7 @@ export const scanDiseaseImage = async (
     const res = response.choices[0].message.content as string;
 
     // Handle image not pest
-    if (res.startsWith("Error: This is not a disease"))
+    if (res.includes("Error: This is not a disease"))
       return ScanStatus.IMAGENOTDISEASE;
 
     if (user?.role !== Role.CUSTOMER) return res;
@@ -192,6 +197,7 @@ export const scanDiseaseImage = async (
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
         type: ScanType.DISEASE,
+        tag
       },
     });
 
@@ -528,6 +534,27 @@ export const deletePest = async (id: string) => {
   revalidatePath("/resources/pests");
 };
 
+export const deleteDisease = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to delete a disease");
+
+  try {
+    await prisma.disease.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete disease" + error.message);
+  }
+
+  revalidatePath("/resources/diseases");
+}
+
 export const editPest = async ({
   id,
   content,
@@ -676,3 +703,25 @@ export const trackProgress = async ({
     return ScanStatus.ERROR;
   }
 };
+
+export const getTags = async () => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user) return;
+
+  const tags = await prisma.scan.findMany({
+    where: {
+      customerId: user.id,
+      type: ScanType.DISEASE,
+    },
+    select: {
+      tag: true,
+    },
+    distinct: ["tag"],
+  });
+
+  revalidatePath("/");
+
+  return tags;
+}
