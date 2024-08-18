@@ -125,7 +125,7 @@ export const ADMIN_ROUTES = [
     icon: faUserDoctor,
   },
   {
-    path: "/admin/admins-data",
+    path: "/admin/admins",
     value: "Admins",
     icon: faUserTie,
   },
