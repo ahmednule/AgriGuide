@@ -3,12 +3,22 @@
 import React, { useState } from "react";
 import DiseaseCard from "./DiseaseCard";
 import { Scan, ScanType } from "@prisma/client";
-import { Button } from "@nextui-org/react";
+import { Button, Select, SelectItem } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import { trackProgress } from "@/lib/actions";
 import ReactMarkdown from "react-markdown";
 
-const DiseaseList = ({ diseases }: { diseases: Scan[] }) => {
+const DiseaseList = ({
+  diseases,
+  tags,
+}: {
+  diseases: Scan[];
+  tags:
+    | {
+        tag: string | null;
+      }[]
+    | undefined;
+}) => {
   const [selectedDisease, setSelectedDisease] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -38,12 +48,39 @@ const DiseaseList = ({ diseases }: { diseases: Scan[] }) => {
   const handleClear = () => {
     setSelectedDisease([]);
     setMessage("");
+    setTag(new Set([]));
   };
+
+  const [tag, setTag] = React.useState<any>(new Set([]));
+
+  let filteredDiseases =
+    tag.size > 0
+      ? diseases.filter((disease) => tag.has(disease.tag))
+      : diseases;
 
   return (
     <>
+      <div className="flex justify-between mt-3 mb-6 items-center">
+        <p>Select 2 disease images to scan the progress overtime.</p>
+        <Select
+          name="tag"
+          onSelectionChange={(keys) => {
+            setSelectedDisease([]);
+            setTag(new Set(keys));
+          }}
+          selectedKeys={tag}
+          color="success"
+          items={tags}
+          label="Filter by an existing tag"
+          className=" w-52"
+        >
+          {(tag) => (
+            <SelectItem key={tag.tag as any}>{tag.tag as any}</SelectItem>
+          )}
+        </Select>
+      </div>
       <div className="grid grid-cols-5 gap-4 mt-4">
-        {diseases.map((disease, index) => (
+        {filteredDiseases.map((disease, index) => (
           <DiseaseCard
             setSelectedDisease={setSelectedDisease}
             selectedDisease={selectedDisease}
