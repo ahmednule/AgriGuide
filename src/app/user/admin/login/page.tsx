@@ -18,8 +18,10 @@ const AdminLogin = async () => {
 
   const userHaveRole = dbUser?.role;
 
-  if(userHaveRole) redirect("/");
-
+  if (userHaveRole) {
+    if (dbUser?.role === Role.ADMIN) redirect("/");
+    redirect("/#has-role");
+  }
   await prisma.admin.create({
     data: {
       id: user.id!,
