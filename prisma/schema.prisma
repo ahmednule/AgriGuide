@@ -65,6 +65,7 @@ model Customer {
 model Scan {
   id          String   @id @default(cuid())
   description String
+  tag         String?
   url         String   @unique
   createdAt   DateTime @default(now()) @map("created_at")
   customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
