@@ -23,7 +23,7 @@ type UserColumnKey = keyof {
   email: string;
   createdAt: Date;
   updatedAt: Date;
-  role: Role;
+  role: Role | null;
 } &
   "images";
 
@@ -37,7 +37,7 @@ const UserTable = ({
     email: string;
     createdAt: Date;
     updatedAt: Date;
-    role: Role;
+    role: Role | null;
   }[];
 }) => {
   // // Define columns explicitly based on the User model
@@ -83,7 +83,7 @@ const UserTable = ({
         email: string;
         createdAt: string;
         updatedAt: string;
-        role: Role;
+        role: Role | null;
       },
       columnKey: UserColumnKey
     ) => {
