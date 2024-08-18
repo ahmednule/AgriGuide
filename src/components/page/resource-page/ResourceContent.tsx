@@ -56,7 +56,7 @@ const ResourceContent = ({
       toast.success(`${type} deleted successfully`);
       router.replace(`/resources/${type.toLowerCase()}s`);
     } catch (e) {
-      toast.error(`Failed to delete ${type.toLowerCase()}`);
+      toast.error(`Failed to delete ${type.toLowerCase()}: ${e instanceof Error ? e.message : "Unknown error"}`);
     } finally {
       setIsLoading(false);
     }
