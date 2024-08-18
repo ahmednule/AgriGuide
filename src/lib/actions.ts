@@ -121,6 +121,8 @@ export const scanPestImage = async (
         },
       });
 
+    revalidatePath("/resources");
+
     return res;
   } catch (error) {
     return ScanStatus.ERROR;
@@ -145,7 +147,6 @@ export const scanDiseaseImage = async (
   const selectTag = formData.get("selectTag") as string;
 
   const tag = fieldTag || selectTag;
-
 
   // text: "The image is a scan of a plant pest. Generate a response that includes: The name of the pest in singular form as the first word, Description: Provide a brief description of the pest, Damage: Describe the damage the pest causes to plants, Control: Outline the control measures for managing the pest, Treatment: Provide treatment options for the pest, including the medicine name and dosage. Ensure each section is very detailed in its own paragraph with the section headings bolded.",
 
@@ -197,7 +198,7 @@ export const scanDiseaseImage = async (
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
         type: ScanType.DISEASE,
-        tag
+        tag,
       },
     });
 
@@ -223,6 +224,8 @@ export const scanDiseaseImage = async (
           slug: diseaseName.toLowerCase().replace(/\s/g, "-"),
         },
       });
+
+    revalidatePath("/resources");
 
     return res;
   } catch (error) {
@@ -553,7 +556,7 @@ export const deleteDisease = async (id: string) => {
   }
 
   revalidatePath("/resources/diseases");
-}
+};
 
 export const editPest = async ({
   id,
@@ -697,7 +700,7 @@ export const trackProgress = async ({
       ],
     });
 
-    console.log(response.choices[0].message)
+    console.log(response.choices[0].message);
     return response.choices[0].message.content as string;
   } catch (error) {
     return ScanStatus.ERROR;
@@ -724,4 +727,4 @@ export const getTags = async () => {
   revalidatePath("/");
 
   return tags;
-}
+};
