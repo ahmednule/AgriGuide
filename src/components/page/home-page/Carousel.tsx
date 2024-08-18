@@ -1,9 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@nextui-org/react";
 import { ImagesSlider } from "@/components/ui/ImagesSlider";
 import ModalUI from "@/components/ui/ModalUI";
+import toast from "react-hot-toast";
 
 const Carousel = () => {
   const images = [
@@ -11,6 +12,19 @@ const Carousel = () => {
     "https://images.unsplash.com/photo-1483982258113-b72862e6cff6?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1482189349482-3defd547e0e9?q=80&w=2848&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
+
+  const [hashState, setHashState] = useState("");
+
+  useEffect(() => {
+    const hash = window.location.hash.substring(1);
+    if (hash) setHashState(hash);
+    if (hashState === "has-role") {
+      toast.error("You are already registered with a different role");
+      // Reset the URL by removing the hash
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [hashState]);
+
   return (
     <section>
       <ImagesSlider className="h-[100svh]" images={images}>
