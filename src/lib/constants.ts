@@ -134,16 +134,6 @@ export const ADMIN_ROUTES = [
     value: "Chat",
     icon: faMessage,
   },
-  {
-    path: "/admin/add-pest",
-    value: "Add Pest",
-    icon: faBug,
-  },
-  {
-    path: "/admin/add-disease",
-    value: "Add Disease",
-    icon: faVirus,
-  },
 ];
 
 export const CUSTOMER_ROUTES = [
