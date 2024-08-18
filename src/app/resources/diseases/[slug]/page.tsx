@@ -8,7 +8,7 @@ import React from "react";
 import ResourceContent from "@/components/page/resource-page/ResourceContent";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
-import { editDisease } from "@/lib/actions";
+import { deleteDisease, editDisease } from "@/lib/actions";
 
 const DiseasePage = async ({ params }: { params: { slug: string } }) => {
   const disease = await prisma.disease.findUnique({
@@ -25,6 +25,7 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
     <>
       <ResourceNav type={ResourceType.DISEASES} name={name} slug={slug} />
       <ResourceContent
+        deleteResource={deleteDisease}
         type="Disease"
         editFn={editDisease}
         name={name}
