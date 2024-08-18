@@ -27,6 +27,8 @@ import AvatarDropdown from "./AvatarDropdown";
 import { makeAdmin, removeAdmin } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { Role } from "@prisma/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   const [password, setPassword] = useState("");
@@ -149,7 +151,7 @@ const Header = () => {
               "text-emerald-500": isActive("/resources"),
             })}
           >
-            Resources
+            <Link className="text-white">Resources</Link>
           </DropdownTrigger>
           <DropdownMenu aria-label="Static Actions">
             <DropdownItem
@@ -192,38 +194,47 @@ const Header = () => {
       <NavbarContent justify="end">
         <NavbarItem>
           {!user && !isLoading && (
-            <>
-              <Button
-                className="text-white bg-emerald-900"
-                onPress={() =>
-                  signIn("google", {
-                    callbackUrl: "/user/customer/login",
-                  })
-                }
+            <Dropdown>
+              <DropdownTrigger
+                className={cn("text-white hover:cursor-pointer")}
               >
-                Customer Login
-              </Button>
-              <Button
-                className="text-white ml-3 bg-emerald-900"
-                onPress={() =>
-                  signIn("google", {
-                    callbackUrl: "/user/consultant/login",
-                  })
-                }
-              >
-                Consultant Login
-              </Button>
-              <Button
-                className="text-white ml-3 bg-emerald-900"
-                onPress={() =>
-                  signIn("google", {
-                    callbackUrl: "/user/admin/login",
-                  })
-                }
-              >
-                Admin Login
-              </Button>
-            </>
+                <Link className="text-white space-x-2">
+                  <span>Login</span>
+                  <FontAwesomeIcon icon={faRightToBracket} />
+                </Link>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Static Actions">
+                <DropdownItem
+                  onPress={() =>
+                    signIn("google", { callbackUrl: "/user/customer/login" })
+                  }
+                  className={cn("hover:!bg-emerald-600 hover:!text-white")}
+                  key="customer"
+                >
+                  Customer
+                </DropdownItem>
+                <DropdownItem
+                  onPress={() =>
+                    signIn("google", {
+                      callbackUrl: "/user/consultant/login",
+                    })
+                  }
+                  className={cn("hover:!bg-emerald-600 hover:!text-white")}
+                  key="consultant"
+                >
+                  Consultant
+                </DropdownItem>
+                <DropdownItem
+                  onPress={() =>
+                    signIn("google", { callbackUrl: "/user/admin/login" })
+                  }
+                  className={cn("hover:!bg-emerald-600 hover:!text-white")}
+                  key="admin"
+                >
+                  Admin
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           )}
           {isLoading && <Spinner color="success" />}
           {user && !isLoading && (
@@ -272,7 +283,7 @@ const Header = () => {
         </NavbarItem> */}
       </NavbarContent>
       <NavbarMenu>
-        {MENU.map((item) => (
+        {/* {MENU.map((item) => (
           <NavbarMenuItem key={item.route}>
             <Link
               color="foreground"
@@ -285,7 +296,39 @@ const Header = () => {
               {item.value}
             </Link>
           </NavbarMenuItem>
-        ))}
+        ))} */}
+        <Link
+          className={cn("text-black", {
+            "text-emerald-500": isActive("/"),
+          })}
+          href="/"
+        >
+          Home
+        </Link>
+        <Link
+          className={cn("text-black", {
+            "text-emerald-500": isActive("/resources"),
+          })}
+          href="/resources"
+        >
+          Resources
+        </Link>
+        <Link
+          className={cn("text-black", {
+            "text-emerald-500": isActive("/market"),
+          })}
+          href="/market"
+        >
+          Market
+        </Link>
+        <Link
+          className={cn("text-black", {
+            "text-emerald-500": isActive("/contact"),
+          })}
+          href="/contact"
+        >
+          Contact
+        </Link>
       </NavbarMenu>
     </Navbar>
   );
