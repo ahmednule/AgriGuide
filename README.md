@@ -11,11 +11,11 @@ Agriguide aims to help farmers, gardeners, and agricultural experts diagnose pla
 ### How AI is Solving the Problem
 The project uses deep learning and computer vision techniques to detect and classify plant diseases and pests. The system is trained on a diverse dataset of plant images with known diseases and pests, allowing the model to recognize patterns and symptoms in new images uploaded by users.
 
-Key benefits of using AI for plant disease and pest identification:
+#### Key Benefits of Using AI for Plant Disease and Pest Identification
 - **Speed**: AI rapidly analyzes plant images, reducing the time needed to identify the problem.
 - **Accuracy**: Trained on thousands of images, AI can accurately detect diseases and pests that might be difficult for the human eye to spot.
 - **Efficiency**: By automating the identification process, AI helps users make faster decisions, improving crop management and yield.
-- **Progress**: Shows the progress of the plant after a certain period.
+- **Progress Tracking**: The platform shows the progress of the plant after a certain period.
 
 ## Getting Started
 
@@ -30,6 +30,7 @@ This is a Next.js project bootstrapped with `create-next-app`.
    ```bash
    git clone https://github.com/ahmednule/AgriGuide.git
    ```
+```
 
 2. Install the required dependencies:
    ```bash
