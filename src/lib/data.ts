@@ -46,3 +46,15 @@ export const FEATURES: TFeatureItem[] = [
     icon: faLink,
   },
 ];
+
+export const PARTNERSHIPS = [
+  { src: "/assets/images/nasa.svg", alt: "NASA logo", name: "NASA" },
+  { src: "/assets/images/meta.svg", alt: "Meta logo", name: "Meta" },
+  { src: "/assets/images/openai.svg", alt: "OpenAI logo", name: "OpenAI" },
+  {
+    src: "/assets/images/microsoft.svg",
+    alt: "Microsoft logo",
+    name: "Microsoft",
+  },
+  { src: "/assets/images/google.svg", alt: "Google logo", name: "Google" },
+];
