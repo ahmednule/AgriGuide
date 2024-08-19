@@ -30,7 +30,7 @@ const Process = () => {
               src="/assets/images/scan.svg"
               width={64}
               height={64}
-              alt=""
+              alt="Scan image icon"
             />
           </div>
           <h3 className="text-2xl mt-8 font-semibold">Get a diagnosis</h3>
