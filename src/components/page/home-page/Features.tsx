@@ -3,7 +3,7 @@ import { cn } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { FEATURES } from "@/lib/data";
+import { FEATURES_DATA } from "@/lib/data";
 import { TFeatureItem } from "@/lib/types";
 
 const Features = () => {
@@ -11,7 +11,7 @@ const Features = () => {
     <section id="features">
       <SectionHeader>Features</SectionHeader>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 relative z-10 px-10 lg:px-20">
-        {FEATURES.map((feature, index) => (
+        {FEATURES_DATA.map((feature, index) => (
           <FeatureItem key={feature.title} {...feature} index={index} />
         ))}
       </div>

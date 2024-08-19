@@ -1,5 +1,5 @@
 import React from "react";
-import { TESTIMONIALS } from "@/lib/constants";
+import { TESTIMONIALS_DATA } from "@/lib/data";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { InfiniteMovingCards } from "@/components/ui/InfiniteMovingCards";
 
@@ -8,7 +8,7 @@ const Testimonials = () => {
     <section id="testimonials">
       <SectionHeader>Testimonials</SectionHeader>
       <InfiniteMovingCards
-        items={TESTIMONIALS}
+        items={TESTIMONIALS_DATA}
         direction="right"
         speed="slow"
       />
