@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { Button } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
 import { ImagesSlider } from "@/components/ui/ImagesSlider";
 import ModalUI from "@/components/ui/ModalUI";
 import toast from "react-hot-toast";
@@ -50,6 +50,8 @@ const Carousel = () => {
           </h1>
           <div className="flex gap-4 md:gap-5 mt-12">
             <Button
+              as={Link}
+              href="#process"
               variant="ghost"
               className="md:px-4 md:py-5 rounded-full md:text-lg bg-transparent hover:!bg-emerald-400/20 border-emerald-400/50 border-large text-white"
             >
