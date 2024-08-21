@@ -225,7 +225,7 @@ export const scanDiseaseImage = async (
         },
       });
 
-    revalidatePath("/resources");
+    revalidatePath("/");
 
     return res;
   } catch (error) {
@@ -280,62 +280,6 @@ export const sendEmail = async (
       db: "Error sending email, please try again",
     };
   }
-};
-
-export const makeAdmin = async (id: string) => {
-  const session = await auth();
-  const user = session?.user;
-
-  if (!user) throw new Error("You must be logged in to make yourself an admin");
-
-  try {
-    await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        role: Role.ADMIN,
-      },
-    });
-    await prisma.customer.delete({
-      where: {
-        id,
-      },
-    });
-    await prisma.admin.create({
-      data: {
-        id,
-      },
-    });
-  } catch (error) {
-    if (error instanceof Error)
-      throw new Error("Failed to make user an admin" + error.message);
-  }
-
-  revalidatePath("/", "layout");
-};
-
-export const removeAdmin = async (id: string) => {
-  const session = await auth();
-  const user = session?.user;
-
-  if (!user) throw new Error("You must be logged in to remove admin status");
-
-  try {
-    await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        role: Role.CUSTOMER,
-      },
-    });
-  } catch (error) {
-    if (error instanceof Error)
-      throw new Error("Failed to remove admin status" + error.message);
-  }
-
-  revalidatePath("/", "layout");
 };
 
 export const deleteUser = async (id: string) => {
@@ -554,6 +498,8 @@ export const deleteDisease = async (id: string) => {
     if (error instanceof Error)
       throw new Error("Failed to delete disease" + error.message);
   }
+
+  // redirect as well
 
   revalidatePath("/resources/diseases");
 };
