@@ -1,4 +1,4 @@
-import ResourceNav from "@/components/page/resource-page/ResourceNav";
+import ResourceMobileNav from "@/components/page/resource-page/ResourceMobileNav";
 import { ResourceType } from "@/lib/constants";
 import prisma from "@/lib/prisma";
 import { Image } from "@nextui-org/react";
@@ -18,12 +18,12 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
   });
   if (!disease) notFound();
   const { name, text, slug, image, id } = disease;
-   const session = await auth();
-   const user = session?.user;
-   const isAdmin = user?.role === Role.ADMIN;
+  const session = await auth();
+  const user = session?.user;
+  const isAdmin = user?.role === Role.ADMIN;
   return (
     <>
-      <ResourceNav type={ResourceType.DISEASES} name={name} slug={slug} />
+      <ResourceMobileNav type={ResourceType.DISEASES} name={name} />
       <ResourceContent
         deleteResource={deleteDisease}
         type="Disease"

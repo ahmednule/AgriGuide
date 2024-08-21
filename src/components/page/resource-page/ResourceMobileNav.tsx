@@ -5,11 +5,9 @@ import React from "react";
 const ResourceMobileNav = ({
   type,
   name,
-  slug,
 }: {
   type?: string;
   name?: string;
-  slug?: string;
 }) => {
   return (
     <nav className=" lg:hidden mb-5 opacity-80">
@@ -26,15 +24,15 @@ const ResourceMobileNav = ({
           <span className="mx-2">&gt;</span>
           <Link
             className={cn({
-              underline: !slug,
+              underline: !name,
             })}
-            href={slug ? `/resources/${type?.toLowerCase()}` : "#"}
+            href={name ? `/resources/${type?.toLowerCase()}` : "#"}
           >
             {type}
           </Link>
         </>
       )}
-      {slug && (
+      {name && (
         <>
           <span className="mx-2">&gt;</span>
           <Link href="#" className="underline">
