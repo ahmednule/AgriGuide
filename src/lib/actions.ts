@@ -116,7 +116,7 @@ export const scanPestImage = async (
         data: {
           name: pestName,
           text: restOfText,
-          image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+          images: [`https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`],
           slug: pestName.toLowerCase().replace(/\s/g, "-"),
         },
       });
@@ -220,7 +220,7 @@ export const scanDiseaseImage = async (
         data: {
           name: diseaseName,
           text: restOfText,
-          image: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+          images: [`https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`],
           slug: diseaseName.toLowerCase().replace(/\s/g, "-"),
         },
       });

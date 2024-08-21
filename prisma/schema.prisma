@@ -13,7 +13,7 @@ model Pest {
   name      String   @unique
   slug      String   @unique
   text      String
-  image     String[]
+  images     String[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -23,7 +23,7 @@ model Pest {
 model Disease {
   id        String   @id @default(cuid())
   name      String   @unique
-  image     String[]
+  images     String[]
   text      String
   slug      String   @unique
   createdAt DateTime @default(now()) @map("created_at")

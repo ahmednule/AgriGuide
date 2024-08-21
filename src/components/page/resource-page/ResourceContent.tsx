@@ -23,7 +23,7 @@ const ResourceContent = ({
   deleteResource: (id: string) => Promise<void>;
   resource: Pest | Disease;
 }) => {
-  const { name, text, id, image } = resource;
+  const { name, text, id, images } = resource;
   const [content, setContent] = useState(convertMarkdownToHtml(text));
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,9 +107,11 @@ const ResourceContent = ({
           dangerouslySetInnerHTML={{ __html: content }}
         />
       )}
-      {image && (
-        <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
-          <Image src={image} alt="" className="h-72 w-80" />
+      {images && (
+        <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-5">
+          {images.map((image, index) => (
+            <Image key={index} src={image} alt="" className="h-72 w-80" />
+          ))}
         </div>
       )}
     </div>
