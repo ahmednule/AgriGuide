@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma-generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -22,6 +22,7 @@
     "@prisma/client": "^5.17.0",
     "@react-email/components": "^0.0.21",
     "@react-email/tailwind": "^0.0.18",
+    "@react-google-maps/api": "^2.19.3",
     "@supabase/supabase-js": "^2.45.0",
     "axios": "^1.7.4",
     "chart.js": "^4.4.3",
@@ -32,6 +33,7 @@
     "filepond-plugin-image-preview": "^4.6.12",
     "framer-motion": "^11.3.8",
     "html-react-parser": "^5.1.12",
+    "mapbox-gl": "^3.6.0",
     "marked": "^14.0.0",
     "next": "14.2.5",
     "next-auth": "^5.0.0-beta.19",
