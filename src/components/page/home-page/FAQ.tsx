@@ -7,7 +7,7 @@ import { FAQ_DATA } from "@/lib/data";
 
 const FAQ = () => {
   return (
-    <section id="faq" className="mb-10">
+    <section className="mb-10">
       <SectionHeader>FAQ</SectionHeader>
       <Accordion
         className="px-10 lg:px-20 text-emerald-950"

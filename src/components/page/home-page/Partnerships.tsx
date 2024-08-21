@@ -5,7 +5,7 @@ import { PARTNERSHIPS_DATA } from "@/lib/data";
 
 const Partnerships = () => {
   return (
-    <section id="partnerships">
+    <section>
       <SectionHeader>Partnerships</SectionHeader>
       <div className="flex flex-col md:flex-row gap-8 md:gap-0 mx-10 justify-between items-center py-5 rounded-lg">
         {PARTNERSHIPS_DATA.map((partner, index) => (

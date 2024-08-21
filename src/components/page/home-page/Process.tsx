@@ -6,7 +6,7 @@ import SectionHeader from "@/components/ui/SectionHeader";
 
 const Process = () => {
   return (
-    <section id="process" className="pb-10">
+    <section className="pb-10">
       <SectionHeader>Process</SectionHeader>
       <div className="flex flex-wrap md:flex-nowrap gap-8 text-white px-10 lg:px-20">
         <div className="text-center w-full rounded-xl shadow-lg shadow-black/20 bg-gradient-to-b from-emerald-800 to-emerald-700 md:basis-1/3 p-10">

@@ -5,7 +5,7 @@ import { InfiniteMovingCards } from "@/components/ui/InfiniteMovingCards";
 
 const Testimonials = () => {
   return (
-    <section id="testimonials">
+    <section>
       <SectionHeader>Testimonials</SectionHeader>
       <InfiniteMovingCards
         items={TESTIMONIALS_DATA}
