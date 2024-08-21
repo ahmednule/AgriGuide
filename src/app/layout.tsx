@@ -12,8 +12,8 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 
 // Get the configuration object
 import { config } from "@fortawesome/fontawesome-svg-core";
-import Header from "@/components/ui/Header";
 import Footer from "@/components/page/home-page/Footer";
+import Header from "@/components/ui/header/Header";
 
 // Prevent Font Awesome from adding its CSS since we did it manually above
 config.autoAddCss = false;
