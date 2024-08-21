@@ -1,9 +1,8 @@
 import { cn } from "@nextui-org/react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import React from "react";
 
-const ResourceNav = ({
+const ResourceMobileNav = ({
   type,
   name,
   slug,
@@ -47,4 +46,4 @@ const ResourceNav = ({
   );
 };
 
-export default ResourceNav;
+export default ResourceMobileNav;
