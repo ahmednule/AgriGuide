@@ -5,7 +5,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import NavLink from "@/components/ui/NavLink";
 
-const Aside = async () => {
+const ResourceAside = async () => {
   const pests = await prisma.pest.findMany({
     orderBy: {
       name: "asc",
@@ -69,4 +69,4 @@ const Aside = async () => {
   );
 };
 
-export default Aside;
+export default ResourceAside;
