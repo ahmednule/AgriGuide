@@ -14,62 +14,14 @@ const NavLinksMenu = () => {
   const pathname = usePathname();
   return (
     <>
-      <Dropdown>
-        <DropdownTrigger
-          className={cn("text-white hover:cursor-pointer", {
-            "text-emerald-500": isLinkActive({
-              route: "/",
-              pathname,
-            }),
-          })}
-        >
-          Home
-        </DropdownTrigger>
-        <DropdownMenu aria-label="Static Actions">
-          <DropdownItem
-            className="hover:!bg-emerald-600 hover:!text-white"
-            key="home"
-            href="/"
-          >
-            Home
-          </DropdownItem>
-          <DropdownItem
-            className="hover:!bg-emerald-600 hover:!text-white"
-            key="process"
-            href="/#process"
-          >
-            Process
-          </DropdownItem>
-          <DropdownItem
-            className="hover:!bg-emerald-600 hover:!text-white"
-            key="features"
-            href="/#features"
-          >
-            Features
-          </DropdownItem>
-          <DropdownItem
-            className="hover:!bg-emerald-600 hover:!text-white"
-            key="testimonials"
-            href="/#testimonials"
-          >
-            Testimonials
-          </DropdownItem>
-          <DropdownItem
-            className="hover:!bg-emerald-600 hover:!text-white"
-            key="partnerships"
-            href="/#partnerships"
-          >
-            Partnerships
-          </DropdownItem>
-          <DropdownItem
-            className="hover:!bg-emerald-600 hover:!text-white"
-            key="faq"
-            href="/#faq"
-          >
-            FAQ
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+      <Link
+        href="/"
+        className={cn("text-white" ,{
+          "text-emerald-500": isLinkActive({ route: "/", pathname })
+        })}
+      >
+        Home
+      </Link>
       <Dropdown>
         <DropdownTrigger
           className={cn("text-white hover:cursor-pointer", {
