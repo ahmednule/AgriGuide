@@ -1,8 +1,9 @@
 "use client";
 
 import { convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
-import { Button } from "@nextui-org/react";
-import { redirect, useRouter } from "next/navigation";
+import { Button, Image } from "@nextui-org/react";
+import { Disease, Pest } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
@@ -10,26 +11,23 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 const ResourceContent = ({
-  name,
-  text,
-  id,
   isAdmin,
   type,
   editFn,
   deleteResource,
+  resource,
 }: {
-  name: string;
-  text: string;
-  id: string;
   isAdmin: boolean;
   type: "Pest" | "Disease";
   editFn: ({ id, content }: { id: string; content: string }) => Promise<void>;
   deleteResource: (id: string) => Promise<void>;
+  resource: Pest | Disease;
 }) => {
+  const { name, text, id, image } = resource;
   const [content, setContent] = useState(convertMarkdownToHtml(text));
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleEdit = async () => {
     setIsEditing((prev) => !prev);
@@ -56,7 +54,11 @@ const ResourceContent = ({
       toast.success(`${type} deleted successfully`);
       router.replace(`/resources/${type.toLowerCase()}s`);
     } catch (e) {
-      toast.error(`Failed to delete ${type.toLowerCase()}: ${e instanceof Error ? e.message : "Unknown error"}`);
+      toast.error(
+        `Failed to delete ${type.toLowerCase()}: ${
+          e instanceof Error ? e.message : "Unknown error"
+        }`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -104,6 +106,11 @@ const ResourceContent = ({
           className="edit-cont"
           dangerouslySetInnerHTML={{ __html: content }}
         />
+      )}
+      {image && (
+        <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
+          <Image src={image} alt="" className="h-72 w-80" />
+        </div>
       )}
     </div>
   );

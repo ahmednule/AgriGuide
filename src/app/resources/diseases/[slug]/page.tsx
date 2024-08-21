@@ -17,28 +17,20 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
     },
   });
   if (!disease) notFound();
-  const { name, text, image, id } = disease;
   const session = await auth();
   const user = session?.user;
   const isAdmin = user?.role === Role.ADMIN;
-  
+
   return (
     <>
-      <ResourceMobileNav type={ResourceType.DISEASES} name={name} />
+      <ResourceMobileNav type={ResourceType.DISEASES} name={disease.name} />
       <ResourceContent
         deleteResource={deleteDisease}
         type="Disease"
         editFn={editDisease}
-        name={name}
-        text={text}
-        id={id}
+        resource={disease}
         isAdmin={isAdmin}
       />
-      {image && (
-        <div className="flex flex-col md:flex-row mt-10 items-center justify-center gap-5">
-          <Image src={image} alt="" className="h-72 w-80" />
-        </div>
-      )}
     </>
   );
 };
