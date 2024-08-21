@@ -1,23 +1,28 @@
 import {
   Button,
+  Input,
   Link,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   useDisclosure,
 } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ImageUpload from "./ImageUpload";
 import { useFormState } from "react-dom";
-import { scanPestImage, scanDiseaseImage } from "@/lib/actions";
+import { scanPestImage, scanDiseaseImage, getTags } from "@/lib/actions";
 import { ScanStatus } from "@/lib/constants";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import ChipUI from "./ChipUI";
 import ScanResponse from "./ScanResponse";
 import ScanButton from "./ScanButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 
 const ModalUI = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -54,6 +59,17 @@ const ModalUI = () => {
 
   const [choice, setChoice] = useState("");
 
+  const [tags, setTags] = useState<
+    | {
+        tag: string | null;
+      }[]
+    | undefined
+  >();
+
+  useEffect(() => {
+    getTags().then((tags) => setTags(tags));
+  }, []);
+
   return (
     <>
       <Button
@@ -82,8 +98,13 @@ const ModalUI = () => {
                 {!choice && (
                   <>
                     <p>Do you wish to scan for a pest or a disease?</p>
-                    <Button className="mx-10" onPress={() => setChoice("pest")}>Pest</Button>
-                    <Button className="mx-10" onPress={() => setChoice("disease")}>
+                    <Button className="mx-10" onPress={() => setChoice("pest")}>
+                      Pest
+                    </Button>
+                    <Button
+                      className="mx-10"
+                      onPress={() => setChoice("disease")}
+                    >
                       Disease
                     </Button>
                   </>
@@ -122,6 +143,34 @@ const ModalUI = () => {
                     </p>
                     <form action={diseaseFormAction} className="flex flex-col">
                       <ImageUpload name="image" />
+                      <div className="flex flex-col gap-5 mb-8 items-center">
+                        <div className="flex gap-3 max-w-md justify-center items-center mx-auto">
+                          <Input
+                            name="tag"
+                            label="Enter short tag"
+                            color="success"
+                          />
+                          <FontAwesomeIcon
+                            title="A tag is used to identify and group exact plants you diagnosed for a disease."
+                            className="text-gray-500"
+                            icon={faQuestionCircle}
+                          />
+                        </div>
+                        <span>OR</span>
+                        <Select
+                          name="selectTag"
+                          color="success"
+                          items={tags}
+                          label="Select an existing tag"
+                          className="max-w-xs"
+                        >
+                          {(tag) => (
+                            <SelectItem key={tag.tag as any}>
+                              {tag.tag as any}
+                            </SelectItem>
+                          )}
+                        </Select>
+                      </div>
                       <ScanButton />
                       <ChipUI
                         formState={diseaseFormState}

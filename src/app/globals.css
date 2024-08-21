@@ -30,3 +30,7 @@ html {
 .edit-cont a {
   @apply text-blue-500
 }
+
+.progress-message p {
+  @apply my-4
+}

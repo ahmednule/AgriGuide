@@ -28,7 +28,7 @@ const ContactForm = () => {
     <form
       ref={formRef}
       action={formAction}
-      className="max-w-xl mx-auto mt-14 space-y-6 px-10 md:px-0"
+      className="max-w-xl mx-auto mt-10 space-y-6 px-10 md:px-0"
     >
       <div className="flex flex-col md:flex-row gap-6">
         <Input

@@ -22,8 +22,8 @@ import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { convertMarkdownToHtml } from "@/lib/utils";
 import { ScanType } from "@prisma/client";
+import ReactMarkdown from "react-markdown";
 
 type ScanColumnKey = "id" | "description" | "createdAt" | "image" | "actions";
 
@@ -125,12 +125,7 @@ const CustomerScansTable = ({
           );
         case "description":
           return (
-            <div
-              className="whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: convertMarkdownToHtml(cellValue),
-              }}
-            />
+            <ReactMarkdown className="whitespace-pre-wrap">{cellValue}</ReactMarkdown>
           );
         default:
           return cellValue;

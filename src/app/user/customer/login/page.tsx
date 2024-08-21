@@ -17,7 +17,10 @@ const CustomerLogin = async () => {
 
   const userHaveRole = dbUser?.role;
 
-  if (userHaveRole) redirect("/");
+  if (userHaveRole) {
+    if(dbUser?.role === Role.CUSTOMER) redirect("/");
+    redirect("/#has-role")
+  };
 
   await prisma.customer.create({
     data: {

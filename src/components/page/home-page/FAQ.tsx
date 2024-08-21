@@ -6,9 +6,8 @@ import SectionHeader from "@/components/ui/SectionHeader";
 
 const FAQ = () => {
   return (
-    <section>
+    <section id="faq" className="mb-10">
       <SectionHeader>FAQ</SectionHeader>
-      {/* Extract the accordion to its own component later */}
       <Accordion
         className="px-10 lg:px-20 text-emerald-950"
         itemClasses={{

@@ -4,10 +4,10 @@ import { faCamera, faUpload } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import SectionHeader from "@/components/ui/SectionHeader";
 
-const HowItWorks = () => {
+const Process = () => {
   return (
-    <section id="how-it-works" className="pb-10">
-      <SectionHeader>How it works</SectionHeader>
+    <section id="process" className="pb-10">
+      <SectionHeader>Process</SectionHeader>
       <div className="flex flex-wrap md:flex-nowrap gap-8 text-white px-10 lg:px-20">
         <div className="text-center w-full rounded-xl shadow-lg shadow-black/20 bg-gradient-to-b from-emerald-800 to-emerald-700 md:basis-1/3 p-10">
           <FontAwesomeIcon className="text-[4rem]" icon={faCamera} />
@@ -44,4 +44,4 @@ const HowItWorks = () => {
   );
 };
 
-export default HowItWorks;
+export default Process;

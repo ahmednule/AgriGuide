@@ -16,3 +16,8 @@ export const convertHtmlToMarkdown = (html: string): string => {
 export const convertMarkdownToHtml = (markdown: string): string => {
   return converter.makeHtml(markdown);
 };
+
+export const getResourceName = (res: string): string => {
+  const match = res.match(/\*\*(.*?)\*\*/);
+  return match ? match[1] : "";
+}
