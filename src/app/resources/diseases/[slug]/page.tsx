@@ -17,10 +17,11 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
     },
   });
   if (!disease) notFound();
-  const { name, text, slug, image, id } = disease;
+  const { name, text, image, id } = disease;
   const session = await auth();
   const user = session?.user;
   const isAdmin = user?.role === Role.ADMIN;
+  
   return (
     <>
       <ResourceMobileNav type={ResourceType.DISEASES} name={name} />

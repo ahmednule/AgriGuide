@@ -15,7 +15,7 @@ const PestPage = async ({ params }: { params: { slug: string } }) => {
     },
   });
   if (!pest) notFound();
-  const { name, text, slug, image, id } = pest;
+  const { name, text, image, id } = pest;
   const session = await auth();
   const user = session?.user;
   const isAdmin = user?.role === Role.ADMIN;
