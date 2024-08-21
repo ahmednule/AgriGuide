@@ -11,7 +11,7 @@ import React, { useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 
 // Set your Mapbox access token
-mapboxgl.accessToken = "pk.eyJ1IjoiaXRzYWhtZWQiLCJhIjoiY20wM296ajBsMDAxazJqcXpkeHpsMmJkeCJ9.02qy1RWfp1aHiaiAQbZCoQ";
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 
 // Container style for the map
 const containerStyle = {
@@ -49,18 +49,18 @@ const MapPage: React.FC = () => {
     // Initialize the map
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLElement,
-      style: 'mapbox://styles/mapbox/streets-v11', // Map style
+      style: 'mapbox://styles/mapbox/streets-v11', 
       center: [userLocation.lng, userLocation.lat],
       zoom: 12,
     });
 
-    // Add user location marker
+  
     new mapboxgl.Marker({ color: 'blue' })
       .setLngLat([userLocation.lng, userLocation.lat])
       .setPopup(new mapboxgl.Popup().setText("You are here"))
       .addTo(map.current);
 
-    // Add markers for shops
+
     shops.forEach(shop => {
       new mapboxgl.Marker()
         .setLngLat([shop.lng, shop.lat])
@@ -68,7 +68,6 @@ const MapPage: React.FC = () => {
         .addTo(map.current as mapboxgl.Map);
     });
 
-    // Clean up on unmount
     return () => map.current?.remove();
   }, [shops, userLocation]);
 
