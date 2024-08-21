@@ -13,7 +13,7 @@ model Pest {
   name      String   @unique
   slug      String   @unique
   text      String
-  image     String?
+  image     String[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -23,7 +23,7 @@ model Pest {
 model Disease {
   id        String   @id @default(cuid())
   name      String   @unique
-  image     String?
+  image     String[]
   text      String
   slug      String   @unique
   createdAt DateTime @default(now()) @map("created_at")
@@ -46,14 +46,12 @@ model User {
 
   customer   Customer?
   consultant Consultant?
-  // admin       Admin?
   Admin      Admin?
 
   @@map("users")
 }
 
 model Customer {
-  // id     String @id @default(cuid())
   user User   @relation(fields: [id], references: [id], onDelete: Cascade)
   id   String @unique @map("customer_id")
 
