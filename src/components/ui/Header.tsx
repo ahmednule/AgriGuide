@@ -1,6 +1,5 @@
 "use client";
 
-import { MENU } from "@/lib/constants";
 import { signIn, useSession } from "next-auth/react";
 import { Link } from "@nextui-org/link";
 import {
@@ -9,11 +8,9 @@ import {
   NavbarContent,
   NavbarItem,
   NavbarMenu,
-  NavbarMenuItem,
   NavbarMenuToggle,
 } from "@nextui-org/navbar";
 import {
-  Button,
   cn,
   Dropdown,
   DropdownItem,
@@ -24,55 +21,18 @@ import {
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import AvatarDropdown from "./AvatarDropdown";
-import { makeAdmin, removeAdmin } from "@/lib/actions";
-import toast from "react-hot-toast";
-import { Role } from "@prisma/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import NavLinksMenu from "./NavLinksMenu";
+import { isLinkActive } from "@/lib/utils";
 
 const Header = () => {
-  const [password, setPassword] = useState("");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const isActive = (route: string) =>
-    route === "/" ? pathname === "/" : pathname.startsWith(route);
-
-  const { data, status, update } = useSession();
+  const { data, status } = useSession();
   const user = data?.user;
   const isLoading = status === "loading";
-  const role = data?.user.role;
-  const isAdmin = role === Role.ADMIN;
 
-  const handleRemoveAdminClick = async () => {
-    try {
-      await removeAdmin(user!.id!);
-      toast.error("You are no longer an admin!");
-      update();
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-    }
-  };
-
-  const handleAdminClick = async () => {
-    try {
-      await makeAdmin(user!.id!);
-      toast.success("You are now an admin!");
-      update();
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-    }
-  };
-
-  const handleAdminSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== "Admin123") return toast.error("Invalid password!");
-    setPassword("");
-    await handleAdminClick();
-  };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <Navbar
@@ -87,121 +47,22 @@ const Header = () => {
         className="sm:hidden text-white"
       />
       <NavbarBrand>
-        <p className="text-white text-xl">
+        <span className="text-white text-xl">
           Agri<span className="font-bold text-xl text-emerald-500">GUIDE</span>
-        </p>
+        </span>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <Dropdown>
-          <DropdownTrigger
-            className={cn("text-white hover:cursor-pointer", {
-              "text-emerald-500": isActive("/"),
-            })}
-          >
-            Home
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions">
-            <DropdownItem
-              className="hover:!bg-emerald-600 hover:!text-white"
-              key="home"
-              href="/"
-            >
-              Home
-            </DropdownItem>
-            <DropdownItem
-              className="hover:!bg-emerald-600 hover:!text-white"
-              key="process"
-              href="/#process"
-            >
-              Process
-            </DropdownItem>
-            <DropdownItem
-              className="hover:!bg-emerald-600 hover:!text-white"
-              key="features"
-              href="/#features"
-            >
-              Features
-            </DropdownItem>
-            <DropdownItem
-              className="hover:!bg-emerald-600 hover:!text-white"
-              key="testimonials"
-              href="/#testimonials"
-            >
-              Testimonials
-            </DropdownItem>
-            <DropdownItem
-              className="hover:!bg-emerald-600 hover:!text-white"
-              key="partnerships"
-              href="/#partnerships"
-            >
-              Partnerships
-            </DropdownItem>
-            <DropdownItem
-              className="hover:!bg-emerald-600 hover:!text-white"
-              key="faq"
-              href="/#faq"
-            >
-              FAQ
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-        <Dropdown>
-          <DropdownTrigger
-            className={cn("text-white hover:cursor-pointer", {
-              "text-emerald-500": isActive("/resources"),
-            })}
-          >
-            <Link className="text-white">Resources</Link>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Static Actions">
-            <DropdownItem
-              className={cn("hover:!bg-emerald-600 hover:!text-white", {
-                "bg-emerald-700 text-white": isActive("/resources/pests"),
-              })}
-              key="pests"
-              href="/resources/pests"
-            >
-              Pests
-            </DropdownItem>
-            <DropdownItem
-              className={cn("hover:!bg-emerald-600 hover:!text-white", {
-                "bg-emerald-700 text-white": isActive("/resources/diseases"),
-              })}
-              key="diseases"
-              href="/resources/diseases"
-            >
-              Diseases
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-        <Link
-          className={cn("text-white", {
-            "text-emerald-500": isActive("/market"),
-          })}
-          href="/market"
-        >
-          Market
-        </Link>
-        <Link
-          className={cn("text-white", {
-            "text-emerald-500": isActive("/contact"),
-          })}
-          href="/contact"
-        >
-          Contact
-        </Link>
+        <NavLinksMenu />
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
           {!user && !isLoading && (
             <Dropdown>
-              <DropdownTrigger
-                className={cn("text-white hover:cursor-pointer")}
-              >
-                <Link className="text-white space-x-2">
+              <DropdownTrigger>
+                <div className="text-white space-x-2 hover:cursor-pointer">
                   <span>Login</span>
                   <FontAwesomeIcon icon={faRightToBracket} />
-                </Link>
+                </div>
               </DropdownTrigger>
               <DropdownMenu aria-label="Static Actions">
                 <DropdownItem
@@ -249,7 +110,7 @@ const Header = () => {
       <NavbarMenu>
         <Link
           className={cn("text-black", {
-            "text-emerald-500": isActive("/"),
+            "text-emerald-500": isLinkActive({ route: "/", pathname }),
           })}
           href="/"
         >
@@ -257,7 +118,7 @@ const Header = () => {
         </Link>
         <Link
           className={cn("text-black", {
-            "text-emerald-500": isActive("/resources"),
+            "text-emerald-500": isLinkActive({ route: "/resources", pathname }),
           })}
           href="/resources"
         >
@@ -265,7 +126,7 @@ const Header = () => {
         </Link>
         <Link
           className={cn("text-black", {
-            "text-emerald-500": isActive("/market"),
+            "text-emerald-500": isLinkActive({ route: "/market", pathname }),
           })}
           href="/market"
         >
@@ -273,7 +134,7 @@ const Header = () => {
         </Link>
         <Link
           className={cn("text-black", {
-            "text-emerald-500": isActive("/contact"),
+            "text-emerald-500": isLinkActive({ route: "/contact", pathname }),
           })}
           href="/contact"
         >
