@@ -20,4 +20,12 @@ export const convertMarkdownToHtml = (markdown: string): string => {
 export const getResourceName = (res: string): string => {
   const match = res.match(/\*\*(.*?)\*\*/);
   return match ? match[1] : "";
-}
+};
+
+export const isLinkActive = ({
+  route,
+  pathname,
+}: {
+  route: string;
+  pathname: string;
+}) => (route === "/" ? pathname === "/" : pathname.startsWith(route));
