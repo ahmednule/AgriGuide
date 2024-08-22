@@ -9,11 +9,7 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import {
-  Button,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { Button, Select, SelectItem } from "@nextui-org/react";
 import { deleteScan } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,7 +17,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ScanType } from "@prisma/client";
 import ReactMarkdown from "react-markdown";
-import { TScanData } from "@/lib/types";
+import { ExpandedDescriptions, TScanData } from "@/lib/types";
 
 type ScanColumnKey = "id" | "description" | "createdAt" | "image" | "actions";
 
@@ -66,6 +62,14 @@ const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
       setIsLoading("");
     }
   };
+  const [expandedDescriptions, setExpandedDescriptions] = useState<ExpandedDescriptions>({});
+
+  const toggleDescription = (id: string) => {
+    setExpandedDescriptions((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
+  };
 
   const renderCell = React.useCallback(
     (
@@ -107,16 +111,29 @@ const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
             </div>
           );
         case "description":
+          const isExpanded = expandedDescriptions[scan.id];
           return (
-            <ReactMarkdown className="whitespace-pre-wrap">
-              {cellValue}
-            </ReactMarkdown>
+            <div>
+              <ReactMarkdown className="whitespace-pre-wrap">
+                {isExpanded
+                  ? scan.description
+                  : scan.description.substring(0, 100) + "..."}
+              </ReactMarkdown>
+              {scan.description.length > 100 && (
+                <button
+                  onClick={() => toggleDescription(scan.id)}
+                  className="text-blue-500 mt-2 underline"
+                >
+                  {isExpanded ? "Show less" : "Show more"}
+                </button>
+              )}
+            </div>
           );
         default:
           return cellValue;
       }
     },
-    [isLoading]
+    [isLoading, expandedDescriptions]
   );
 
   return (

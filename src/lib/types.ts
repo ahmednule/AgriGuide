@@ -46,3 +46,7 @@ export type TScanData =
       id: string;
     })
   | null;
+
+  export type ExpandedDescriptions = {
+    [key: string]: boolean;
+  };
