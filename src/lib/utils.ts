@@ -22,6 +22,10 @@ export const getResourceName = (res: string): string => {
   return match ? match[1] : "";
 };
 
+export const getResourceDescription = (res: string): string => {
+  return res.replace(/\*\*.*?\*\*/, "").trim();
+};
+
 export const isLinkActive = ({
   route,
   pathname,
