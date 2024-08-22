@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
+import ActionButton from "@/components/ui/ActionButton";
 import CustomerScansTable from "@/components/ui/CustomerScansTable";
-import SubmitButton from "@/components/ui/SubmitButton";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { deleteAllScans } from "@/lib/actions";
 import prisma from "@/lib/prisma";
-import { Button } from "@nextui-org/react";
 import React from "react";
 
 const CustomerScanHistory = async () => {
@@ -17,16 +17,20 @@ const CustomerScanHistory = async () => {
       scan: true,
     },
   });
+
   return (
     <>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-emerald-900">Scan History</h1>
+        <SectionHeader as="h1" className="m-0">
+          Scan History
+        </SectionHeader>
         {customer!.scan.length > 1 && (
-          <form action={deleteAllScans}>
-            <SubmitButton size="md" color="danger">
-              Delete all
-            </SubmitButton>
-          </form>
+          <ActionButton
+            successMessage="All scans deleted successfully"
+            action={deleteAllScans}
+          >
+            Delete all
+          </ActionButton>
         )}
       </div>
       <CustomerScansTable scanData={customer} />
