@@ -45,7 +45,7 @@ const DiseaseCard = ({
           src={disease.url}
           height={200}
           width={200}
-          className="object-cover h-40 w-48 rounded-xl"
+          className="object-cover w-full sm:h-40 sm:w-48 rounded-xl"
         />
       </CardBody>
       <CardFooter>{disease?.createdAt.toLocaleDateString()}</CardFooter>
