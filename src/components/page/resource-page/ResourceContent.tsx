@@ -104,13 +104,11 @@ const ResourceContent = ({
           dangerouslySetInnerHTML={{ __html: content }}
         />
       )}
-      {images && (
-        <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-5">
-          {images.map((image, index) => (
-            <Image key={index} src={image} alt="" className="h-72 w-80" />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-5">
+        {images.map((image, index) => (
+          <Image key={index} src={image} alt="" className="h-72 w-80" />
+        ))}
+      </div>
     </div>
   );
 };
