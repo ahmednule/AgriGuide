@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import DiseaseProgressTracker from "@/components/page/progress-tracker/DiseaseProgressTracker";
+import SectionHeader from "@/components/ui/SectionHeader";
 import prisma from "@/lib/prisma";
 import { ScanType } from "@prisma/client";
 import { notFound } from "next/navigation";
@@ -30,17 +31,16 @@ const ProgressTracker = async () => {
 
   return (
     <>
-        <h1 className="text-3xl font-bold">Progress Tracker</h1>
-        {diseases.length > 0 ? (
-          <>
-            <DiseaseProgressTracker
-              tags={tags}
-              diseases={diseases}
-            />
-          </>
-        ) : (
-          <p className="mt-6">No disease images found.</p>
-        )}
+      <SectionHeader as="h1" className="m-0 text-left">
+        Progress Tracker
+      </SectionHeader>
+      {diseases.length > 0 ? (
+        <>
+          <DiseaseProgressTracker tags={tags} diseases={diseases} />
+        </>
+      ) : (
+        <p className="mt-6">No disease images found.</p>
+      )}
     </>
   );
 };
