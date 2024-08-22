@@ -41,12 +41,17 @@ export type TScanData =
         createdAt: Date;
         customerId: string;
         type: ScanType;
+        name: string;
       }[];
     } & {
       id: string;
     })
   | null;
 
-  export type ExpandedDescriptions = {
-    [key: string]: boolean;
-  };
+export type ExpandedDescriptions = {
+  [key: string]: boolean;
+};
+
+export type ResourceNames = {
+  name: string;
+}[];
