@@ -18,7 +18,7 @@ import Image from "next/image";
 import { ScanType } from "@prisma/client";
 import ReactMarkdown from "react-markdown";
 import { ExpandedDescriptions, ResourceNames, TScanData } from "@/lib/types";
-import { getResourceName } from "@/lib/utils";
+import { convertMarkdownToHtml, getResourceName } from "@/lib/utils";
 
 type ScanColumnKey = "id" | "description" | "createdAt" | "image" | "actions";
 
@@ -127,11 +127,14 @@ const CustomerScansTable = ({
           const isExpanded = expandedDescriptions[scan.id];
           return (
             <div>
-              <ReactMarkdown className="whitespace-pre-wrap">
-                {isExpanded
-                  ? scan.description
-                  : scan.description.substring(0, 100) + "..."}
-              </ReactMarkdown>
+              <div
+                className="edit-cont"
+                dangerouslySetInnerHTML={{
+                  __html: isExpanded
+                    ? convertMarkdownToHtml(scan.description)
+                    : convertMarkdownToHtml(scan.description.slice(0, 195) + "..."),
+                }}
+              />
               {scan.description.length > 100 && (
                 <button
                   onClick={() => toggleDescription(scan.id)}
