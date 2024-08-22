@@ -29,6 +29,7 @@ import { Role, ScanType } from "@prisma/client";
 import { supabase } from "./supabase";
 import removeMarkdown from "remove-markdown";
 import { getResourceName } from "./utils";
+import { redirect } from "next/navigation";
 
 export const scanPestImage = async (
   formState: string,
@@ -478,7 +479,7 @@ export const deletePest = async (id: string) => {
       throw new Error("Failed to delete pest" + error.message);
   }
 
-  revalidatePath("/resources/pests");
+  redirect("/resources/pests");
 };
 
 export const deleteDisease = async (id: string) => {
@@ -499,9 +500,7 @@ export const deleteDisease = async (id: string) => {
       throw new Error("Failed to delete disease" + error.message);
   }
 
-  // redirect as well
-
-  revalidatePath("/resources/diseases");
+  redirect("/resources/diseases");
 };
 
 export const editPest = async ({

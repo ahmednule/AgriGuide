@@ -3,7 +3,6 @@
 import { convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
 import { Button, Image } from "@nextui-org/react";
 import { Disease, Pest } from "@prisma/client";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
@@ -27,7 +26,6 @@ const ResourceContent = ({
   const [content, setContent] = useState(convertMarkdownToHtml(text));
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleEdit = async () => {
     setIsEditing((prev) => !prev);
@@ -52,7 +50,6 @@ const ResourceContent = ({
       setIsLoading(true);
       await deleteResource(id);
       toast.success(`${type} deleted successfully`);
-      router.replace(`/resources/${type.toLowerCase()}s`);
     } catch (e) {
       toast.error(
         `Failed to delete ${type.toLowerCase()}: ${
@@ -66,7 +63,7 @@ const ResourceContent = ({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:justify-between md:items-center mb-6">
         <h1 className="text-3xl font-bold">{name}</h1>
         {isAdmin && (
           <div className="space-x-4">
