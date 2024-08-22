@@ -18,6 +18,16 @@ const CustomerScanHistory = async () => {
     },
   });
 
+  const resourceNames = await prisma.scan.findMany({
+    where: {
+      customerId: user!.id!,
+    },
+    select: {
+      name: true,
+    },
+    distinct: ["name"],
+  });
+
   return (
     <>
       <div className="flex items-center justify-between mb-8">
@@ -33,7 +43,7 @@ const CustomerScanHistory = async () => {
           </ActionButton>
         )}
       </div>
-      <CustomerScansTable scanData={customer} />
+      <CustomerScansTable resourceNames = {resourceNames} scanData={customer} />
     </>
   );
 };
