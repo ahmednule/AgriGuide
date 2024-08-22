@@ -1,13 +1,13 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const ConsultantLogin = async () => {
   const session = await auth();
   const user = session?.user;
 
-  if (!user) redirect("/");
+  if (!user) notFound();
 
   const dbUser = await prisma.user.findUnique({
     where: {
@@ -21,6 +21,7 @@ const ConsultantLogin = async () => {
     if (dbUser?.role === Role.CONSULTANT) redirect("/");
     redirect("/#has-role");
   }
+
   await prisma.consultant.create({
     data: {
       id: user.id!,
