@@ -10,41 +10,22 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import {
-  Avatar,
   Button,
-  Chip,
-  User as NextUser,
   Select,
   SelectItem,
 } from "@nextui-org/react";
 import { deleteScan } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationArrow, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ScanType } from "@prisma/client";
 import ReactMarkdown from "react-markdown";
+import { TScanData } from "@/lib/types";
 
 type ScanColumnKey = "id" | "description" | "createdAt" | "image" | "actions";
 
-const CustomerScansTable = ({
-  scanData,
-}: {
-  scanData:
-    | ({
-        scan: {
-          id: string;
-          description: string | null;
-          url: string;
-          createdAt: Date;
-          customerId: string;
-          type: ScanType;
-        }[];
-      } & {
-        id: string;
-      })
-    | null;
-}) => {
+const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
   const columns = [
     { key: "index", label: "Index" },
     { key: "createdAt", label: "Created At" },
@@ -58,7 +39,9 @@ const CustomerScansTable = ({
 
   let filteredScan =
     filterType.size > 0
-      ? scanData?.scan?.filter((scan) => scan.type === Array.from(filterType)[0])
+      ? scanData?.scan?.filter(
+          (scan) => scan.type === Array.from(filterType)[0]
+        )
       : scanData?.scan;
 
   const rows = filteredScan?.map((scan, index) => ({
@@ -72,7 +55,7 @@ const CustomerScansTable = ({
 
   const [isLoading, setIsLoading] = useState("");
 
-  const deletePreviousScan = async (id: string) => {
+  const deleteScanFn = async (id: string) => {
     setIsLoading(id);
     try {
       await deleteScan(id);
@@ -114,7 +97,7 @@ const CustomerScansTable = ({
             <div className="relative flex items-center gap-3 justify-center">
               <Button
                 color="danger"
-                onPress={() => deletePreviousScan(scan.id)}
+                onPress={() => deleteScanFn(scan.id)}
                 title="Delete"
                 isLoading={isLoading === scan.id}
                 isIconOnly
@@ -125,7 +108,9 @@ const CustomerScansTable = ({
           );
         case "description":
           return (
-            <ReactMarkdown className="whitespace-pre-wrap">{cellValue}</ReactMarkdown>
+            <ReactMarkdown className="whitespace-pre-wrap">
+              {cellValue}
+            </ReactMarkdown>
           );
         default:
           return cellValue;
