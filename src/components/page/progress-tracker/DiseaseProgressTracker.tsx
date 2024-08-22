@@ -36,6 +36,7 @@ const DiseaseProgressTracker = ({
         image2: selectedDisease[1],
       });
       setMessage(resMessage);
+      toast.success("Progress tracked successfully");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
