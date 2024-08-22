@@ -1,8 +1,6 @@
 import { auth } from "@/auth";
-import DiseaseCard from "@/components/page/progress-tracker/DiseaseCard";
-import DiseaseList from "@/components/page/progress-tracker/DiseaseList";
+import DiseaseProgressTracker from "@/components/page/progress-tracker/DiseaseProgressTracker";
 import prisma from "@/lib/prisma";
-import { supabase } from "@/lib/supabase";
 import { ScanType } from "@prisma/client";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -36,7 +34,10 @@ const ProgressTracker = async () => {
         <h1 className="text-3xl font-bold">Progress Tracker</h1>
         {diseases.length > 0 ? (
           <>
-            <DiseaseList tags={tags} diseases={diseases} />
+            <DiseaseProgressTracker
+              tags={tags}
+              diseases={diseases}
+            />
           </>
         ) : (
           <p className="mt-6">No disease images found.</p>

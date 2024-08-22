@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import DiseaseCard from "./DiseaseCard";
-import { Scan, ScanType } from "@prisma/client";
+import { Scan } from "@prisma/client";
 import { Button, Select, SelectItem } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import { trackProgress } from "@/lib/actions";
 import ReactMarkdown from "react-markdown";
 
-const DiseaseList = ({
+const DiseaseProgressTracker = ({
   diseases,
   tags,
 }: {
@@ -107,4 +107,4 @@ const DiseaseList = ({
   );
 };
 
-export default DiseaseList;
+export default DiseaseProgressTracker;
