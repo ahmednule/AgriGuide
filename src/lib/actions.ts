@@ -28,7 +28,7 @@ import prisma from "./prisma";
 import { Role, ScanType } from "@prisma/client";
 import { supabase } from "./supabase";
 import removeMarkdown from "remove-markdown";
-import { getResourceName } from "./utils";
+import { getResourceDescription, getResourceName } from "./utils";
 import { redirect } from "next/navigation";
 
 export const scanPestImage = async (
@@ -89,9 +89,13 @@ export const scanPestImage = async (
         contentType: parsedImage.type,
       });
 
+    const pestName = getResourceName(res);
+    const pestDescription = getResourceDescription(res);
+
     // Store scan in database
     await prisma.scan.create({
       data: {
+        name: pestName,
         description: removeMarkdown(res),
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
@@ -100,10 +104,6 @@ export const scanPestImage = async (
     });
 
     // Store pest in database
-
-    const pestName = getResourceName(res);
-    const restOfText = res.replace(/\*\*.*?\*\*/, "").trim();
-
     const isPestStored = await prisma.pest.findFirst({
       where: {
         slug: pestName.toLowerCase().replace(/\s/g, "-"),
@@ -116,8 +116,10 @@ export const scanPestImage = async (
       await prisma.pest.create({
         data: {
           name: pestName,
-          text: restOfText,
-          images: [`https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`],
+          text: pestDescription,
+          images: [
+            `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+          ],
           slug: pestName.toLowerCase().replace(/\s/g, "-"),
         },
       });
@@ -176,7 +178,7 @@ export const scanDiseaseImage = async (
     });
     const res = response.choices[0].message.content as string;
 
-    // Handle image not pest
+    // Handle image not disease
     if (res.includes("Error: This is not a disease"))
       return ScanStatus.IMAGENOTDISEASE;
 
@@ -192,9 +194,13 @@ export const scanDiseaseImage = async (
         contentType: parsedImage.type,
       });
 
+    const diseaseName = getResourceName(res);
+    const diseaseDescription = getResourceDescription(res);
+
     // Store scan in database
     await prisma.scan.create({
       data: {
+        name: diseaseName,
         description: removeMarkdown(res),
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
@@ -204,10 +210,6 @@ export const scanDiseaseImage = async (
     });
 
     // Store disease in database
-
-    const diseaseName = getResourceName(res);
-    const restOfText = res.replace(/\*\*.*?\*\*/, "").trim();
-
     const isDiseaseStored = await prisma.disease.findFirst({
       where: {
         slug: diseaseName.toLowerCase().replace(/\s/g, "-"),
@@ -220,8 +222,10 @@ export const scanDiseaseImage = async (
       await prisma.disease.create({
         data: {
           name: diseaseName,
-          text: restOfText,
-          images: [`https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`],
+          text: diseaseDescription,
+          images: [
+            `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
+          ],
           slug: diseaseName.toLowerCase().replace(/\s/g, "-"),
         },
       });
@@ -322,7 +326,7 @@ export const deleteScan = async (id: string) => {
       throw new Error("Failed to delete scan" + error.message);
   }
 
-  revalidatePath("/scan-history");
+  revalidatePath("/customer/scan-history");
 };
 
 export const addPest = async (
@@ -583,7 +587,7 @@ export const deleteAllScans = async () => {
       throw new Error("Failed to delete scans" + error.message);
   }
 
-  revalidatePath("/scan-history");
+  revalidatePath("/customer/scan-history");
 };
 
 // a function which receives 2 image ids, fetches the url of the image by use of the id from the scan prisma model and converts the 2 supabase bucket url to a form that open ai image api can understand the image and pass the 2 images to the api with a text of stating how the progress is and returning the response
