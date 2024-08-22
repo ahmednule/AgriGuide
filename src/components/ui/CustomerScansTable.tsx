@@ -17,14 +17,22 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ScanType } from "@prisma/client";
 import ReactMarkdown from "react-markdown";
-import { ExpandedDescriptions, TScanData } from "@/lib/types";
+import { ExpandedDescriptions, ResourceNames, TScanData } from "@/lib/types";
+import { getResourceName } from "@/lib/utils";
 
 type ScanColumnKey = "id" | "description" | "createdAt" | "image" | "actions";
 
-const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
+const CustomerScansTable = ({
+  scanData,
+  resourceNames,
+}: {
+  scanData: TScanData;
+  resourceNames: ResourceNames;
+}) => {
   const columns = [
     { key: "index", label: "Index" },
     { key: "createdAt", label: "Created At" },
+    { key: "name", label: "Name" },
     { key: "image", label: "Image" },
     { key: "description", label: "Description" },
     { key: "type", label: "Type" },
@@ -32,20 +40,23 @@ const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
   ];
 
   const [filterType, setFilterType] = useState<any>(new Set([]));
+  const [filterName, setFilterName] = useState<any>(new Set([]));
 
-  let filteredScan =
-    filterType.size > 0
-      ? scanData?.scan?.filter(
-          (scan) => scan.type === Array.from(filterType)[0]
-        )
-      : scanData?.scan;
+  const filteredScans = scanData?.scan
+    ?.filter(
+      (scan) => !filterType.size || scan.type === Array.from(filterType)[0]
+    )
+    ?.filter(
+      (scan) => !filterName.size || scan.name === Array.from(filterName)[0]
+    );
 
-  const rows = filteredScan?.map((scan, index) => ({
+  const rows = filteredScans?.map((scan, index) => ({
     id: scan.id,
     createdAt: scan.createdAt.toLocaleDateString(),
     image: scan.url,
     description: scan.description!,
     type: scan.type,
+    name: scan.name,
     index: index + 1,
   }));
 
@@ -62,7 +73,8 @@ const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
       setIsLoading("");
     }
   };
-  const [expandedDescriptions, setExpandedDescriptions] = useState<ExpandedDescriptions>({});
+  const [expandedDescriptions, setExpandedDescriptions] =
+    useState<ExpandedDescriptions>({});
 
   const toggleDescription = (id: string) => {
     setExpandedDescriptions((prevState) => ({
@@ -76,6 +88,7 @@ const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
       scan: {
         id: string;
         image: string;
+        name: string;
         description: string;
         createdAt: string;
         type: ScanType;
@@ -138,18 +151,31 @@ const CustomerScansTable = ({ scanData }: { scanData: TScanData }) => {
 
   return (
     <>
-      <Select
-        selectedKeys={filterType}
-        onSelectionChange={setFilterType}
-        label="Filter scan"
-        color="success"
-        variant="bordered"
-        className="max-w-40 mb-4"
-      >
-        <SelectItem key={ScanType.PEST}>Pest</SelectItem>
-        <SelectItem key={ScanType.DISEASE}>Disease</SelectItem>
-      </Select>
-
+      <div className="space-x-4">
+        <Select
+          selectedKeys={filterType}
+          onSelectionChange={setFilterType}
+          label="Filter type"
+          color="success"
+          variant="bordered"
+          className="max-w-40 mb-4"
+        >
+          <SelectItem key={ScanType.PEST}>Pest</SelectItem>
+          <SelectItem key={ScanType.DISEASE}>Disease</SelectItem>
+        </Select>
+        <Select
+          selectedKeys={filterName}
+          onSelectionChange={setFilterName}
+          label="Filter name"
+          color="success"
+          variant="bordered"
+          className="max-w-40 mb-4"
+        >
+          {resourceNames.map((resourceName) => (
+            <SelectItem key={resourceName.name}>{resourceName.name}</SelectItem>
+          ))}
+        </Select>
+      </div>
       <Table isStriped aria-label="Example table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
