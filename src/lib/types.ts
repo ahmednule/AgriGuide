@@ -1,6 +1,12 @@
 import { z } from "zod";
-import { addPestFormSchema, contactFormSchema, addDiseaseFormSchema, editPestFormSchema } from "./schemas";
+import {
+  addPestFormSchema,
+  contactFormSchema,
+  addDiseaseFormSchema,
+  editPestFormSchema,
+} from "./schemas";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { ScanType } from "@prisma/client";
 
 export type ContactForm = z.infer<typeof contactFormSchema>;
 
@@ -25,3 +31,18 @@ export type TFeatureItem =
       alt: string;
       icon?: undefined;
     };
+
+export type TScanData =
+  | ({
+      scan: {
+        id: string;
+        description: string | null;
+        url: string;
+        createdAt: Date;
+        customerId: string;
+        type: ScanType;
+      }[];
+    } & {
+      id: string;
+    })
+  | null;
