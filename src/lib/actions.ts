@@ -96,7 +96,7 @@ export const scanPestImage = async (
     await prisma.scan.create({
       data: {
         name: pestName,
-        description: removeMarkdown(res),
+        description: pestDescription,
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
         type: ScanType.PEST,
@@ -201,7 +201,7 @@ export const scanDiseaseImage = async (
     await prisma.scan.create({
       data: {
         name: diseaseName,
-        description: removeMarkdown(res),
+        description: diseaseDescription,
         customerId: user!.id!,
         url: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData?.fullPath}`,
         type: ScanType.DISEASE,
