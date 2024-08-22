@@ -61,7 +61,7 @@ const DiseaseProgressTracker = ({
 
   return (
     <>
-      <div className="flex justify-between mt-3 mb-6 items-center">
+      <div className="flex justify-between mt-6 md:mt-3 mb-6 items-center">
         <p>Select 2 disease images to scan the progress overtime.</p>
         <Select
           name="tag"
@@ -80,7 +80,7 @@ const DiseaseProgressTracker = ({
           )}
         </Select>
       </div>
-      <div className="grid grid-cols-5 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-10 md:mt-4">
         {filteredDiseases.map((disease, index) => (
           <DiseaseCard
             setSelectedDisease={setSelectedDisease}
