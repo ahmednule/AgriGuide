@@ -30,7 +30,6 @@ const ProgressTracker = async () => {
 
   return (
     <>
-      <section>
         <h1 className="text-3xl font-bold">Progress Tracker</h1>
         {diseases.length > 0 ? (
           <>
@@ -42,7 +41,6 @@ const ProgressTracker = async () => {
         ) : (
           <p className="mt-6">No disease images found.</p>
         )}
-      </section>
     </>
   );
 };
