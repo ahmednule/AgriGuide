@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
-import CustomerAside from "@/components/page/customer-page/CustomerAside";
+import CustomerNav from "@/components/page/customer-page/CustomerNav";
+import Aside from "@/components/ui/Aside";
 import { Role } from "@prisma/client";
 import { notFound, redirect } from "next/navigation";
 import React, { PropsWithChildren } from "react";
@@ -9,7 +10,9 @@ const layout = async ({ children }: PropsWithChildren) => {
   if (session?.user.role !== Role.CUSTOMER) notFound();
   return (
     <div className="h-[93vh] flex bg-emerald-50">
-      <CustomerAside />
+      <Aside>
+        <CustomerNav />
+      </Aside>
       <main className="p-10 pt-20 lg:p-20 lg:w-5/6 h-full overflow-y-auto text-emerald-900">
         {children}
       </main>
