@@ -1,4 +1,4 @@
-import ResourceMobileNav from "@/components/page/resource-page/ResourceMobileNav";
+import MobileNav from "@/components/ui/MobileNav";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
@@ -6,7 +6,7 @@ import React from "react";
 const ResourcesPage = () => {
   return (
     <>
-      <ResourceMobileNav />
+      <MobileNav />
       <h1 className="text-3xl text-emerald-800 font-bold">
         Pest and Diseases guide
       </h1>

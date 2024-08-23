@@ -1,5 +1,4 @@
-import ResourceMobileNav from "@/components/page/resource-page/ResourceMobileNav";
-import { ResourceType } from "@/lib/constants";
+import MobileNav from "@/components/ui/MobileNav";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import React from "react";
@@ -12,7 +11,7 @@ const AllDiseasesPage = async () => {
   });
   return (
     <>
-      <ResourceMobileNav type={ResourceType.DISEASES} />
+      <MobileNav />
       <h1 className="text-3xl font-bold mb-6">Plant Diseases</h1>
       <p>
         Our plant diseases resource provides essential information on various

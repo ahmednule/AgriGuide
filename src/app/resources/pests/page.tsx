@@ -1,5 +1,4 @@
-import ResourceMobileNav from "@/components/page/resource-page/ResourceMobileNav";
-import { ResourceType } from "@/lib/constants";
+import MobileNav from "@/components/ui/MobileNav";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import React from "react";
@@ -12,7 +11,7 @@ const AllPestsPage = async () => {
   });
   return (
     <>
-      <ResourceMobileNav type={ResourceType.PESTS} />
+      <MobileNav />
       <h1 className="text-3xl font-bold mb-6">Plant Pests</h1>
       <p>
         You will find helpful information about different pests that can affect

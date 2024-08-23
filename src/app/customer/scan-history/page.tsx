@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import ActionButton from "@/components/ui/ActionButton";
 import CustomerScansTable from "@/components/ui/CustomerScansTable";
+import MobileNav from "@/components/ui/MobileNav";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { deleteAllScans } from "@/lib/actions";
 import prisma from "@/lib/prisma";
@@ -30,6 +31,7 @@ const CustomerScanHistory = async () => {
 
   return (
     <>
+      <MobileNav />
       <div className="flex items-center justify-between mb-8">
         <SectionHeader as="h1" className="m-0">
           Scan History
@@ -43,7 +45,7 @@ const CustomerScanHistory = async () => {
           </ActionButton>
         )}
       </div>
-      <CustomerScansTable resourceNames = {resourceNames} scanData={customer} />
+      <CustomerScansTable resourceNames={resourceNames} scanData={customer} />
     </>
   );
 };

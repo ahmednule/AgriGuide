@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import DiseaseProgressTracker from "@/components/page/progress-tracker/DiseaseProgressTracker";
+import MobileNav from "@/components/ui/MobileNav";
 import SectionHeader from "@/components/ui/SectionHeader";
 import prisma from "@/lib/prisma";
 import { ScanType } from "@prisma/client";
@@ -31,6 +32,7 @@ const ProgressTracker = async () => {
 
   return (
     <>
+      <MobileNav />
       <SectionHeader as="h1" className="m-0 text-left">
         Progress Tracker
       </SectionHeader>

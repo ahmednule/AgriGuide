@@ -1,14 +1,11 @@
-import ResourceMobileNav from "@/components/page/resource-page/ResourceMobileNav";
-import { ResourceType } from "@/lib/constants";
 import prisma from "@/lib/prisma";
-import { Image } from "@nextui-org/react";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 import React from "react";
 import ResourceContent from "@/components/page/resource-page/ResourceContent";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import { deleteDisease, editDisease } from "@/lib/actions";
+import MobileNav from "@/components/ui/MobileNav";
 
 const DiseasePage = async ({ params }: { params: { slug: string } }) => {
   const disease = await prisma.disease.findUnique({
@@ -23,7 +20,7 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
 
   return (
     <>
-      <ResourceMobileNav type={ResourceType.DISEASES} name={disease.name} />
+      <MobileNav />
       <ResourceContent
         deleteResource={deleteDisease}
         type="Disease"
