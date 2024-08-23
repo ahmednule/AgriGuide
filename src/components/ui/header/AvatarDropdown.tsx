@@ -51,7 +51,7 @@ const AvatarDropdown = ({
           <DropdownItem key="profile">My Profile</DropdownItem>
           {user?.role === Role.CUSTOMER ? (
             <DropdownItem key="user-panel" href="/customer">
-              User panel
+              Customer panel
             </DropdownItem>
           ) : (
             <DropdownItem key="admin-panel" href="/admin">
