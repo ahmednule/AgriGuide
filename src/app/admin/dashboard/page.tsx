@@ -1,4 +1,5 @@
 import UserDataChart from "@/components/page/admin-page/Charts";
+import MobileNav from "@/components/ui/MobileNav";
 import prisma from "@/lib/prisma";
 import {
   faArrowRight,
@@ -19,10 +20,11 @@ const AdminDashboard = async () => {
   const admins = users.filter((user) => user.role === Role.ADMIN);
   return (
     <>
+      <MobileNav />
       <section>
         <h1 className="text-3xl font-bold text-emerald-900 mb-8">Dashboard</h1>
-        <div className="flex gap-5">
-          <Card shadow="sm" className="bg-emerald-100 w-96">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card shadow="sm" className="bg-emerald-100 w-full">
             <CardHeader className="text-xl font-bold text-emerald-900">
               <FontAwesomeIcon icon={faUser} className="mr-4 text-2xl" />
               <h2>Customers</h2>
@@ -50,7 +52,7 @@ const AdminDashboard = async () => {
               </div>
             </CardBody>
           </Card>
-          <Card className="bg-emerald-100 w-96">
+          <Card className="bg-emerald-100 w-full">
             <CardHeader className="text-xl font-bold text-emerald-900">
               <FontAwesomeIcon icon={faUserDoctor} className="mr-4 text-2xl" />
               <h2>Consultants</h2>
@@ -78,7 +80,7 @@ const AdminDashboard = async () => {
               </div>
             </CardBody>
           </Card>
-          <Card className="bg-emerald-100 w-96">
+          <Card className="bg-emerald-100 w-full">
             <CardHeader className="text-xl font-bold text-emerald-900">
               <FontAwesomeIcon icon={faUserTie} className="mr-4 text-2xl" />
               <h2>Admins</h2>
@@ -110,9 +112,11 @@ const AdminDashboard = async () => {
       </section>
       <section className="mt-10 space-y-2">
         <h2 className="text-xl font-bold mb-5 text-emerald-900">User Growth</h2>
-        <UserDataChart label="Customers Joined" users={customers} />
-        <UserDataChart label="Consultants Joined" users={consultants} />
-        <UserDataChart label="Admins Joined" users={admins} />
+        <div className="space-y-4">
+          <UserDataChart label="Customers Joined" users={customers} />
+          <UserDataChart label="Consultants Joined" users={consultants} />
+          <UserDataChart label="Admins Joined" users={admins} />
+        </div>
       </section>
     </>
   );

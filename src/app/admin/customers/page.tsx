@@ -1,4 +1,5 @@
 import UserTable from "@/components/page/admin-page/UserTable";
+import MobileNav from "@/components/ui/MobileNav";
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import React from "react";
@@ -9,21 +10,22 @@ const CustomersPage = async () => {
       role: Role.CUSTOMER,
     },
   });
-   const newCustomer = customers.map((customer) => {
-     return {
-       id: customer.id,
-       image: customer.image || null,
-       name: customer.name as string,
-       email: customer.email as string,
-       createdAt: customer.createdAt,
-       updatedAt: customer.updatedAt,
-       role: customer.role,
-     };
-   });
+  const newCustomer = customers.map((customer) => {
+    return {
+      id: customer.id,
+      image: customer.image || null,
+      name: customer.name as string,
+      email: customer.email as string,
+      createdAt: customer.createdAt,
+      updatedAt: customer.updatedAt,
+      role: customer.role,
+    };
+  });
   return (
     <>
+      <MobileNav />
       <h1 className="text-3xl font-bold text-emerald-900 mb-8">Customers</h1>
-      <UserTable users={newCustomer}/>
+      <UserTable users={newCustomer} />
     </>
   );
 };
