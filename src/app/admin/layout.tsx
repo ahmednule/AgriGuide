@@ -10,7 +10,7 @@ const layout = async ({ children }: PropsWithChildren) => {
   return (
     <div className="h-[93vh] flex bg-emerald-50">
       <AdminAside />
-      <main className="p-10 pt-20 lg:p-20 lg:w-5/6 h-full overflow-y-auto text-emerald-900">
+      <main className="p-10 pt-20 lg:p-20 lg:w-5/6 h-full w-full overflow-y-auto text-emerald-900">
         {children}
       </main>
     </div>
