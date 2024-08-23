@@ -55,3 +55,8 @@ export type ExpandedDescriptions = {
 export type ResourceNames = {
   name: string;
 }[];
+
+export enum ResourceType {
+  PEST = "Pest",
+  DISEASE = "Disease",
+};

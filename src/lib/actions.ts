@@ -13,11 +13,12 @@ import {
   initialFormState,
   ScanStatus,
 } from "./constants";
-import type {
+import {
   AddDiseaseForm,
   AddPestForm,
   ContactForm,
   EditPestForm,
+  ResourceType,
 } from "./types";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/ui/EmailTemplate";
@@ -676,4 +677,61 @@ export const getTags = async () => {
   revalidatePath("/");
 
   return tags;
+};
+
+export const uploadImages = async ({
+  id,
+  files,
+  type,
+}: {
+  id: string;
+  files: { name: string; type: string; base64: string }[];
+  type: ResourceType;
+}) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user || user.role !== Role.ADMIN) return;
+
+  const images = files.map(async (file) => {
+    const base64Data = file.base64.split(",")[1];
+    const imageBuffer = Buffer.from(base64Data, "base64");
+    const folderName = `resource`;
+    const fileName = `${folderName}/${Date.now()}_${file.name}`;
+    const { data: imageData, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, imageBuffer, {
+        contentType: file.type,
+      });
+
+    if (error) throw new Error("Failed to upload image");
+
+    const imageUrl = `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`;
+
+    if (type === ResourceType.PEST) {
+      await prisma.pest.update({
+        where: { id },
+        data: {
+          images: {
+            push: imageUrl,
+          },
+        },
+      });
+    } else if (type === ResourceType.DISEASE) {
+      await prisma.disease.update({
+        where: { id },
+        data: {
+          images: {
+            push: imageUrl,
+          },
+        },
+      });
+    }
+
+    return imageUrl;
+  });
+
+  await Promise.all(images);
+
+  revalidatePath(`/resources`);
 };

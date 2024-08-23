@@ -1,13 +1,33 @@
 "use client";
 
-import { convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
+// Refactor later
+import { convertFileToBase64, convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
 import { Button, Image } from "@nextui-org/react";
 import { Disease, Pest } from "@prisma/client";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 
+import { FilePond, registerPlugin } from "react-filepond";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import FilePondPluginFileEncode from "filepond-plugin-file-encode";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
+
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  FilePondPluginFileEncode,
+  FilePondPluginFileValidateSize
+);
+
 import "react-quill/dist/quill.snow.css";
+import { uploadImages } from "@/lib/actions";
+import { ResourceType } from "@/lib/types";
 
 const ResourceContent = ({
   isAdmin,
@@ -17,7 +37,7 @@ const ResourceContent = ({
   resource,
 }: {
   isAdmin: boolean;
-  type: "Pest" | "Disease";
+  type: ResourceType;
   editFn: ({ id, content }: { id: string; content: string }) => Promise<void>;
   deleteResource: (id: string) => Promise<void>;
   resource: Pest | Disease;
@@ -26,6 +46,8 @@ const ResourceContent = ({
   const [content, setContent] = useState(convertMarkdownToHtml(text));
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [files, setFiles] = useState<any[]>([]);
+  const [isAddingImage, setIsAddingImage] = useState(false);
 
   const handleEdit = async () => {
     setIsEditing((prev) => !prev);
@@ -60,6 +82,46 @@ const ResourceContent = ({
       setIsLoading(false);
     }
   };
+
+const handleUpload = async () => {
+  if(files.length === 0) {
+    toast.error("Please select an image to upload");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    const fileData = await Promise.all(
+      files.map(async (file) => {
+        const base64 = await convertFileToBase64(file);
+        return {
+          name: file.name,
+          type: file.type,
+          base64: base64,
+        };
+      })
+    );
+
+    await uploadImages({
+      files: fileData,
+      type,
+      id,
+    });
+
+    toast.success("Images uploaded successfully");
+    setIsAddingImage(false);
+    setFiles([]);
+  } catch (e) {
+    toast.error(
+      `Failed to upload images: ${
+        e instanceof Error ? e.message : "Unknown error"
+      }`
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div>
@@ -109,6 +171,45 @@ const ResourceContent = ({
           <Image key={index} src={image} alt="" className="h-72 w-80" />
         ))}
       </div>
+      {isAdmin && (
+        <div className="mt-14">
+          {isAddingImage && (
+            <FilePond
+              required
+              files={files}
+              onupdatefiles={(items) => {
+                setFiles(items.map((item) => item.file));
+              }}
+              acceptedFileTypes={["image/*"]}
+              labelFileTypeNotAllowed="Invalid file type. Please upload an image"
+              allowMultiple={true}
+              maxFiles={3}
+              labelFileProcessingError="An error occurred during processing"
+              labelIdle="Drag & Drop or Browse your desired image"
+              maxFileSize="1MB"
+            />
+          )}
+          <div className="flex justify-center gap-4">
+            <Button
+              className="text-white"
+              color={isAddingImage ? "danger" : "primary"}
+              onPress={() => setIsAddingImage((prev) => !prev)}
+            >
+              {isAddingImage ? "Cancel" : "Add Image"}
+            </Button>
+            {isAddingImage && (
+              <Button
+                isLoading={isLoading}
+                color="success"
+                className="text-white"
+                onPress={handleUpload}
+              >
+                Upload
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
