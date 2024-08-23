@@ -7,12 +7,15 @@ import {
   Avatar,
   DropdownSection,
   Link,
+  cn,
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import { signOut, useSession } from "next-auth/react";
 import { auth } from "@/auth";
 import { Role } from "@prisma/client";
+import { isLinkActive } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 const AvatarDropdown = ({
   name,
@@ -25,6 +28,7 @@ const AvatarDropdown = ({
 }) => {
   const { data, status, update } = useSession();
   const user = data?.user;
+  const pathname = usePathname();
   return (
     <Dropdown showArrow>
       <DropdownTrigger>
@@ -47,17 +51,34 @@ const AvatarDropdown = ({
             <p className="text-neutral-500 text-sm">{email}</p>
           </DropdownItem>
         </DropdownSection>
-        <DropdownSection showDivider aria-label="Dropdown Actions">
-          <DropdownItem key="profile">My Profile</DropdownItem>
-          {user?.role === Role.CUSTOMER ? (
-            <DropdownItem key="user-panel" href="/customer">
-              Customer panel
-            </DropdownItem>
-          ) : (
-            <DropdownItem key="admin-panel" href="/admin">
-              Admin panel
-            </DropdownItem>
-          )}
+        <DropdownSection showDivider aria-label="User Dropdown Actions">
+          <DropdownItem
+            key="profile"
+            className={cn({
+              "text-emerald-500": isLinkActive({ route: "/profile", pathname }),
+            })}
+            href="/profile"
+          >
+            My Profile
+          </DropdownItem>
+          <DropdownItem
+            key="user-panel"
+            className={cn({
+              "text-emerald-500": isLinkActive({
+                route: "/customer",
+                pathname,
+              }),
+            })}
+            href={`
+            ${
+              user?.role === Role.CUSTOMER
+                ? "/customer/scan-history"
+                : "/admin/dashboard"
+            }
+            `}
+          >
+            {user?.role === Role.CUSTOMER ? "Customer" : "Admin"} Panel
+          </DropdownItem>
         </DropdownSection>
         <DropdownSection aria-label="logout">
           <DropdownItem
