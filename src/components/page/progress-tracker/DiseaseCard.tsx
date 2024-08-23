@@ -16,10 +16,6 @@ const DiseaseCard = ({
   setSelectedDisease: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
 
-  const diseaseName = disease?.description
-    ? disease.description.split("\n")[0]
-    : "";
-
   const handleSelectDisease = () => {
     if (selectedDisease.includes(disease!.id)) {
         setSelectedDisease(prev => prev.filter((id) => id !== disease!.id));
@@ -38,7 +34,7 @@ const DiseaseCard = ({
         "border border-emerald-500 ": selectedDisease.includes(disease!.id),
       })}
     >
-      <CardHeader className="pb-0 pt-2 px-4">{diseaseName}</CardHeader>
+      <CardHeader className="pb-0 pt-2 px-4">{disease.name}</CardHeader>
       <CardBody>
         <Image
           alt=""
