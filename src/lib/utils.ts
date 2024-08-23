@@ -33,3 +33,10 @@ export const isLinkActive = ({
   route: string;
   pathname: string;
 }) => (route === "/" ? pathname === "/" : pathname.startsWith(route));
+
+export const convertKebabToNormal = (kebab: string): string => {
+  return kebab
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
