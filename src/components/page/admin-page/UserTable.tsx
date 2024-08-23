@@ -30,15 +30,7 @@ type UserColumnKey = keyof {
 const UserTable = ({
   users,
 }: {
-  users: {
-    id: string;
-    image: string | null;
-    name: string;
-    email: string;
-    createdAt: Date;
-    updatedAt: Date;
-    role: Role | null;
-  }[];
+  users: User[];
 }) => {
   // // Define columns explicitly based on the User model
   const columns = [

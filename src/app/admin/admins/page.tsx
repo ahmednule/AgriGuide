@@ -10,22 +10,11 @@ const AdminsPage = async () => {
       role: Role.ADMIN,
     },
   });
-  const newAdmins = admins.map((admin) => {
-    return {
-      id: admin.id,
-      image: admin.image || null,
-      name: admin.name as string,
-      email: admin.email as string,
-      createdAt: admin.createdAt,
-      updatedAt: admin.updatedAt,
-      role: admin.role,
-    };
-  });
   return (
     <>
       <MobileNav />
       <h1 className="text-3xl font-bold text-emerald-900 mb-8">Admins</h1>
-      <UserTable users={newAdmins} />
+      <UserTable users={admins} />
     </>
   );
 };
