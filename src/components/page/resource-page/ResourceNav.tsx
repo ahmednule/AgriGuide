@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import prisma from "@/lib/prisma";
 import NavLink from "@/components/ui/NavLink";
 
-const ResourceAside = async () => {
+const ResourceNav = async () => {
   const pests = await prisma.pest.findMany({
     orderBy: {
       name: "asc",
@@ -16,7 +16,6 @@ const ResourceAside = async () => {
     },
   });
   return (
-    <aside className=" w-1/6 bg-gradient-to-r overflow-y-auto p-10 pt-20 hidden lg:block from-emerald-800 to-emerald-700 h-full">
       <nav>
         <h2 className="text-emerald-200 text-xl">
           <NavLink href="/resources" className="hover:text-emerald-300">
@@ -69,8 +68,7 @@ const ResourceAside = async () => {
           ))}
         </ol>
       </nav>
-    </aside>
   );
 };
 
-export default ResourceAside;
+export default ResourceNav;
