@@ -1,14 +1,12 @@
 import { auth } from "@/auth";
 import AdminAside from "@/components/page/admin-page/AdminAside";
 import { Role } from "@prisma/client";
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import React, { PropsWithChildren } from "react";
 
 const layout = async ({ children }: PropsWithChildren) => {
   const session = await auth();
-  if (session?.user.role !== Role.ADMIN) {
-    notFound();
-  }
+  if (session?.user.role !== Role.ADMIN) notFound();
   return (
     <div className="h-[93vh] flex bg-emerald-50">
       <AdminAside />
