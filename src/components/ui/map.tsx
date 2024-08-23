@@ -1,4 +1,4 @@
-"use client";  // Add this line at the top
+"use client";  // for client side rendering
 
 import React, { useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
