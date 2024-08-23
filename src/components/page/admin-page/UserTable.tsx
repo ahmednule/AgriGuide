@@ -10,7 +10,7 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import { Role, User } from "@prisma/client";
-import { Avatar, Button, Chip, User as NextUser } from "@nextui-org/react";
+import { Button, User as NextUser } from "@nextui-org/react";
 import { deleteUser } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -92,22 +92,11 @@ const UserTable = ({
               {user.email}
             </NextUser>
           );
-        // case "status":
-        //   return (
-        //     <Chip
-        //       className="capitalize"
-        //       // color={statusColorMap[user.status]}
-        //       size="sm"
-        //       variant="flat"
-        //     >
-        //       {cellValue}
-        //     </Chip>
-        //   );
         case "actions":
           return (
             <div className="relative flex items-center gap-3 justify-center">
               <Button
-                onPress={() => deleteUserFn(user.key)}
+                onPress={() => {}}
                 color="primary"
                 isIconOnly
                 title="View"
