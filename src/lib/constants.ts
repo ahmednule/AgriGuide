@@ -40,43 +40,11 @@ export const initialDiseaseFormState = {
   db: "",
 };
 
-export const MENU = [
-  {
-    route: "/",
-    value: "Home",
-  },
-  {
-    route: "#how-it-works",
-    value: "How it works",
-  },
-  {
-    route: "#features",
-    value: "Features",
-  },
-  {
-    route: "#testimonials",
-    value: "Testimonials",
-  },
-  {
-    route: "#partnerships",
-    value: "Partnerships",
-  },
-  {
-    route: "#contact",
-    value: "Contact",
-  },
-];
-
 export enum ScanStatus {
   SUCCESS = "Success",
   ERROR = "Something unexpected happened",
   IMAGENOTPEST = "Image is not a pest",
   IMAGENOTDISEASE = "Image is not a disease",
-}
-
-export enum ResourceType {
-  PESTS = "Pests",
-  DISEASES = "Diseases",
 }
 
 export const ADMIN_ROUTES = [
