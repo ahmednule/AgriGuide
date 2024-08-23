@@ -1,7 +1,11 @@
 "use client";
 
 // Refactor later
-import { convertFileToBase64, convertHtmlToMarkdown, convertMarkdownToHtml } from "@/lib/utils";
+import {
+  convertFileToBase64,
+  convertHtmlToMarkdown,
+  convertMarkdownToHtml,
+} from "@/lib/utils";
 import { Button, Image } from "@nextui-org/react";
 import { Disease, Pest } from "@prisma/client";
 import React, { useState } from "react";
@@ -26,8 +30,10 @@ registerPlugin(
 );
 
 import "react-quill/dist/quill.snow.css";
-import { uploadImages } from "@/lib/actions";
+import { deleteImage, uploadImages } from "@/lib/actions";
 import { ResourceType } from "@/lib/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const ResourceContent = ({
   isAdmin,
@@ -48,6 +54,9 @@ const ResourceContent = ({
   const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<any[]>([]);
   const [isAddingImage, setIsAddingImage] = useState(false);
+  const [isDeletingImage, setIsDeletingImage] = useState(false);
+
+  const imageLength = images.length;
 
   const handleEdit = async () => {
     setIsEditing((prev) => !prev);
@@ -83,45 +92,66 @@ const ResourceContent = ({
     }
   };
 
-const handleUpload = async () => {
-  if(files.length === 0) {
-    toast.error("Please select an image to upload");
-    return;
-  }
+  const handleUpload = async () => {
+    if (files.length === 0) {
+      toast.error("Please select an image to upload");
+      return;
+    }
 
-  try {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const fileData = await Promise.all(
-      files.map(async (file) => {
-        const base64 = await convertFileToBase64(file);
-        return {
-          name: file.name,
-          type: file.type,
-          base64: base64,
-        };
-      })
-    );
+      const fileData = await Promise.all(
+        files.map(async (file) => {
+          const base64 = await convertFileToBase64(file);
+          return {
+            name: file.name,
+            type: file.type,
+            base64: base64,
+          };
+        })
+      );
 
-    await uploadImages({
-      files: fileData,
-      type,
-      id,
-    });
+      await uploadImages({
+        files: fileData,
+        type,
+        id,
+      });
 
-    toast.success("Images uploaded successfully");
-    setIsAddingImage(false);
-    setFiles([]);
-  } catch (e) {
-    toast.error(
-      `Failed to upload images: ${
-        e instanceof Error ? e.message : "Unknown error"
-      }`
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
+      toast.success("Images uploaded successfully");
+      setIsAddingImage(false);
+      setFiles([]);
+    } catch (e) {
+      toast.error(
+        `Failed to upload images: ${
+          e instanceof Error ? e.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteImage = async (imageUrl: string) => {
+    try {
+      setIsDeletingImage(true);
+      await deleteImage({
+        id,
+        imageUrl,
+        type,
+      });
+      toast.success("Image deleted successfully");
+    } catch (e) {
+      toast.error(
+        `Failed to delete image: ${
+          e instanceof Error ? e.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setIsDeletingImage(false);
+    }
+  };
+
 
   return (
     <div>
@@ -168,7 +198,21 @@ const handleUpload = async () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-5">
         {images.map((image, index) => (
-          <Image key={index} src={image} alt="" className="h-72 w-80" />
+          <div key={index} className="relative group">
+            <Image src={image} alt="" className="h-72 w-80" />
+            {isAdmin && (
+              <Button
+                isIconOnly
+                color="danger"
+                variant="flat"
+                className="absolute z-50 top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleDeleteImage(image)}
+                isLoading={isDeletingImage}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
+            )}
+          </div>
         ))}
       </div>
       {isAdmin && (
@@ -183,7 +227,6 @@ const handleUpload = async () => {
               acceptedFileTypes={["image/*"]}
               labelFileTypeNotAllowed="Invalid file type. Please upload an image"
               allowMultiple={true}
-              maxFiles={3}
               labelFileProcessingError="An error occurred during processing"
               labelIdle="Drag & Drop or Browse your desired image"
               maxFileSize="1MB"
@@ -193,7 +236,13 @@ const handleUpload = async () => {
             <Button
               className="text-white"
               color={isAddingImage ? "danger" : "primary"}
-              onPress={() => setIsAddingImage((prev) => !prev)}
+              onPress={() => {
+                if (imageLength + files.length === 6)
+                  return toast.error(
+                    "You can only upload a maximum of 6 images per resource."
+                  );
+                setIsAddingImage((prev) => !prev);
+              }}
             >
               {isAddingImage ? "Cancel" : "Add Image"}
             </Button>

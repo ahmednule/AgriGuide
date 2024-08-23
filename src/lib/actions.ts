@@ -735,3 +735,66 @@ export const uploadImages = async ({
 
   revalidatePath(`/resources`);
 };
+
+export const deleteImage = async ({
+  id,
+  imageUrl,
+  type,
+}: {
+  id: string;
+  imageUrl: string;
+  type: ResourceType;
+}) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user || user.role !== Role.ADMIN) return
+
+  // Extract the file name from the URL
+  const fileName = imageUrl.split("/").pop();
+
+  if (!fileName) {
+    throw new Error("Invalid image URL");
+  }
+
+  // Delete the file from Supabase storage
+  const { error: deleteError } = await supabase.storage
+    .from("images")
+    .remove([`resource/${fileName}`]);
+
+  if (deleteError) {
+    throw new Error("Failed to delete image from storage");
+  }
+
+  // Update the database to remove the image URL
+  if (type === "Pest") {
+    await prisma.pest.update({
+      where: { id },
+      data: {
+        images: {
+          set: await prisma.pest
+            .findUnique({ where: { id } })
+            .then(
+              (pest) => pest?.images.filter((img) => img !== imageUrl) || []
+            ),
+        },
+      },
+    });
+  } else if (type === "Disease") {
+    await prisma.disease.update({
+      where: { id },
+      data: {
+        images: {
+          set: await prisma.disease
+            .findUnique({ where: { id } })
+            .then(
+              (disease) =>
+                disease?.images.filter((img) => img !== imageUrl) || []
+            ),
+        },
+      },
+    });
+  }
+
+  revalidatePath(`/resources`);
+};
