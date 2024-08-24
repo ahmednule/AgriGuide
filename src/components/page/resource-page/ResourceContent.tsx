@@ -98,6 +98,11 @@ const ResourceContent = ({
       return;
     }
 
+    if(files.length + imageLength > 6) {
+      toast.error("You can only upload a maximum of 6 images per resource.");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -151,7 +156,6 @@ const ResourceContent = ({
       setIsDeletingImage(false);
     }
   };
-
 
   return (
     <div>
@@ -229,22 +233,28 @@ const ResourceContent = ({
               allowMultiple={true}
               labelFileProcessingError="An error occurred during processing"
               labelIdle="Drag & Drop or Browse your desired image"
-              maxFileSize="1MB"
             />
           )}
           <div className="flex justify-center gap-4">
             <Button
               className="text-white"
               color={isAddingImage ? "danger" : "primary"}
-              onPress={() => {
-                if (imageLength + files.length === 6)
-                  return toast.error(
-                    "You can only upload a maximum of 6 images per resource."
-                  );
-                setIsAddingImage((prev) => !prev);
-              }}
+              onPress={
+                !isAddingImage
+                  ? () => {
+                      if (imageLength + files.length === 6)
+                        return toast.error(
+                          "You can only upload a maximum of 6 images per resource."
+                        );
+                      setIsAddingImage((prev) => !prev);
+                    }
+                  : () => {
+                      setFiles([]);
+                      setIsAddingImage(false);
+                    }
+              }
             >
-              {isAddingImage ? "Cancel" : "Add Image"}
+              {isAddingImage ? "Cancel" : "Add Images"}
             </Button>
             {isAddingImage && (
               <Button
