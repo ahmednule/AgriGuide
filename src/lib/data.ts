@@ -118,3 +118,54 @@ export const TESTIMONIALS_DATA = [
     title: "Agribusiness Manager",
   },
 ];
+
+// each agrochemical object should have name, shop sold, price, image, location and description
+export const TEMP_PRODUCT_DATA = [
+ {
+  id: 1,
+  name: "Fungicide",
+  supplier: "Agrovet",
+  price: "500",
+  // image: "/assets/images/fungicide.jpg",
+  location: "Nairobi",
+  description: "Fungicide is a chemical pesticide that kills or inhibits the growth of fungi. It is used to control fungal diseases in crops, such as powdery mildew, rust, and blight. Fungicides can be applied as a spray, dust, or seed treatment, depending on the type of fungus and the crop being treated."
+ },
+ {
+  id: 2,
+  name: "Insecticide",
+  supplier: "Agrovet",
+  price: "400",
+  // image: "/assets/images/insecticide.jpg",
+  location: "Nairobi",
+  description: "Insecticide is a chemical pesticide that kills or repels insects. It is used to control insect pests in crops, such as aphids, caterpillars, and beetles. Insecticides can be applied as a spray, dust, or seed treatment, depending on the type of insect and the crop being treated."
+ },
+ {
+  id: 3,
+  name: "Herbicide",
+  supplier: "Agrovet",
+  price: "300",
+  // image: "/assets/images/herbicide.jpg",
+  location: "Nairobi",
+  description: "Herbicide is a chemical pesticide that kills or inhibits the growth of weeds. It is used to control unwanted plants in crops, such as grasses, broadleaf weeds, and sedges. Herbicides can be applied as a spray, dust, or soil treatment, depending on the type of weed and the crop being treated."
+ },
+ {
+  id: 4,
+  name: "Fertilizer",
+  supplier: "Agrovet",
+  price: "200",
+  // image: "/assets/images/fertilizer.jpg",
+  location: "Nairobi",
+  description: "Fertilizer is a substance that provides essential nutrients to plants to promote growth and increase yields. It is used to supplement the soil with nutrients that may be lacking, such as nitrogen, phosphorus, and potassium. Fertilizers can be applied as a granular, liquid, or foliar spray, depending on the type of crop and the soil conditions."
+ },
+ {
+  id: 5,
+  name: "Pesticide",
+  supplier: "Agrovet",
+  price: "250",
+  location: "Nairobi",
+  description: "Pesticide is a chemical substance used to kill or control pests, such as insects, weeds, and fungi. It is used to protect crops from damage and increase yields. Pesticides can be applied as a spray, dust, or seed treatment, depending on the type of pest and the crop being treated.",
+  // image: "/assets/images/pesticide.jpg",
+ }
+]
+
+
