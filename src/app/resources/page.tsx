@@ -1,4 +1,5 @@
 import MobileNav from "@/components/ui/MobileNav";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
@@ -7,9 +8,7 @@ const ResourcesPage = () => {
   return (
     <>
       <MobileNav />
-      <h1 className="text-3xl text-emerald-800 font-bold">
-        Pest and Diseases guide
-      </h1>
+      <SectionHeader className="text-left m-0">Pest and Diseases guide</SectionHeader>
       <p className="text-emerald-800 mt-5">
         AgriGuide offers a comprehensive guide on managing pests and diseases in
         plants. It includes description, identification guides, control methods,
