@@ -132,6 +132,31 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+model Product {
+  id         String    @id @default(cuid())
+  name       String    @unique
+  price      Float
+  images     String[]
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  supplierId String?
+
+  @@map("products")
+}
+
+model Supplier {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  logo      String
+  location  String
+  products  Product[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("suppliers")
+}
+
 enum Role {
   CUSTOMER
   ADMIN
