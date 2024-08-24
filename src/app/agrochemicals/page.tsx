@@ -1,6 +1,5 @@
-import AgrochemicalsList from "@/components/agrochemicals-page/AgrochemicalsList";
+import AgrochemicalProducts from "@/components/agrochemicals-page/AgrochemicalProducts";
 import SectionHeader from "@/components/ui/SectionHeader";
-
 
 const AgrochemicalsPage = () => {
   return (
@@ -8,7 +7,7 @@ const AgrochemicalsPage = () => {
       <SectionHeader as="h1" className="mt-0">
         Agrochemical Products
       </SectionHeader>
-     <AgrochemicalsList />
+      <AgrochemicalProducts />
     </main>
   );
 };

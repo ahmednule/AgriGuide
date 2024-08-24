@@ -60,3 +60,11 @@ export enum ResourceType {
   PEST = "Pest",
   DISEASE = "Disease",
 };
+
+export type Product = {
+  id: string;
+  name: string;
+  price: string;
+  supplier: string;
+  location: string;
+}

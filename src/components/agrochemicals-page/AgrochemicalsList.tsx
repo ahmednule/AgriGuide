@@ -1,5 +1,5 @@
-import React from 'react'
-import { TEMP_PRODUCT_DATA } from "@/lib/data";
+// AgrochemicalsList.tsx
+import React from "react";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/ProductCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,17 +8,15 @@ import {
   faShop,
 } from "@fortawesome/free-solid-svg-icons";
 import { Image } from "@nextui-org/react";
+import { Product } from "@/lib/types";
 
-const AgrochemicalsList = () => {
+const AgrochemicalsList = ({ products }: { products: Product[] }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-      {TEMP_PRODUCT_DATA.map((product) => (
+      {products.map((product) => (
         <CardContainer key={product.id} className="">
-          <CardBody className=" relative group/card  w-[22rem] md:w-[23rem] xl:w-[26rem] h-auto rounded-xl p-6 shadow-lg shadow-emerald-200 ">
-            <div
-              className="cursor-pointer"
-              // onClick={() => router.push(`/event/${item.id}`)}
-            >
+          <CardBody className="relative group/card w-[22rem] md:w-[23rem] xl:w-[26rem] h-auto rounded-xl p-6 shadow-lg shadow-emerald-200">
+            <div className="cursor-pointer">
               <CardItem
                 translateZ="50"
                 as="div"
@@ -35,7 +33,6 @@ const AgrochemicalsList = () => {
 
               <CardItem translateZ="100" className="w-full mt-4">
                 <Image
-                  // src={product.image}
                   src="https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/images/resource/1724432565698_OIP.jpeg"
                   height="500"
                   width="500"
@@ -46,9 +43,7 @@ const AgrochemicalsList = () => {
               <CardItem
                 translateZ={80}
                 as="div"
-                href=""
-                target="__blank"
-                className=" flex w-full justify-between mt-4"
+                className="flex w-full justify-between mt-4"
               >
                 <div className="space-x-2 text-emerald-800">
                   <FontAwesomeIcon icon={faShop} />
@@ -65,6 +60,6 @@ const AgrochemicalsList = () => {
       ))}
     </div>
   );
-}
+};
 
-export default AgrochemicalsList
+export default AgrochemicalsList;
