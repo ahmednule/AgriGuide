@@ -6,7 +6,7 @@ import {
   editPestFormSchema,
 } from "./schemas";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { ScanType } from "@prisma/client";
+import { Product, ScanType, Supplier } from "@prisma/client";
 
 export type ContactForm = z.infer<typeof contactFormSchema>;
 
@@ -59,12 +59,17 @@ export type ResourceNames = {
 export enum ResourceType {
   PEST = "Pest",
   DISEASE = "Disease",
-};
-
-export type Product = {
-  id: string;
-  name: string;
-  price: string;
-  supplier: string;
-  location: string;
 }
+
+export type ProductWithSuppliers = {
+  location: string;
+  price: number;
+  images: string[];
+  product: {
+    name: string;
+    id: string;
+  };
+  supplier: {
+    name: string;
+  };
+};
