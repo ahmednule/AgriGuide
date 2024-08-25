@@ -6,14 +6,23 @@ import {
   faLocationDot,
   faShop,
 } from "@fortawesome/free-solid-svg-icons";
-import { Image } from "@nextui-org/react";
+import { Image, Spinner } from "@nextui-org/react";
 import { ProductWithSuppliers } from "@/lib/types";
+import useGeolocation from "@/lib/hooks/useGeolocation";
 
 const AgrochemicalsList = ({
   productsWithSupplier,
 }: {
   productsWithSupplier: ProductWithSuppliers[];
 }) => {
+  const { isLoading } = useGeolocation();
+  if (isLoading)
+    return (
+      <div className="flex mt-14 justify-center items-center">
+        <Spinner color="success" size="lg" />
+      </div>
+    );
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
       {productsWithSupplier.map((product) => {
