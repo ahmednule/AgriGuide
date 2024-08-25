@@ -2,28 +2,45 @@
 
 import React, { useState } from "react";
 import AgrochemicalsList from "./AgrochemicalsList";
+import { ProductWithSuppliers } from "@/lib/types";
 import AgrochemicalsFilter from "./AgrochemicalsFilter";
-import { TEMP_PRODUCT_DATA } from "@/lib/data";
-import { Product } from "@/lib/types";
 
-const AgrochemicalProducts = () => {
+const AgrochemicalProducts = ({
+  productsWithSupplier,
+}: {
+  productsWithSupplier: ProductWithSuppliers[];
+}) => {
   const [filterName, setFilterName] = useState<any>(new Set([]));
   const [filterSupplier, setFilterSupplier] = useState<any>(new Set([]));
   const [filterPrice, setFilterPrice] = useState<any>(new Set([]));
   const [filterLocation, setFilterLocation] = useState<any>(new Set([]));
 
- const filterByCriteria = (product: Product) => {
-   const matchName = !filterName.size || filterName.has(product.name);
-   const matchSupplier =
-     !filterSupplier.size || filterSupplier.has(product.supplier);
-   const matchPrice = !filterPrice.size || filterPrice.has(product.price);
-   const matchLocation =
-     !filterLocation.size || filterLocation.has(product.location);
+  if (productsWithSupplier.length === 0)
+    return (
+      <p className="text-emerald-700 text-center">
+        No products currently available
+      </p>
+    );
 
-   return matchName && matchSupplier && matchPrice && matchLocation;
- };
-
- const filteredProducts = TEMP_PRODUCT_DATA.filter(filterByCriteria);
+  const filteredProducts = productsWithSupplier
+    .filter(
+      (product) =>
+        !filterSupplier.size ||
+        product.supplier.name === Array.from(filterSupplier)[0]
+    )
+    ?.filter(
+      (product) =>
+        !filterName.size || product.product.name === Array.from(filterName)[0]
+    )
+    ?.filter(
+      (product) =>
+        !filterPrice.size || product.price.toString() === Array.from(filterPrice)[0]
+    )
+    ?.filter(
+      (product) =>
+        !filterLocation.size ||
+        product.location === Array.from(filterLocation)[0]
+    );
 
   return (
     <div>
@@ -35,10 +52,10 @@ const AgrochemicalProducts = () => {
         filterPrice={filterPrice}
         setFilterPrice={setFilterPrice}
         filterLocation={filterLocation}
-        product={TEMP_PRODUCT_DATA}
+        product={productsWithSupplier}
         setFilterLocation={setFilterLocation}
       />
-      <AgrochemicalsList products={filteredProducts} />
+      <AgrochemicalsList productsWithSupplier={filteredProducts} />
     </div>
   );
 };
