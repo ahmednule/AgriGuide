@@ -10,10 +10,10 @@ const AgrochemicalProducts = ({
 }: {
   productsWithSupplier: ProductWithSuppliers[];
 }) => {
-  const [filterName, setFilterName] = useState<any>(new Set([]));
-  const [filterSupplier, setFilterSupplier] = useState<any>(new Set([]));
-  const [filterPrice, setFilterPrice] = useState<any>(new Set([]));
-  const [filterLocation, setFilterLocation] = useState<any>(new Set([]));
+  const [filterName, setFilterName] = useState<Set<string>>(new Set([]));
+  const [filterSupplier, setFilterSupplier] = useState<Set<string>>(new Set([]));
+  const [filterPrice, setFilterPrice] = useState<Set<string>>(new Set([]));
+  const [filterLocation, setFilterLocation] = useState<Set<string>>(new Set([]));
 
   if (productsWithSupplier.length === 0)
     return (
@@ -34,7 +34,8 @@ const AgrochemicalProducts = ({
     )
     ?.filter(
       (product) =>
-        !filterPrice.size || product.price.toString() === Array.from(filterPrice)[0]
+        !filterPrice.size ||
+        product.price.toString() === Array.from(filterPrice)[0]
     )
     ?.filter(
       (product) =>
