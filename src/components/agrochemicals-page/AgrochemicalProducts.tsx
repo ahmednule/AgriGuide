@@ -34,8 +34,7 @@ const AgrochemicalProducts = ({
     )
     ?.filter(
       (product) =>
-        !filterPrice.size ||
-        product.price.toString() === Array.from(filterPrice)[0]
+        !filterPrice.size || product.price.toString() === Array.from(filterPrice)[0]
     )
     ?.filter(
       (product) =>
@@ -46,9 +45,13 @@ const AgrochemicalProducts = ({
   return (
     <div>
       <AgrochemicalsFilter
+        filterName={filterName}
         setFilterName={setFilterName}
+        filterSupplier={filterSupplier}
         setFilterSupplier={setFilterSupplier}
+        filterPrice={filterPrice}
         setFilterPrice={setFilterPrice}
+        filterLocation={filterLocation}
         productsWithSuppliers={productsWithSupplier}
         setFilterLocation={setFilterLocation}
       />
