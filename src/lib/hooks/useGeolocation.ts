@@ -1,19 +1,28 @@
 import { useState, useEffect } from "react";
 
 const useGeolocation = () => {
-  const [country, setCountry] = useState("");
+  const [location, setLocation] = useState<{
+    country: string;
+    city: string;
+  }>({
+    country: "",
+    city: "",
+  });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCountry = async () => {
+    const fetchLocation = async () => {
       try {
         const response = await fetch("https://ipapi.co/json/");
         if (!response.ok) {
-          throw new Error("Failed to fetch country data");
+          throw new Error("Failed to fetch location data");
         }
         const data = await response.json();
-        setCountry(data.country_name);
+        setLocation({
+          country: data.country_name,
+          city: data.city,
+        });
       } catch (e) {
         setError(e instanceof Error ? e.message : "An error occurred");
       } finally {
@@ -21,10 +30,10 @@ const useGeolocation = () => {
       }
     };
 
-    fetchCountry();
+    fetchLocation();
   }, []);
 
-  return { country, error, isLoading };
+  return { location, error, isLoading };
 };
 
 export default useGeolocation;
