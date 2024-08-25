@@ -1,6 +1,8 @@
 import { ProductWithSuppliers } from "@/lib/types";
-import { Button, Select, SelectItem } from "@nextui-org/react";
-import React from "react";
+import { Button, Select, SelectItem, Spinner } from "@nextui-org/react";
+import React, { useEffect } from "react";
+import useGeolocation from "@/lib/hooks/useGeolocation";
+import toast from "react-hot-toast";
 
 const AgrochemicalsFilter = ({
   filterName,
@@ -11,7 +13,7 @@ const AgrochemicalsFilter = ({
   setFilterPrice,
   filterLocation,
   setFilterLocation,
-  productsWithSuppliers
+  productsWithSuppliers,
 }: {
   filterName: Set<string>;
   setFilterName: any;
@@ -23,6 +25,13 @@ const AgrochemicalsFilter = ({
   setFilterLocation: any;
   productsWithSuppliers: ProductWithSuppliers[];
 }) => {
+  const { country, error, isLoading } = useGeolocation();
+
+  useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
+
+  // Extract unique values for filtering
   const names = Array.from(
     new Set(productsWithSuppliers.map((product) => product.product.name))
   );
@@ -35,6 +44,13 @@ const AgrochemicalsFilter = ({
   const locations = Array.from(
     new Set(productsWithSuppliers.map((product) => product.location))
   );
+
+  // Set the initial location filter based on the user's country
+  useEffect(() => {
+    if (country) {
+      setFilterLocation(new Set([country]));
+    }
+  }, [country]);
 
   const handleClear = () => {
     setFilterName(new Set([]));
@@ -83,6 +99,7 @@ const AgrochemicalsFilter = ({
         selectedKeys={filterLocation}
         label="Filter location"
         color="success"
+        isLoading={isLoading}
         className="max-w-xs"
       >
         {locations.map((location) => (
