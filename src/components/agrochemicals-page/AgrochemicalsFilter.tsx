@@ -1,37 +1,25 @@
-import { Product } from "@/lib/types";
+import { ProductWithSuppliers } from "@/lib/types";
 import { Select, SelectItem } from "@nextui-org/react";
 import React from "react";
 
-type FilterKey = "name" | "supplier" | "price" | "location";
-
 const AgrochemicalsFilter = ({
-  filterName,
   setFilterName,
-  filterSupplier,
   setFilterSupplier,
-  filterPrice,
   setFilterPrice,
-  filterLocation,
   setFilterLocation,
-  product,
+  productsWithSuppliers,
 }: {
-  filterName: Set<string>;
   setFilterName: any;
-  filterSupplier: Set<string>;
   setFilterSupplier: any;
-  filterPrice: Set<string>;
   setFilterPrice: any;
-  filterLocation: Set<string>;
   setFilterLocation: any;
-  product: Product[];
+  productsWithSuppliers: ProductWithSuppliers[];
 }) => {
-  const getDistinctValues = (key: any[]) => {
-    return Array.from(new Set(key));
-  };
-  const names = getDistinctValues(product.map((product) => product.name));
-  const suppliers = getDistinctValues(product.map((product) => product.supplier));
-  const prices = getDistinctValues(product.map((product) => product.price));
-  const locations = getDistinctValues(product.map((product) => product.location));
+
+  const names = Array.from(new Set(productsWithSuppliers.map((product) => product.product.name)));
+  const suppliers = Array.from(new Set(productsWithSuppliers.map((product) => product.supplier.name)));
+  const prices = Array.from(new Set(productsWithSuppliers.map((product) => product.price.toString())));
+  const locations = Array.from(new Set(productsWithSuppliers.map((product) => product.location)));
 
   return (
     <div className="px-9 mb-8 flex sticky top-0 w-full justify-between flex-wrap z-10">
@@ -61,7 +49,7 @@ const AgrochemicalsFilter = ({
         color="success"
         className="max-w-xs"
       >
-        {prices.map((price) => (
+        {prices.sort().map((price) => (
           <SelectItem key={price}>{price}</SelectItem>
         ))}
       </Select>
