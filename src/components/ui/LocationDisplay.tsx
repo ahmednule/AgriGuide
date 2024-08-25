@@ -20,7 +20,7 @@ const LocationDisplay = () => {
         <Skeleton isLoaded={!isLoading} className=" h-6 w-36 rounded bg-emerald-100" />
       </div>
     );
-  else
+  if(!isLoading && !error)
     return (
       <div className="text-center mt-1 mb-8 text-emerald-600">
         {city}, {country}
