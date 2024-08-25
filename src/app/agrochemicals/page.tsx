@@ -1,4 +1,5 @@
-import AgrochemicalProducts from "@/components/agrochemicals-page/AgrochemicalProducts";
+import AgrochemicalProducts from "@/components/page/agrochemicals-page/AgrochemicalProducts";
+import LocationDisplay from "@/components/ui/LocationDisplay";
 import SectionHeader from "@/components/ui/SectionHeader";
 import prisma from "@/lib/prisma";
 
@@ -6,7 +7,8 @@ const AgrochemicalsPage = async () => {
   const productsWithSupplier = await prisma.productSupplier.findMany({
     select: {
       price: true,
-      location: true,
+      city: true,
+      country: true,
       images: true,
       product: {
         select: {
@@ -19,13 +21,14 @@ const AgrochemicalsPage = async () => {
           name: true,
         },
       },
-    }
+    },
   });
   return (
     <main className="min-h-[93vh] pt-20">
-      <SectionHeader as="h1" className="mt-0">
-        Agrochemical Products
+      <SectionHeader as="h1" className="m-0">
+        Shop Agrochemicals
       </SectionHeader>
+      <LocationDisplay />
       <AgrochemicalProducts productsWithSupplier={productsWithSupplier} />
     </main>
   );
