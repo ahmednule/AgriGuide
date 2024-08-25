@@ -133,28 +133,37 @@ model VerificationToken {
 }
 
 model Product {
-  id         String    @id @default(cuid())
-  name       String    @unique
-  price      Float
-  images     String[]
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
-  supplierId String?
+  id              String            @id @default(cuid())
+  name            String            @unique
+  ProductSupplier ProductSupplier[]
 
   @@map("products")
 }
 
 model Supplier {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  logo      String
-  location  String
-  products  Product[]
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  id              String            @id @default(cuid())
+  name            String            @unique
+  logo            String
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  ProductSupplier ProductSupplier[]
 
   @@map("suppliers")
+}
+
+model ProductSupplier {
+  location   String
+  price      Float
+  images     String[]
+  productId  String
+  supplierId String
+  product    Product  @relation(fields: [productId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@id([productId, supplierId])
+  @@map("product_suppliers")
 }
 
 enum Role {
