@@ -8,12 +8,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Image } from "@nextui-org/react";
 import { ProductWithSuppliers } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 const AgrochemicalsList = ({
   productsWithSupplier,
 }: {
   productsWithSupplier: ProductWithSuppliers[];
 }) => {
+  const router = useRouter();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
       {productsWithSupplier.map((product) => {
@@ -22,11 +24,13 @@ const AgrochemicalsList = ({
         const supplierName = product.supplier.name;
         const supplierLocation = `${product.city}, ${product.country}`;
         const productImage = product.images[0];
-        const productId = product.product.id;
+        const productId = product.id;
         return (
           <CardContainer key={productId} className="">
             <CardBody className="relative group/card w-[22rem] md:w-[23rem] xl:w-[26rem] h-auto rounded-xl p-6 shadow-lg shadow-emerald-200">
-              <div className="cursor-pointer">
+              <div onClick={() => router.push(
+                `/store/product/${productId}`
+              )} className="cursor-pointer">
                 <CardItem
                   translateZ="50"
                   as="div"

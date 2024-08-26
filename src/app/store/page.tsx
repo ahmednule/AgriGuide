@@ -1,11 +1,12 @@
-import AgrochemicalProducts from "@/components/page/agrochemicals-page/AgrochemicalProducts";
+import AgrochemicalProducts from "@/components/page/store-page/AgrochemicalProducts";
 import LocationDisplay from "@/components/ui/LocationDisplay";
 import SectionHeader from "@/components/ui/SectionHeader";
 import prisma from "@/lib/prisma";
 
-const AgrochemicalsPage = async () => {
+const StorePage = async () => {
   const productsWithSupplier = await prisma.productSupplier.findMany({
     select: {
+      id: true,
       price: true,
       city: true,
       country: true,
@@ -34,4 +35,4 @@ const AgrochemicalsPage = async () => {
   );
 };
 
-export default AgrochemicalsPage;
+export default StorePage;
