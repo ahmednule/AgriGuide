@@ -19,9 +19,9 @@ const AgrochemicalProducts = ({
   const [filterPrice, setFilterPrice] = useState<Set<string>>(new Set([]));
 
   const { location, isLoading } = useGeolocation();
-  const country = location.country;
-  const city = location.city;
-
+   const country = location?.country_name;
+   const city = location?.city;
+   
   if (productsWithSupplier.length === 0)
     return (
       <p className="text-emerald-700 text-center">

@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
+import { IpInfo } from "../types";
 
 const useGeolocation = () => {
-  const [location, setLocation] = useState<{
-    country: string;
-    city: string;
-  }>({
-    country: "",
-    city: "",
-  });
+  const [location, setLocation] = useState<IpInfo>();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -18,11 +13,8 @@ const useGeolocation = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch location data");
         }
-        const data = await response.json();
-        setLocation({
-          country: data.country_name,
-          city: data.city,
-        });
+        const data = await response.json() as IpInfo;
+        setLocation(data);
       } catch (e) {
         setError(e instanceof Error ? e.message : "An error occurred");
       } finally {

@@ -20,10 +20,9 @@ const AgrochemicalsFilter = ({
   setFilterPrice: any;
   productsWithSuppliers: ProductWithSuppliers[];
 }) => {
-  const {
-    location: { city, country },
-  } = useGeolocation();
-  
+  const { location: { country_name: country, city } = {}, isLoading } =
+    useGeolocation();
+
   const filteredProducts = productsWithSuppliers.filter(
     (product) => product.city === city && product.country === country
   );
