@@ -59,11 +59,11 @@ const NavLinksMenu = () => {
       </Dropdown>
       <Link
         className={cn("text-white", {
-          "text-emerald-500": isLinkActive({ route: "/agrochemicals", pathname }),
+          "text-emerald-500": isLinkActive({ route: "/store", pathname }),
         })}
-        href="/agrochemicals"
+        href="/store"
       >
-        Agrochemicals
+        Store
       </Link>
       <Link
         className={cn("text-white", {
