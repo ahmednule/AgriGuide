@@ -34,3 +34,14 @@ html {
 .progress-message p {
   @apply my-4
 }
+
+/* styles.css or any global CSS file */
+.active, .image-gallery-thumbnail:hover {
+  @apply !border-emerald-500 !border-large
+}
+
+.image-gallery-thumbnail {
+  @apply !p-1 !mx-1 !rounded-lg
+}
+
+
