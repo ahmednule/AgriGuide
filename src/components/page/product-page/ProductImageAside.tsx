@@ -1,5 +1,5 @@
-import ProductImages from "@/app/store/product/[id]/ProductImages";
 import React from "react";
+import ProductImages from "./ProductImages";
 
 const ProductImageAside = ({ images }: { images: string[] | undefined }) => {
   return (
