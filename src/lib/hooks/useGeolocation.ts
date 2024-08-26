@@ -14,7 +14,7 @@ const useGeolocation = () => {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const response = await fetch("https://ipapi.co/json/");
+        const response = await fetch("/api/geolocation");
         if (!response.ok) {
           throw new Error("Failed to fetch location data");
         }
