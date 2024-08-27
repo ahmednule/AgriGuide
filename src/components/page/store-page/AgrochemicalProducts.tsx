@@ -47,7 +47,7 @@ const AgrochemicalProducts = ({
     .filter((product) => product.city === city && product.country === country);
 
   return (
-    <div>
+    <div className="px-10">
       <AgrochemicalsFilter
         filterName={filterName}
         setFilterName={setFilterName}
@@ -58,30 +58,30 @@ const AgrochemicalProducts = ({
         productsWithSuppliers={productsWithSupplier}
       />
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-y-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
           <Skeleton
             isLoaded={!isLoading}
-            className="w-[22rem] mx-10 md:w-[23rem] xl:w-[26rem] rounded-xl h-[372px]  px-[24px] bg-emerald-100 p-6 shadow-lg"
+            className="w-full h-[421px] bg-emerald-100 p-6 shadow-lg rounded-xl"
           />
           <Skeleton
             isLoaded={!isLoading}
-            className="w-[22rem] mx-10 md:w-[23rem] xl:w-[26rem] rounded-xl h-[372px]  px-[24px] bg-emerald-100 p-6 shadow-lg"
+            className="w-full h-[421px] bg-emerald-100 p-6 shadow-lg rounded-xl"
           />
           <Skeleton
             isLoaded={!isLoading}
-            className="w-[22rem] mx-10 md:w-[23rem] xl:w-[26rem] rounded-xl h-[372px]  px-[24px] bg-emerald-100 p-6 shadow-lg"
+            className="w-full h-[421px] bg-emerald-100 p-6 shadow-lg rounded-xl"
           />
           <Skeleton
             isLoaded={!isLoading}
-            className="w-[22rem] mx-10 md:w-[23rem] xl:w-[26rem] rounded-xl h-[372px]  px-[24px] bg-emerald-100 p-6 shadow-lg"
+            className="w-full h-[421px] bg-emerald-100 p-6 shadow-lg rounded-xl"
           />
           <Skeleton
             isLoaded={!isLoading}
-            className="w-[22rem] mx-10 md:w-[23rem] xl:w-[26rem] rounded-xl h-[372px]  px-[24px] bg-emerald-100 p-6 shadow-lg"
+            className="w-full h-[421px] bg-emerald-100 p-6 shadow-lg rounded-xl"
           />
           <Skeleton
             isLoaded={!isLoading}
-            className="w-[22rem] mx-10 md:w-[23rem] xl:w-[26rem] rounded-xl h-[372px]  px-[24px] bg-emerald-100 p-6 shadow-lg"
+            className="w-full h-[421px] bg-emerald-100 p-6 shadow-lg rounded-xl"
           />
         </div>
       ) : (
