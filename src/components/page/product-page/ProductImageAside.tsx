@@ -3,7 +3,7 @@ import ProductImages from "./ProductImages";
 
 const ProductImageAside = ({ images }: { images: string[] | undefined }) => {
   return (
-    <aside className="space-y-4 md:sticky md:top-5 self-start">
+    <aside className="space-y-4 self-start">
       {images && images.length > 0 ? (
         <ProductImages images={images} />
       ) : (
