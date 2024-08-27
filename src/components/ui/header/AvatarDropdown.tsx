@@ -28,7 +28,16 @@ const AvatarDropdown = ({
 }) => {
   const { data, status, update } = useSession();
   const user = data?.user;
+  const userRole = user?.role;
   const pathname = usePathname();
+  const route =
+    userRole === Role.CUSTOMER
+      ? "/customer"
+      : userRole === Role.CONSULTANT
+      ? "/consultant"
+      : userRole === Role.SUPPLIER
+      ? "/cupplier"
+      : "/admin";
   return (
     <Dropdown showArrow>
       <DropdownTrigger>
@@ -64,20 +73,31 @@ const AvatarDropdown = ({
           <DropdownItem
             key="user-panel"
             className={cn({
-              "text-emerald-500": isLinkActive({
-                route: "/customer",
+              "!text-emerald-500": isLinkActive({
+                route,
                 pathname,
               }),
             })}
             href={`
             ${
-              user?.role === Role.CUSTOMER
+              userRole === Role.CUSTOMER
                 ? "/customer/scan-history"
+                : userRole === Role.CONSULTANT
+                ? "/consultant/dashboard"
+                : userRole === Role.SUPPLIER
+                ? "/supplier/dashboard"
                 : "/admin/dashboard"
             }
             `}
           >
-            {user?.role === Role.CUSTOMER ? "Customer" : "Admin"} Panel
+            {userRole === Role.CUSTOMER
+              ? "Customer"
+              : userRole === Role.CONSULTANT
+              ? "Consultant"
+              : userRole === Role.SUPPLIER
+              ? "Supplier"
+              : "Admin"}{" "}
+            Panel
           </DropdownItem>
         </DropdownSection>
         <DropdownSection aria-label="logout">
