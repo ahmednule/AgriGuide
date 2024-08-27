@@ -63,6 +63,7 @@ export enum ResourceType {
 
 export type ProductWithSuppliers = {
   country: string;
+  description: string;
   id: string;
   product: {
     id: string;

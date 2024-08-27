@@ -13,6 +13,7 @@ const ProductPage = async ({ params: { id } }: { params: { id: string } }) => {
       id: true,
       price: true,
       city: true,
+      description: true,
       country: true,
       images: true,
       product: {

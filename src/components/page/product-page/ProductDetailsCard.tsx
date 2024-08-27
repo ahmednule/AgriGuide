@@ -10,11 +10,10 @@ const ProductDetailsCard = ({
   productData: ProductWithSuppliers | null;
   currencySymbol: string;
 }) => {
-  const { city, country, price, product, supplier } = productData ?? {};
-  const description =
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus error placeat tempora debitis, aperiam tempore cum alias, magnam porro rerum praesentium, distinctio ab facere odit nemo doloribus fuga? Quisquam, veniam.  Quia, ipsum sit praesentium facilis cum doloremque amet laudantium maiores velit perferendis incidunt consectetur ad excepturi inventore reprehenderit labore. Enim mollitia laborum necessitatibus quod vero ex sit inventore voluptas nihil.";
-  const supplierName = supplier?.name;
+  const { city, country, price, product, supplier, description } = productData ?? {};
+ const supplierName = supplier?.name;
   const productName = product?.name;
+
   return (
     <article className="shadow-lg self-start p-8 rounded-xl bg-white/50">
       <header className="mb-2 flex items-center justify-between">

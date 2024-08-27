@@ -10,7 +10,7 @@ import { Skeleton } from "@nextui-org/react";
 const AgrochemicalProducts = ({
   productsWithSupplier,
 }: {
-  productsWithSupplier: ProductWithSuppliers[];
+  productsWithSupplier: Omit<ProductWithSuppliers, "description">[];
 }) => {
   const [filterName, setFilterName] = useState<Set<string>>(new Set([]));
   const [filterSupplier, setFilterSupplier] = useState<Set<string>>(

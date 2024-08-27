@@ -18,7 +18,7 @@ const AgrochemicalsFilter = ({
   setFilterSupplier: any;
   filterPrice: Set<string>;
   setFilterPrice: any;
-  productsWithSuppliers: ProductWithSuppliers[];
+  productsWithSuppliers: Omit<ProductWithSuppliers, "description">[];
 }) => {
   const { location: { country_name: country, city } = {}, isLoading } =
     useGeolocation();
