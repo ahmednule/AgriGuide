@@ -1,14 +1,14 @@
+import { GEOLOCATION_API } from "@/lib/constants";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const apiKey = process.env.GEOLOCATION_API;
-    if (!apiKey) {
+    if (!GEOLOCATION_API) {
       throw new Error("GEOLOCATION_API key is not set");
     }
 
     const response = await fetch(
-      `https://api.ipgeolocation.io/ipgeo?apiKey=${apiKey}`
+      `https://api.ipgeolocation.io/ipgeo?apiKey=${GEOLOCATION_API}`
     );
 
     if (!response.ok) {
