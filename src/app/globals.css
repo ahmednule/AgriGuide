@@ -44,4 +44,10 @@ html {
   @apply !p-1 !mx-1 !rounded-lg
 }
 
+.filepond--drop-label {
+  @apply bg-emerald-100 rounded-lg
+}
 
+.filepond--wrapper {
+  @apply col-span-full
+}
