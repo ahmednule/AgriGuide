@@ -1,4 +1,5 @@
 import {
+  faBoxesStacked,
   faClockRotateLeft,
   faCog,
   faHouse,
@@ -13,6 +14,16 @@ export const initialFormState = {
   name: "",
   email: "",
   message: "",
+  db: "",
+};
+
+export const initialSupplierFormState = {
+  name: "",
+  email: "",
+  address: "",
+  phone: "",
+  logo: "",
+  license: "",
   db: "",
 };
 
@@ -62,6 +73,11 @@ export const ADMIN_ROUTES = [
     path: "/admin/consultants",
     value: "Consultants",
     icon: faUserDoctor,
+  },
+  {
+    path: "/admin/suppliers",
+    value: "Suppliers",
+    icon: faBoxesStacked
   },
   {
     path: "/admin/admins",
