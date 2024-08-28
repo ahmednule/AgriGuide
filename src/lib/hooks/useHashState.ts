@@ -11,8 +11,14 @@ const useHashState = () => {
 
   useEffect(() => {
     if (hashState === "has-role") {
-      toast.error("You are already registered with a different role");
+      toast.error("You are already registered with a different role.a");
       // Reset the URL by removing the hash
+      window.history.replaceState(null, "", window.location.pathname);
+    } else if (hashState === "pending") {
+      toast.error("Please wait for approval.");
+      window.history.replaceState(null, "", window.location.pathname);
+    } else if (hashState === "rejected") {
+      toast.error("Your application has been rejected, please try again soon or contact us.");
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, [hashState]);
