@@ -30,3 +30,13 @@ export const editPestFormSchema = z.object({
   content: z.string().min(1, "Content is required"),
   db: z.string().optional(),
 });
+
+export const registerSupplierFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  address: z.string().min(1, "Address is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  logo: z.any(),
+  license: z.any(),
+  db: z.string().optional(),
+});
