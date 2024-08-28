@@ -9,8 +9,8 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import { Role, User } from "@prisma/client";
-import { Button, User as NextUser } from "@nextui-org/react";
+import { User } from "@prisma/client";
+import { Button, User as NextUser, Tooltip } from "@nextui-org/react";
 import { deleteUser } from "@/lib/actions";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,19 +23,14 @@ type UserColumnKey = keyof {
   email: string;
   createdAt: Date;
   updatedAt: Date;
-  role: Role | null;
 } &
-  "images";
+  "images" &
+  "User";
 
-const UserTable = ({
-  users,
-}: {
-  users: User[];
-}) => {
+const UserTable = ({ users }: { users: User[] }) => {
   // // Define columns explicitly based on the User model
   const columns = [
-    { key: "name", label: "Name" },
-    { key: "role", label: "Role" },
+    { key: "user", label: "User" },
     { key: "createdAt", label: "Created At" },
     { key: "updatedAt", label: "Updated At" },
     { key: "actions", label: "Actions" },
@@ -45,14 +40,14 @@ const UserTable = ({
   const rows = users.map((user) => ({
     key: user.id,
     image: user.image,
+    user: user.name || "-",
     name: user.name || "-",
     email: user.email || "-",
     createdAt: user.createdAt.toLocaleDateString(),
     updatedAt: user.updatedAt.toLocaleDateString(),
-    role: user.role,
   }));
 
-  const [isLoading, setIsLoading] = useState('');
+  const [isLoading, setIsLoading] = useState("");
 
   const deleteUserFn = async (userId: string) => {
     setIsLoading(userId);
@@ -62,7 +57,7 @@ const UserTable = ({
     } catch (error) {
       toast.error("Failed to delete user");
     } finally {
-      setIsLoading('');
+      setIsLoading("");
     }
   };
 
@@ -75,14 +70,13 @@ const UserTable = ({
         email: string;
         createdAt: string;
         updatedAt: string;
-        role: Role | null;
       },
       columnKey: UserColumnKey
     ) => {
       const cellValue = user[columnKey];
 
       switch (columnKey) {
-        case "name":
+        case "user":
           return (
             <NextUser
               avatarProps={{ radius: "lg", src: user.image || "" }}
@@ -95,27 +89,17 @@ const UserTable = ({
         case "actions":
           return (
             <div className="relative flex items-center gap-3 justify-center">
-              <Button
-                onPress={() => {}}
-                color="primary"
-                isIconOnly
-                title="View"
-              >
-                <FontAwesomeIcon
-                  className="text-white"
-                  size="lg"
-                  icon={faLocationArrow}
-                />
-              </Button>
-              <Button
-                color="danger"
-                title="Delete"
-                onPress={() => deleteUserFn(user.key)}
-                isLoading={isLoading === user.key}
-                isIconOnly
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </Button>
+              <Tooltip color="danger" content="Delete">
+                <Button
+                  color="danger"
+                  title="Delete"
+                  onPress={() => deleteUserFn(user.key)}
+                  isLoading={isLoading === user.key}
+                  isIconOnly
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              </Tooltip>
             </div>
           );
         default:
