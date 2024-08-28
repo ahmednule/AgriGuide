@@ -65,12 +65,15 @@ const ProductPage = async ({ params: { id } }: { params: { id: string } }) => {
             productData={productData}
           />
         </div>
-        <section className="mb-10 mx-10 mt-20">
-          <h2 className="text-xl mb-10 text-emerald-900">
-            More products from <span className="font-bold">{productData?.supplier.name}</span>
-          </h2>
-          <AgrochemicalsList productsWithSupplier={productsWithSupplier} />
-        </section>
+        {productsWithSupplier.length > 0 && (
+          <section className="mb-10 mx-10 mt-20">
+            <h2 className="text-xl mb-10 text-emerald-900">
+              More products from{" "}
+              <span className="font-bold">{productData?.supplier.name}</span>
+            </h2>
+            <AgrochemicalsList productsWithSupplier={productsWithSupplier} />
+          </section>
+        )}
       </main>
     </>
   );
