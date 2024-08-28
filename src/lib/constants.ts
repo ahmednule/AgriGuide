@@ -1,4 +1,5 @@
 import {
+  faAdd,
   faBoxesStacked,
   faClockRotateLeft,
   faCog,
@@ -77,7 +78,7 @@ export const ADMIN_ROUTES = [
   {
     path: "/admin/suppliers",
     value: "Suppliers",
-    icon: faBoxesStacked
+    icon: faBoxesStacked,
   },
   {
     path: "/admin/admins",
@@ -118,3 +119,18 @@ export const CUSTOMER_ROUTES = [
     icon: faCog,
   },
 ];
+
+export const SUPPLIER_ROUTES = [
+  {
+    path: "/supplier/dashboard",
+    value: "Dashboard",
+    icon: faHouse,
+  },
+  {
+    path: "/supplier/add-product",
+    value: "Add Product",
+    icon: faAdd,
+  },
+];
+
+export const GEOLOCATION_API = process.env.GEOLOCATION_API;
