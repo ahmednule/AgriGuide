@@ -17,6 +17,7 @@ import { useFormState } from "react-dom";
 import { initialSupplierFormState } from "@/lib/constants";
 import { registerSupplier } from "@/lib/actions";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 registerPlugin(
   FilePondPluginImageExifOrientation,
@@ -32,11 +33,13 @@ const SupplierForm = ({ user }: { user: User }) => {
     { address, email: emailState, name: nameState, phone, db, license, logo },
     formAction,
   ] = useFormState(registerSupplier, initialSupplierFormState);
+  const router = useRouter();
 
   useEffect(() => {
     if (db) {
       if (db === "success") {
         toast.success("Successfully registered, please wait for approval");
+        router.push("/");
       } else {
         toast.error(db);
       }
