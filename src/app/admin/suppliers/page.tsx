@@ -5,8 +5,12 @@ import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import React from "react";
 
-const CustomersPage = async () => {
-  const suppliers = await prisma.supplier.findMany();
+const SuppliersPage = async () => {
+  const suppliers = await prisma.supplier.findMany({
+    where: {
+      status: { not: null },
+    },
+  });
   return (
     <>
       <MobileNav />
@@ -16,4 +20,4 @@ const CustomersPage = async () => {
   );
 };
 
-export default CustomersPage;
+export default SuppliersPage;
