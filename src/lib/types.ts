@@ -4,9 +4,10 @@ import {
   contactFormSchema,
   addDiseaseFormSchema,
   editPestFormSchema,
+  registerSupplierFormSchema,
 } from "./schemas";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { Product, ScanType, Supplier } from "@prisma/client";
+import { Product, Role, Scan, ScanType, Supplier, User } from "@prisma/client";
 
 export type ContactForm = z.infer<typeof contactFormSchema>;
 
@@ -15,6 +16,8 @@ export type AddPestForm = z.infer<typeof addPestFormSchema>;
 export type AddDiseaseForm = z.infer<typeof addDiseaseFormSchema>;
 
 export type EditPestForm = z.infer<typeof editPestFormSchema>;
+
+export type RegisterSupplierForm = z.infer<typeof registerSupplierFormSchema>;
 
 export type TFeatureItem =
   | {
@@ -119,4 +122,16 @@ export type IpInfo = {
   geoname_id: number;
   currency: Currency;
   time_zone: TimeZone;
+};
+
+export type CustomerScan = {
+  id: string;
+  role: Role | null;
+  image: string | null;
+  name: string | null;
+  totalScans: number;
+  updatedAt: Date;
+  createdAt: Date;
+  userName: string | null;
+  userEmail: string | null;
 };
