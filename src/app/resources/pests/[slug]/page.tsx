@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import { deletePest, editPest } from "@/lib/actions";
 import MobileNav from "@/components/ui/MobileNav";
+import { ResourceType } from "@/lib/types";
 
 const PestPage = async ({ params }: { params: { slug: string } }) => {
   const pest = await prisma.pest.findUnique({
@@ -22,7 +23,7 @@ const PestPage = async ({ params }: { params: { slug: string } }) => {
       <MobileNav />
       <ResourceContent
         deleteResource={deletePest}
-        type="Pest"
+        type={ResourceType.PEST}
         editFn={editPest}
         resource={pest}
         isAdmin={isAdmin}

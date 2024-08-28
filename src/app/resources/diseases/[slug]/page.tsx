@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { Role } from "@prisma/client";
 import { deleteDisease, editDisease } from "@/lib/actions";
 import MobileNav from "@/components/ui/MobileNav";
+import { ResourceType } from "@/lib/types";
 
 const DiseasePage = async ({ params }: { params: { slug: string } }) => {
   const disease = await prisma.disease.findUnique({
@@ -23,7 +24,7 @@ const DiseasePage = async ({ params }: { params: { slug: string } }) => {
       <MobileNav />
       <ResourceContent
         deleteResource={deleteDisease}
-        type="Disease"
+        type={ResourceType.DISEASE}
         editFn={editDisease}
         resource={disease}
         isAdmin={isAdmin}
