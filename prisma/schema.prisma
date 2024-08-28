@@ -46,7 +46,8 @@ model User {
 
   customer   Customer?
   consultant Consultant?
-  Admin      Admin?
+  admin      Admin?
+  supplier   Supplier?
 
   @@map("users")
 }
@@ -80,6 +81,27 @@ model Consultant {
   isConsultantVerified Boolean? @default(false) @map("is_verified")
 
   @@map("consultants")
+}
+
+model Supplier {
+  user            User              @relation(fields: [id], references: [id], onDelete: Cascade)
+  id              String            @id @default(cuid())
+  name            String            @unique
+  logo            String
+  address         String
+  phone           String
+  license         String
+  email           String
+  status          SupplierStatus?
+  approvedBy      String?           @map("approved_by")
+  approvedAt      DateTime?         @map("approved_at")
+  rejectedBy      String?           @map("rejected_by")
+  rejectedAt      DateTime?         @map("rejected_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  ProductSupplier ProductSupplier[]
+
+  @@map("suppliers")
 }
 
 model Admin {
@@ -138,26 +160,6 @@ model Product {
   ProductSupplier ProductSupplier[]
 
   @@map("products")
-}
-
-model Supplier {
-  id              String            @id @default(cuid())
-  name            String            @unique
-  logo            String
-  address         String
-  phone           String
-  license         String
-  email           String
-  status          SupplierStatus?
-  approvedBy      String?           @map("approved_by")
-  approvedAt      DateTime?         @map("approved_at")
-  rejectedBy      String?           @map("rejected_by")
-  rejectedAt      DateTime?         @map("rejected_at")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  ProductSupplier ProductSupplier[]
-
-  @@map("suppliers")
 }
 
 model ProductSupplier {
