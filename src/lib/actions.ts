@@ -5,12 +5,14 @@ import {
   addPestFormSchema,
   contactFormSchema,
   editPestFormSchema,
+  registerSupplierFormSchema,
 } from "./schemas";
 import {
   initialAddPestFormState,
   initialDiseaseFormState,
   initialEditPestFormState,
   initialFormState,
+  initialSupplierFormState,
   ScanStatus,
 } from "./constants";
 import {
@@ -18,6 +20,7 @@ import {
   AddPestForm,
   ContactForm,
   EditPestForm,
+  RegisterSupplierForm,
   ResourceType,
 } from "./types";
 import { Resend } from "resend";
@@ -26,7 +29,7 @@ import OpenAI from "openai";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import prisma from "./prisma";
-import { Role, ScanType } from "@prisma/client";
+import { Role, ScanType, SupplierStatus } from "@prisma/client";
 import { supabase } from "./supabase";
 import removeMarkdown from "remove-markdown";
 import { getResourceDescription, getResourceName } from "./utils";
@@ -748,7 +751,7 @@ export const deleteImage = async ({
   const session = await auth();
   const user = session?.user;
 
-  if (!user || user.role !== Role.ADMIN) return
+  if (!user || user.role !== Role.ADMIN) return;
 
   // Extract the file name from the URL
   const fileName = imageUrl.split("/").pop();
@@ -797,4 +800,236 @@ export const deleteImage = async ({
   }
 
   revalidatePath(`/resources`);
+};
+
+export const registerSupplier = async (
+  formState: RegisterSupplierForm,
+  formData: FormData
+): Promise<RegisterSupplierForm> => {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const address = formData.get("address") as string;
+  const phone = formData.get("phone") as string;
+  const logo = formData.get("logo") as any;
+  const license = formData.get("license") as any;
+
+  const session = await auth();
+  const id = session?.user.id;
+
+  const { success, data, error } = registerSupplierFormSchema.safeParse({
+    name,
+    email,
+    address,
+    phone,
+    logo,
+    license,
+  });
+
+  if (!success) {
+    return {
+      ...initialSupplierFormState,
+      name: error.flatten().fieldErrors.name?.[0] ?? "",
+      email: error.flatten().fieldErrors.email?.[0] ?? "",
+      address: error.flatten().fieldErrors.address?.[0] ?? "",
+      phone: error.flatten().fieldErrors.phone?.[0] ?? "",
+      logo: error.flatten().fieldErrors.logo?.[0] ?? "",
+      license: error.flatten().fieldErrors.license?.[0] ?? "",
+    };
+  }
+
+  const parsedLogo = JSON.parse(logo);
+  const parsedLicense = JSON.parse(license);
+  const logoBuffer = Buffer.from(parsedLogo.data, "base64");
+  const licenseBuffer = Buffer.from(parsedLicense.data, "base64");
+
+  try {
+
+    const folderName = `supplier/${name}`;
+    const logoFileName = `${folderName}/${Date.now()}_${parsedLogo.name}`;
+    const licenseFileName = `${folderName}/${Date.now()}_${parsedLicense.name}`;
+    const { data: logoData, error: logoError } = await supabase.storage
+      .from("images")
+      .upload(logoFileName, logoBuffer, {
+        contentType: parsedLogo.type,
+      });
+    const { data: licenseData, error: licenseError } = await supabase.storage
+      .from("images")
+      .upload(licenseFileName, licenseBuffer, {
+        contentType: parsedLicense.type,
+      });
+
+    if (logoError || licenseError) {
+      throw new Error("Failed to upload images");
+    }
+
+    await prisma.supplier.update({
+      where: {
+        id,
+      },
+      data: {
+        name: data.name,
+        email: data.email,
+        address: data.address,
+        status: SupplierStatus.PENDING,
+        phone: data.phone,
+        logo: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${logoData.fullPath}`,
+        license: `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${licenseData.fullPath}`,
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role: Role.SUPPLIER,
+      },
+    });
+
+    return {
+      ...initialSupplierFormState,
+      db: "success",
+    };
+  } catch (error) {
+    return {
+      ...initialSupplierFormState,
+      db:
+        "Error registering supplier: " +
+        (error instanceof Error ? error.message : "Unknown error"),
+    };
+  }
+};
+
+export const deleteSupplier = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to delete a supplier");
+
+  try {
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+    await prisma.supplier.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete supplier" + error.message);
+  }
+
+  revalidatePath("/resources/suppliers");
+};
+
+export const approveSupplier = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to approve a supplier");
+
+  try {
+    await prisma.supplier.update({
+      where: {
+        id,
+      },
+      data: {
+        status: SupplierStatus.APPROVED,
+        approvedBy: user.name,
+        approvedAt: new Date(),
+        rejectedAt: null,
+        rejectedBy: null,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to approve supplier" + error.message);
+  }
+
+  revalidatePath("/resources/suppliers");
+};
+
+export const rejectSupplier = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to reject a supplier");
+
+  try {
+    await prisma.supplier.update({
+      where: {
+        id,
+      },
+      data: {
+        status: SupplierStatus.REJECTED,
+        rejectedBy: user.name,
+        rejectedAt: new Date(),
+        approvedAt: null,
+        approvedBy: null,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to reject supplier" + error.message);
+  }
+
+  revalidatePath("/resources/suppliers");
+};
+
+export const cancelRejection = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to cancel rejection of a supplier");
+
+  try {
+    await prisma.supplier.update({
+      where: {
+        id,
+      },
+      data: {
+        status: SupplierStatus.PENDING,
+        rejectedBy: null,
+        rejectedAt: null,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to cancel rejection of supplier" + error.message);
+  }
+
+  revalidatePath("/resources/suppliers");
+};
+
+export const cancelApproval = async (id: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.ADMIN)
+    throw new Error("You must be an admin to cancel approval of a supplier");
+
+  try {
+    await prisma.supplier.update({
+      where: {
+        id,
+      },
+      data: {
+        status: SupplierStatus.PENDING,
+        approvedBy: null,
+        approvedAt: null,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to cancel approval of supplier" + error.message);
+  }
+
+  revalidatePath("/resources/suppliers");
 };
