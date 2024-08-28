@@ -24,8 +24,8 @@ const AgrochemicalProducts = ({
    
   if (productsWithSupplier.length === 0)
     return (
-      <p className="text-emerald-700 text-center">
-        No products currently available
+      <p className="text-emerald-700 mt-20 text-center">
+        No products currently available 😢
       </p>
     );
 
