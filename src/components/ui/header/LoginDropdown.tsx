@@ -50,6 +50,17 @@ const LoginDropdown = () => {
             </DropdownItem>
             <DropdownItem
               onPress={() =>
+                signIn("google", {
+                  callbackUrl: "/user/supplier/login",
+                })
+              }
+              className={cn("hover:!bg-emerald-600 hover:!text-white")}
+              key="supplier"
+            >
+              Supplier
+            </DropdownItem>
+            <DropdownItem
+              onPress={() =>
                 signIn("google", { callbackUrl: "/user/admin/login" })
               }
               className={cn("hover:!bg-emerald-600 hover:!text-white")}
