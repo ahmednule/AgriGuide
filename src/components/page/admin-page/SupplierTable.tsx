@@ -34,9 +34,23 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Supplier, SupplierStatus } from "@prisma/client";
 
-type SupplierTableColumn = keyof Omit<Supplier, "logo"> | "actions" | "supplier";
+type SupplierTableColumn =
+  | keyof Omit<
+      Supplier & {
+        _count: {
+          ProductSupplier: number;
+        };
+      },
+      "logo"
+    >
+  | "actions"
+  | "supplier";
 
-const SupplierTable = ({ suppliers }: { suppliers: Supplier[] }) => {
+const SupplierTable = ({
+  suppliers,
+}: {
+  suppliers: (Supplier & { _count: { ProductSupplier: number } })[];
+}) => {
   const columns: { key: SupplierTableColumn; label: string }[] = [
     { key: "supplier", label: "Supplier" },
     { key: "createdAt", label: "Created At" },
@@ -57,6 +71,10 @@ const SupplierTable = ({ suppliers }: { suppliers: Supplier[] }) => {
       key: "status",
       label: "Status",
     },
+    {
+      key: "_count",
+      label: "No. of Products",
+    },
     { key: "actions", label: "Actions" },
   ];
 
@@ -69,11 +87,12 @@ const SupplierTable = ({ suppliers }: { suppliers: Supplier[] }) => {
     updatedAt: supplier.updatedAt.toLocaleString(),
     address: supplier.address,
     phone: supplier.phone,
+    _count: supplier._count.ProductSupplier,
     license: supplier.license,
-    approvedBy: supplier.approvedBy || "-",
-    approvedAt: supplier.approvedAt?.toLocaleString() || "-",
-    rejectedBy: supplier.rejectedBy || "-",
-    rejectedAt: supplier.rejectedAt?.toLocaleString() || "-",
+    approvedBy: supplier.approvedBy,
+    approvedAt: supplier.approvedAt?.toLocaleString(),
+    rejectedBy: supplier.rejectedBy,
+    rejectedAt: supplier.rejectedAt?.toLocaleString(),
     status: supplier.status,
   }));
 
@@ -322,7 +341,7 @@ const SupplierTable = ({ suppliers }: { suppliers: Supplier[] }) => {
             </div>
           );
         default:
-          return cellValue || "-";
+          return columnKey === "_count" ? cellValue || 0 : cellValue || "-";
       }
     },
     [
@@ -340,7 +359,7 @@ const SupplierTable = ({ suppliers }: { suppliers: Supplier[] }) => {
         {(column) => (
           <TableColumn
             key={column.key}
-            align={column.key === "actions" ? "center" : "start"}
+            align={column.key === "actions" || column.key === "_count" ? "center" : "start"}
           >
             {column.label}
           </TableColumn>
