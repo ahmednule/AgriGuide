@@ -91,13 +91,14 @@ const AvatarDropdown = ({
             `}
           >
             {userRole === Role.CUSTOMER
-              ? "Customer"
+              ? "Customer Panel"
               : userRole === Role.CONSULTANT
-              ? "Consultant"
+              ? "Consultant Panel"
               : userRole === Role.SUPPLIER
-              ? "Supplier"
-              : "Admin"}{" "}
-            Panel
+              ? "Supplier Panel"
+              : userRole === Role.ADMIN
+              ? "Admin Panel"
+              : ""}
           </DropdownItem>
         </DropdownSection>
         <DropdownSection aria-label="logout">
