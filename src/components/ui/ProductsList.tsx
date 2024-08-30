@@ -72,14 +72,15 @@ const ProductsList = ({
                   </h2>
                   <p className="mt-2 text-gray-600">{product.description}</p>
                 </div>
-                <div className="flex flex-col md:flex-row md:gap-0 mt-5 gap-2 justify-between">
-                  <p className="text-gray-500 text-sm">
+                <div className="flex flex-col text-gray-500 text-xs md:flex-row md:gap-5 mt-5 gap-2">
+                  <p>
                     Created:{" "}
                     {formatDistanceToNow(new Date(product.createdAt), {
                       addSuffix: true,
                     })}
                   </p>
-                  <p className="text-gray-500 text-sm">
+                  <span className="hidden md:inline">|</span>
+                  <p>
                     Last updated:{" "}
                     {formatDistanceToNow(new Date(product.updatedAt), {
                       addSuffix: true,
