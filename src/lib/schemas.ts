@@ -40,3 +40,14 @@ export const registerSupplierFormSchema = z.object({
   license: z.any(),
   db: z.string().optional(),
 });
+
+export const addProductFormSchema = z.object({
+  name: z.string().min(1, "Name is required").optional(),
+  price: z.string().min(1, "Price is required"),
+  description: z.string().min(1, "Description is required"),
+  images: z.array(z.string()).or(z.string()),
+  country: z.string().min(1, "Country is required"),
+  region: z.string().min(1, "Region is required"),
+  city: z.string().min(1, "City is required"),
+  db: z.string().optional(),
+});
