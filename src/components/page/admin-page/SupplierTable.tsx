@@ -169,7 +169,7 @@ const SupplierTable = ({
       switch (columnKey) {
         case "license":
           return (
-            <Link isExternal title="View license" href={cellValue}>
+            <Link className="underline" isExternal title="View license" href={cellValue}>
               <FontAwesomeIcon icon={faEye} />
               <span className="ml-2">License</span>
             </Link>
@@ -217,6 +217,8 @@ const SupplierTable = ({
               {supplier.email}
             </NextUser>
           );
+        case "_count":
+          return <Link className="underline" href={`/admin/suppliers/${supplier.key}/products`}>{cellValue}</Link>;
         case "actions":
           return (
             <div className="relative flex items-center gap-3 justify-center">
@@ -341,7 +343,7 @@ const SupplierTable = ({
             </div>
           );
         default:
-          return columnKey === "_count" ? cellValue || 0 : cellValue || "-";
+          return cellValue || "-";
       }
     },
     [
@@ -359,7 +361,11 @@ const SupplierTable = ({
         {(column) => (
           <TableColumn
             key={column.key}
-            align={column.key === "actions" || column.key === "_count" ? "center" : "start"}
+            align={
+              column.key === "actions" || column.key === "_count"
+                ? "center"
+                : "start"
+            }
           >
             {column.label}
           </TableColumn>
