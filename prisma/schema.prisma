@@ -163,9 +163,10 @@ model Product {
 }
 
 model ProductSupplier {
-  id          String   @id @default(cuid())
+  id          String   @unique @default(cuid())
   country     String
   city        String
+  region      String
   price       Float
   description String
   images      String[]
@@ -176,6 +177,7 @@ model ProductSupplier {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  @@id([country, city, region, productId, supplierId])
   @@map("product_suppliers")
 }
 
