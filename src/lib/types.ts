@@ -5,6 +5,7 @@ import {
   addDiseaseFormSchema,
   editPestFormSchema,
   registerSupplierFormSchema,
+  addProductFormSchema,
 } from "./schemas";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Product, Role, Scan, ScanType, Supplier, User } from "@prisma/client";
@@ -18,6 +19,8 @@ export type AddDiseaseForm = z.infer<typeof addDiseaseFormSchema>;
 export type EditPestForm = z.infer<typeof editPestFormSchema>;
 
 export type RegisterSupplierForm = z.infer<typeof registerSupplierFormSchema>;
+
+export type AddProductForm = z.infer<typeof addProductFormSchema>;
 
 export type TFeatureItem =
   | {
