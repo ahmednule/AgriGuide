@@ -3,12 +3,14 @@
 import {
   addDiseaseFormSchema,
   addPestFormSchema,
+  addProductFormSchema,
   contactFormSchema,
   editPestFormSchema,
   registerSupplierFormSchema,
 } from "./schemas";
 import {
   initialAddPestFormState,
+  initialAddProductFormState,
   initialDiseaseFormState,
   initialEditPestFormState,
   initialFormState,
@@ -18,6 +20,7 @@ import {
 import {
   AddDiseaseForm,
   AddPestForm,
+  AddProductForm,
   ContactForm,
   EditPestForm,
   RegisterSupplierForm,
@@ -843,7 +846,6 @@ export const registerSupplier = async (
   const licenseBuffer = Buffer.from(parsedLicense.data, "base64");
 
   try {
-
     const folderName = `supplier/${name}`;
     const logoFileName = `${folderName}/${Date.now()}_${parsedLogo.name}`;
     const licenseFileName = `${folderName}/${Date.now()}_${parsedLicense.name}`;
@@ -1033,3 +1035,136 @@ export const cancelApproval = async (id: string) => {
 
   revalidatePath("/resources/suppliers");
 };
+
+export async function addProduct(prevState: any, formData: FormData) {
+  const name = formData.get("name") as string;
+  const price = formData.get("price") as string;
+  const description = formData.get("description") as string;
+  const images = formData.getAll("images") as any;
+  const city = formData.get("city") as string;
+  const id = formData.get("id") as string;
+  const country = formData.get("country") as string;
+  const region = formData.get("region") as string;
+
+  const session = await auth();
+  const user = session?.user;
+
+  const { success, data, error } = addProductFormSchema.safeParse({
+    name,
+    price,
+    description,
+    images,
+    city,
+    country,
+    id,
+    region,
+  });
+  
+  if (!success) {
+    return {
+      ...initialAddProductFormState,
+      name: error.flatten().fieldErrors.name?.[0] ?? "",
+      price: error.flatten().fieldErrors.price?.[0] ?? "",
+      description: error.flatten().fieldErrors.description?.[0] ?? "",
+      images: error.flatten().fieldErrors.images?.[0] ?? "",
+      city: error.flatten().fieldErrors.city?.[0] ?? "",
+      country: error.flatten().fieldErrors.country?.[0] ?? "",
+      region: error.flatten().fieldErrors.region?.[0] ?? "",
+      id: error.flatten().fieldErrors.id?.[0] ?? "",
+    };
+  }
+
+  const imageBuffers = images.map((image: any) => {
+    const parsedImage = JSON.parse(image);
+    return Buffer.from(parsedImage.data, "base64");
+  });
+
+  try {
+    let productId = id;
+    if (name && !id) { //if product doesnt exist
+      const product = await prisma.product.create({
+        data: {
+          name,
+        },
+      });
+      productId = product.id;
+    }
+
+    const folderName = `products/${name}`;
+    const imageUrls = await Promise.all(
+      imageBuffers.map(async (imageBuffer: any) => {
+        const fileName = `${folderName}/${Date.now()}_${Math.random()}.jpeg`;
+        const { data: imageData, error } = await supabase.storage
+          .from("images")
+          .upload(fileName, imageBuffer, {
+            contentType: "image/jpeg",
+          });
+
+        if (error) throw error;
+
+        return `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`;
+      })
+    );
+
+    await prisma.productSupplier.create({
+      data: {
+        price: parseFloat(data.price),
+        description: data.description,
+        images: imageUrls,
+        city: data.city,
+        country: data.country,
+        region: data.region,
+        supplierId: user?.id!,
+        productId,
+      },
+    });
+
+    return {
+      ...initialAddProductFormState,
+      db: "success",
+    };
+  } catch (error) {
+    return {
+      ...initialAddProductFormState,
+      db:
+        "Error adding product: " +
+        (error instanceof Error ? error.message : "Unknown error"),
+    };
+  }
+}
+
+export const deleteProduct = async ({id, imagesUrl}: {id: string, imagesUrl: string[]}) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (user?.role !== Role.SUPPLIER && user?.role !== Role.ADMIN)
+    throw new Error("You are not allowed to delete product");
+
+  try {
+    await prisma.productSupplier.delete({
+      where: {
+        id,
+      },
+    });
+
+    imagesUrl.forEach(async (imageUrl) => {
+      const fileName = imageUrl.split("/").pop();
+      if (!fileName) {
+        throw new Error("Invalid image URL");
+      }
+
+      const { error: deleteError } = await supabase.storage
+        .from("images")
+        .remove([`products/${fileName}`]);
+
+      if (deleteError) {
+        throw new Error("Failed to delete image from storage");
+      }
+    });
+  } catch (error) {
+    if (error instanceof Error)
+      throw new Error("Failed to delete product" + error.message);
+  }
+
+  revalidatePath("/supplier/view-products");
+}
