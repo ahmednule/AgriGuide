@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import React from "react";
 
-const SupplierProducts = async ({
+const AdminSupplierProductsPage = async ({
   params: { id },
 }: {
   params: {
@@ -13,16 +13,6 @@ const SupplierProducts = async ({
   };
 }) => {
   if (!id) notFound();
-  const products = await prisma.productSupplier.findMany({
-    where: {
-      supplierId: id,
-    },
-    include: {
-      product: true,
-    },
-  });
-
-  if (!products) notFound();
 
   const supplier = await prisma.supplier.findUnique({
     where: {
@@ -33,7 +23,18 @@ const SupplierProducts = async ({
     },
   });
 
-  const supplierName = supplier?.name || "Supplier's";
+  if(!supplier) notFound();
+
+  const supplierName = supplier?.name || "Supplier";
+
+  const products = await prisma.productSupplier.findMany({
+    where: {
+      supplierId: id,
+    },
+    include: {
+      product: true,
+    },
+  });
 
   return (
     <>
@@ -42,10 +43,13 @@ const SupplierProducts = async ({
         <SectionHeader as="h1" className="m-0 text-left">
           {supplierName}&apos;s Products
         </SectionHeader>
-        <ProductsList products={products} />
+        {products.length > 0 && <ProductsList products={products} />}
+        {products.length === 0 && (
+          <p className="text-center text-gray-500 mt-10">No products found</p>
+        )}
       </section>
     </>
   );
 };
 
-export default SupplierProducts;
+export default AdminSupplierProductsPage;
