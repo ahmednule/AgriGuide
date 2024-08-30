@@ -28,7 +28,7 @@ const SupplierDashboard = async () => {
   const suppliers = users.filter((user) => user.role === Role.SUPPLIER);
 
   const session = await auth();
-  const user = session?.user;
+  const user = session!.user;
 
   const res = await fetch(
     `https://api.ipgeolocation.io/ipgeo?apiKey=${GEOLOCATION_API}`
@@ -39,7 +39,7 @@ const SupplierDashboard = async () => {
   }: IpInfo = await res.json();
 
   const products = await prisma.productSupplier.findMany({
-    where: { supplierId: user?.id },
+    where: { supplierId: user.id },
   });
 
   const productNameWithCount = await prisma.productSupplier.groupBy({
@@ -48,7 +48,7 @@ const SupplierDashboard = async () => {
       _all: true,
     },
     where: {
-      supplierId: user?.id,
+      supplierId: user.id,
     },
     orderBy: {
       _count: {
