@@ -36,7 +36,7 @@ const LocationAutocomplete = ({
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedCity, setSelectedCity] = useState<any>("");
-  
+
   const handleSearch = useCallback(
     debounce((query: string) => {
       fetchCities(query);
@@ -45,7 +45,10 @@ const LocationAutocomplete = ({
   );
 
   const fetchCities = async (query: string) => {
-    if (query.length < 3) return setCities([]);
+    if (query.length < 3) {
+      setCities([]);
+      setSelectedCity("");
+    }
 
     setLoading(true);
     try {
