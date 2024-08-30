@@ -17,7 +17,7 @@ registerPlugin(
   FilePondPluginFileValidateSize
 );
 
-const ImageUpload = forwardRef(({ name }: { name: string }, ref?) => {
+const ImageUpload = forwardRef(({ name, allowMultiple = false}: { name: string, allowMultiple?: boolean }, ref?) => {
   const pondRef = useRef<FilePond>(null);
 
   useImperativeHandle(ref, () => ({
@@ -33,11 +33,11 @@ const ImageUpload = forwardRef(({ name }: { name: string }, ref?) => {
       <FilePond
         ref={pondRef}
         required
-        allowReorder={false}
+        allowReorder={allowMultiple}
         acceptedFileTypes={["image/*"]}
         name={name}
         labelFileTypeNotAllowed="Invalid file type. Please upload an image"
-        allowMultiple={false}
+        allowMultiple={allowMultiple}
         labelFileProcessingError="An error occurred during processing"
         labelIdle="Drag & Drop or Browse your desired image"
         maxFileSize="1MB"
