@@ -16,7 +16,7 @@ const ProductsList = ({
     product: Product;
   } & ProductSupplier)[];
 }) => {
-  const [isDeletingProduct, setIsDeletingProduct] = useState('');
+  const [isDeletingProduct, setIsDeletingProduct] = useState("");
   const handleDeleteProduct = async ({
     id,
     imagesUrl,
@@ -38,12 +38,12 @@ const ProductsList = ({
         }`
       );
     } finally {
-      setIsDeletingProduct('');
+      setIsDeletingProduct("");
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
       {products.map((product, index) => (
         <Card key={product.id} className="relative mb-8">
           <div className="md:flex">
@@ -72,12 +72,20 @@ const ProductsList = ({
                   </h2>
                   <p className="mt-2 text-gray-600">{product.description}</p>
                 </div>
-                <p className="text-gray-500 text-sm ">
-                  Updated{" "}
-                  {formatDistanceToNow(new Date(product.updatedAt), {
-                    addSuffix: true,
-                  })}
-                </p>
+                <div className="flex flex-col md:flex-row md:gap-0 mt-5 gap-2 justify-between">
+                  <p className="text-gray-500 text-sm">
+                    Created:{" "}
+                    {formatDistanceToNow(new Date(product.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Last updated:{" "}
+                    {formatDistanceToNow(new Date(product.updatedAt), {
+                      addSuffix: true,
+                    })}
+                  </p>
+                </div>
               </div>
               <div className="flex flex-col-reverse gap-3 md:flex-col">
                 <p className="text-lg font-bold text-green-600 flex items-center justify-end">
@@ -95,7 +103,9 @@ const ProductsList = ({
             color="danger"
             variant="flat"
             className="absolute z-50 bottom-2 left-2 md:right-2 md:left-auto"
-            onClick={() => handleDeleteProduct({id: product.id, imagesUrl: product.images})}
+            onClick={() =>
+              handleDeleteProduct({ id: product.id, imagesUrl: product.images })
+            }
           >
             <FontAwesomeIcon icon={faTrash} />
           </Button>
