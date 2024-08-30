@@ -1042,7 +1042,6 @@ export async function addProduct(prevState: any, formData: FormData) {
   const description = formData.get("description") as string;
   const images = formData.getAll("images") as any;
   const city = formData.get("city") as string;
-  const id = formData.get("id") as string;
   const country = formData.get("country") as string;
   const region = formData.get("region") as string;
 
@@ -1056,10 +1055,9 @@ export async function addProduct(prevState: any, formData: FormData) {
     images,
     city,
     country,
-    id,
     region,
   });
-  
+
   if (!success) {
     return {
       ...initialAddProductFormState,
@@ -1070,7 +1068,26 @@ export async function addProduct(prevState: any, formData: FormData) {
       city: error.flatten().fieldErrors.city?.[0] ?? "",
       country: error.flatten().fieldErrors.country?.[0] ?? "",
       region: error.flatten().fieldErrors.region?.[0] ?? "",
-      id: error.flatten().fieldErrors.id?.[0] ?? "",
+    };
+  }
+
+  // check whether the product with the same name, city, country, region and supplier already exists
+  const productSupplier = await prisma.productSupplier.findFirst({
+    where: {
+      product: {
+        name
+      },
+      city,
+      country,
+      region,
+      supplierId: user?.id!,
+    },
+  });
+
+  if (productSupplier) {
+    return {
+      ...initialAddProductFormState,
+      db: "You have already added a similar product in that location.",
     };
   }
 
@@ -1080,14 +1097,24 @@ export async function addProduct(prevState: any, formData: FormData) {
   });
 
   try {
-    let productId = id;
-    if (name && !id) { //if product doesnt exist
-      const product = await prisma.product.create({
+    // check if product exists by name
+    const product = await prisma.product.findUnique({
+      where: {
+        name,
+      },
+    });
+
+    let productId = product?.id;
+
+    if (!product) {
+      // create product if it doesnt exist
+      const { id } = await prisma.product.create({
         data: {
           name,
         },
       });
-      productId = product.id;
+
+      productId = id;
     }
 
     const folderName = `products/${name}`;
@@ -1115,9 +1142,11 @@ export async function addProduct(prevState: any, formData: FormData) {
         country: data.country,
         region: data.region,
         supplierId: user?.id!,
-        productId,
+        productId: productId!,
       },
     });
+
+    revalidatePath("/supplier/add-product");
 
     return {
       ...initialAddProductFormState,
@@ -1133,7 +1162,13 @@ export async function addProduct(prevState: any, formData: FormData) {
   }
 }
 
-export const deleteProduct = async ({id, imagesUrl}: {id: string, imagesUrl: string[]}) => {
+export const deleteProduct = async ({
+  id,
+  imagesUrl,
+}: {
+  id: string;
+  imagesUrl: string[];
+}) => {
   const session = await auth();
   const user = session?.user;
 
@@ -1167,4 +1202,4 @@ export const deleteProduct = async ({id, imagesUrl}: {id: string, imagesUrl: str
   }
 
   revalidatePath("/supplier/view-products");
-}
+};
