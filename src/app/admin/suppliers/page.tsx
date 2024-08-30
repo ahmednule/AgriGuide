@@ -10,7 +10,13 @@ const SuppliersPage = async () => {
     where: {
       status: { not: null },
     },
+    include: {
+      _count: {
+        select: { ProductSupplier: true },
+      },
+    },
   });
+
   return (
     <>
       <MobileNav />
