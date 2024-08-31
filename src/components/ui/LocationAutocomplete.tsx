@@ -151,6 +151,9 @@ const LocationAutocomplete = ({
       onInputChange={handleInputChange}
       inputValue={inputValue}
       isLoading={loading}
+      listboxProps={{
+        emptyContent: "No location found.",
+      }}
       selectedKey={selectedKey}
       onSelectionChange={handleSelect as any}
     >
@@ -164,7 +167,7 @@ const LocationAutocomplete = ({
               <Image
                 src={`https://flagcdn.com/48x36/${item.countryCode.toLowerCase()}.png`}
                 alt={`${item.city}, ${item.region}, ${item.country}`}
-                className="w-6 h-6 mr-2"
+                className="w-5 h-5 mr-2"
               />
             )}
             <span>{`${item.city}, ${item.region}, ${item.country}`}</span>
