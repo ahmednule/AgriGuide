@@ -1,23 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Autocomplete, AutocompleteItem, Image } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import debounce from "lodash.debounce";
-import { useFormStatus } from "react-dom";
 
 interface City {
   id: string;
-  name: string;
   country: string;
   region: string;
+  city: string;
   countryCode?: string;
 }
 
 const LocationAutocomplete = ({
   setSelectedPlace,
   name,
-  errorState: { city, country, region },
+  errorState,
 }: {
   setSelectedPlace: React.Dispatch<
     React.SetStateAction<{
@@ -35,23 +34,17 @@ const LocationAutocomplete = ({
 }) => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedCity, setSelectedCity] = useState<any>("");
+  const [inputValue, setInputValue] = useState("");
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
-  const handleSearch = useCallback(
-    debounce((query: string) => {
-      fetchCities(query);
-    }, 500),
-    []
-  );
-
-  const fetchCities = async (query: string) => {
-    if (query.length < 3) {
+  const fetchCities = useCallback(async (query: string) => {
+    if (!query) {
       setCities([]);
-      setSelectedCity("");
+      return;
     }
 
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await fetch(
         `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}&limit=10`,
         {
@@ -62,108 +55,122 @@ const LocationAutocomplete = ({
           },
         }
       );
-      if (!response.ok && response.status !== 429)
+      if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
+      }
       const data = await response.json();
-      if (!data?.data) return;
-
-      setCities(
-        data.data.map((city: City) => ({
-          id: city.id,
-          name: `${city.name}, ${city.region}, ${city.country}`,
-          country: city.country,
-          region: city.region,
-          countryCode: city.countryCode,
-        }))
-      );
+      if (data?.data.length > 0) {
+        setCities(
+          data.data.map((location: City) => ({
+            id: location.id,
+            city: location.city,
+            country: location.country,
+            region: location.region,
+            countryCode: location.countryCode,
+          }))
+        );
+      } else {
+        setCities([]);
+      }
     } catch (error) {
       toast.error(
         "Error fetching cities: " +
-          (error instanceof Error ? error.message : error)
+          (error instanceof Error ? error.message : String(error))
       );
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const handleSearch = useCallback(
+    debounce((query: string) => {
+      fetchCities(query);
+    }, 500),
+    [fetchCities]
+  );
+
+  const handleInputChange = (newValue: string) => {
+    setInputValue(newValue);
+    setSelectedKey(null);
+    setSelectedPlace({
+      city: "",
+      country: "",
+      region: "",
+    });
+    if (!newValue) {
+      setSelectedPlace({
+        city: "",
+        country: "",
+        region: "",
+      });
+      setSelectedKey(null);
+    } else {
+      handleSearch(newValue);
+    }
   };
 
-  const handleSelect = async (value: any) => {
-    if (!value) return;
-    setSelectedCity(value);
+  console.log({
+    cities,
+    inputValue,
+    selectedKey,
+  });
 
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `https://wft-geo-db.p.rapidapi.com/v1/geo/cities/${value}`,
-        {
-          headers: {
-            "X-RapidAPI-Key":
-              "bab86b9a00msh4a421fe005e9f45p19708djsn18c4914b019a",
-            "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com",
-          },
-        }
-      );
-      if (!res.ok && res.status !== 429)
-        throw new Error(`Error: ${res.statusText}`);
-      const data = (await res.json()) as { data: City };
-      if (!data?.data) return;
-
+  const handleSelect = (selectedItem: string | null) => {
+    if (selectedItem) {
+      setInputValue(selectedItem.split(",")[0]);
+      setSelectedKey(selectedItem);
+      const [city, region, country] = selectedItem
+        .split(",")
+        .map((s) => s.trim());
       setSelectedPlace({
-        city: data.data.name,
-        country: data.data.country,
-        region: data.data.region,
+        city,
+        region,
+        country,
       });
-
-      setCities([
-        {
-          id: data.data.id,
-          name: `${data.data.name}, ${data.data.region}, ${data.data.country}`,
-          country: data.data.country,
-          region: data.data.region,
-          countryCode: data.data.countryCode,
-        },
-      ]);
-    } catch (error) {
-      toast.error(
-        "Error fetching city: " +
-          (error instanceof Error ? error.message : error)
-      );
-    } finally {
-      setLoading(false);
+    } else {
+      setInputValue("");
+      setSelectedKey(null);
+      setSelectedPlace({
+        city: "",
+        country: "",
+        region: "",
+      });
+      setCities([]);
     }
   };
 
   return (
     <Autocomplete
       items={cities}
-      label="Search for a city"
+      label="Enter city"
       color="success"
       name={name}
       isRequired
-      isInvalid={!!city || !!country || !!region}
-      errorMessage={city || country || region}
-      onInputChange={handleSearch}
+      isInvalid={!!(errorState.city || errorState.country || errorState.region)}
+      errorMessage={errorState.city || errorState.country || errorState.region}
+      onInputChange={handleInputChange}
+      inputValue={inputValue}
       isLoading={loading}
-      onSelectionChange={handleSelect}
-      selectedKey={selectedCity}
+      selectedKey={selectedKey}
+      onSelectionChange={handleSelect as any}
     >
-      {(item) => {
-        return (
-          <AutocompleteItem
-            startContent={
+      {(item: City) => (
+        <AutocompleteItem
+          key={`${item.city}, ${item.region}, ${item.country}`}
+          textValue={`${item.city}`}
+        >
+          <div className="flex items-center">
+            {item.countryCode && (
               <Image
-                src={`
-                  https://flagcdn.com/48x36/${item.countryCode?.toLowerCase()}.png
-                  `}
-                alt={item.name}
-                className="w-6 h-6"
+                src={`https://flagcdn.com/48x36/${item.countryCode.toLowerCase()}.png`}
+                alt={`${item.city}, ${item.region}, ${item.country}`}
+                className="w-6 h-6 mr-2"
               />
-            }
-            key={item.id}
-          >
-            {item.name}
-          </AutocompleteItem>
-        );
-      }}
+            )}
+            <span>{`${item.city}, ${item.region}, ${item.country}`}</span>
+          </div>
+        </AutocompleteItem>
+      )}
     </Autocomplete>
   );
 };
