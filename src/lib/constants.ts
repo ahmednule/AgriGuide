@@ -3,6 +3,7 @@ import {
   faBoxesStacked,
   faClockRotateLeft,
   faCog,
+  faEdit,
   faEye,
   faHouse,
   faLineChart,
@@ -11,7 +12,7 @@ import {
   faUserDoctor,
   faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
-import { AddProductForm } from "./types";
+import { AddProductForm, EditProductForm } from "./types";
 
 export const initialFormState = {
   name: "",
@@ -29,6 +30,11 @@ export const initialAddProductFormState: AddProductForm = {
   region: "",
   city: "",
   db: "",
+};
+
+export const initialEditProductFormState: EditProductForm = {
+  ...initialAddProductFormState,
+  productSupplierId: "", // Additional id field
 };
 
 export const initialSupplierFormState = {
@@ -148,7 +154,14 @@ export const SUPPLIER_ROUTES = [
     path: "/supplier/view-products",
     value: "View Products",
     icon: faEye
+  },
+  {
+    path: "/supplier/edit-product",
+    value: "Edit Product",
+    icon: faEdit
   }
 ];
+
+export const initialPriceRange = [0, 10000];
 
 export const GEOLOCATION_API = process.env.GEOLOCATION_API;
