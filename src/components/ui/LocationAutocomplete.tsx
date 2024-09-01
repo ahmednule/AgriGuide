@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { Autocomplete, AutocompleteItem, Image } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import debounce from "lodash.debounce";
@@ -17,6 +17,8 @@ const LocationAutocomplete = ({
   setSelectedPlace,
   name,
   errorState,
+  inputValue: defaultInputValue,
+  selectedKey: defaultSelectedKey,
 }: {
   setSelectedPlace: React.Dispatch<
     React.SetStateAction<{
@@ -31,11 +33,16 @@ const LocationAutocomplete = ({
     country: string;
     region: string;
   };
+  inputValue: string;
+  selectedKey: string | null;
 }) => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState(defaultInputValue);
+  const [selectedKey, setSelectedKey] = useState<string | null>(
+    defaultSelectedKey
+  );
+
 
   const fetchCities = useCallback(async (query: string) => {
     if (!query) {
@@ -55,11 +62,11 @@ const LocationAutocomplete = ({
           },
         }
       );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+      if (!response.ok && response.status !== 429) {
+        throw new Error();
       }
       const data = await response.json();
-      if (data?.data.length > 0) {
+      if (data.data) {
         setCities(
           data.data.map((location: City) => ({
             id: location.id,
@@ -69,13 +76,11 @@ const LocationAutocomplete = ({
             countryCode: location.countryCode,
           }))
         );
-      } else {
-        setCities([]);
       }
     } catch (error) {
       toast.error(
         "Error fetching cities: " +
-          (error instanceof Error ? error.message : String(error))
+          (error instanceof Error ? error.message : 'Unknown error')
       );
     } finally {
       setLoading(false);
@@ -109,12 +114,6 @@ const LocationAutocomplete = ({
     }
   };
 
-  console.log({
-    cities,
-    inputValue,
-    selectedKey,
-  });
-
   const handleSelect = (selectedItem: string | null) => {
     if (selectedItem) {
       setInputValue(selectedItem.split(",")[0]);
@@ -138,6 +137,12 @@ const LocationAutocomplete = ({
       setCities([]);
     }
   };
+
+  useEffect(() => {
+    if (defaultInputValue) {
+      fetchCities(defaultInputValue);
+    }
+  }, []);
 
   return (
     <Autocomplete
