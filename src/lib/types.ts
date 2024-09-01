@@ -6,6 +6,7 @@ import {
   editPestFormSchema,
   registerSupplierFormSchema,
   addProductFormSchema,
+  editProductFormSchema,
 } from "./schemas";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Product, Role, Scan, ScanType, Supplier, User } from "@prisma/client";
@@ -21,6 +22,8 @@ export type EditPestForm = z.infer<typeof editPestFormSchema>;
 export type RegisterSupplierForm = z.infer<typeof registerSupplierFormSchema>;
 
 export type AddProductForm = z.infer<typeof addProductFormSchema>;
+
+export type EditProductForm = z.infer<typeof editProductFormSchema>;
 
 export type TFeatureItem =
   | {
@@ -71,12 +74,14 @@ export type ProductWithSuppliers = {
   country: string;
   description: string;
   id: string;
+  region: string;
   product: {
     id: string;
     name: string;
   };
   supplier: {
     name: string;
+    id: string;
   };
   city: string;
   price: number;
@@ -138,3 +143,11 @@ export type CustomerScan = {
   userName: string | null;
   userEmail: string | null;
 };
+
+export type TLocation = {
+  id: string
+  countryCode?: string;
+  city: string;
+  country: string;
+  region: string;
+}
