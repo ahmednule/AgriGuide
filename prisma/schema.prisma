@@ -99,7 +99,7 @@ model Supplier {
   rejectedAt      DateTime?         @map("rejected_at")
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
-  ProductSupplier ProductSupplier[]
+  ProductSupplier ProductSupplier[] 
 
   @@map("suppliers")
 }
@@ -172,8 +172,8 @@ model ProductSupplier {
   images      String[]
   productId   String
   supplierId  String
-  product     Product  @relation(fields: [productId], references: [id])
-  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
