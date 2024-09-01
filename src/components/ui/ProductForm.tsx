@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { ForwardedRef, useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import {
   Autocomplete,
@@ -12,13 +12,14 @@ import {
 import ImageUpload from "@/components/ui/ImageUpload";
 import LocationAutocomplete from "@/components/ui/LocationAutocomplete";
 import SubmitButton from "@/components/ui/SubmitButton";
-import { addProduct } from "@/lib/actions";
-import { initialAddProductFormState } from "@/lib/constants";
+import { addProduct, editProduct } from "@/lib/actions";
+import { initialAddProductFormState, initialEditProductFormState } from "@/lib/constants";
 import toast from "react-hot-toast";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { Product, ProductSupplier } from "@prisma/client";
+import { FilePond } from "react-filepond";
 
-const AddProductForm = ({
+const ProductForm = ({
   products,
   product,
 }: {
@@ -35,42 +36,59 @@ const AddProductForm = ({
     region: product?.region || "",
   });
 
-  const [selectedProduct, setSelectedProduct] = useState<any>(
+  const [selectedProduct, setSelectedProduct] = useState(
     product?.product.name || ""
   );
 
-  const [formState, formAction] = useFormState(
+  const [formState, addProductAction] = useFormState(
     addProduct,
     initialAddProductFormState
   );
 
+  const [editProductState, editProductAction] = useFormState(
+    editProduct,
+    initialEditProductFormState
+  );
+
   const formRef = useRef<HTMLFormElement>(null);
-  const imageRef = useRef<{ reset: () => void }>(null);
+  const imageRef = useRef<FilePond>(null);
 
   useEffect(() => {
     if (formState.db)
       if (formState.db === "success") {
         toast.success("Product successfully added.");
-        imageRef.current?.reset();
+        imageRef.current?.removeFiles();
         formRef.current?.reset();
       } else toast.error(formState.db);
     formState.db = undefined;
   }, [formState]);
 
+  useEffect(() => {
+    if (editProductState.db)
+      if (editProductState.db === "success") {
+        toast.success("Product successfully edited.");
+      } else toast.error(editProductState.db);
+    editProductState.db = undefined;
+  }, [editProductState]);
+
   return (
     <Card className=" p-8 mx-auto max-w-xl space-y-4">
       <SectionHeader as="h1" className="m-0">
-        {product ? `Edit ${product.product.name}` : " Add New Product"}
+        {product ? `Edit Product` : " Add New Product"}
       </SectionHeader>
-      <form ref={formRef} action={formAction} className="space-y-4">
+      <form
+        ref={formRef}
+        action={product ? editProductAction : addProductAction}
+        className="space-y-4"
+      >
         <Autocomplete
           allowsCustomValue
           color="success"
           name="name"
           isRequired
           defaultSelectedKey={product ? product.product.name : ""}
-          isInvalid={!!formState.name}
-          errorMessage={formState.name}
+          isInvalid={product ? !!editProductState.name : !!formState.name}
+          errorMessage={product ? !!editProductState.name : formState.name}
           inputValue={selectedProduct}
           onInputChange={setSelectedProduct}
           defaultItems={products}
@@ -84,17 +102,19 @@ const AddProductForm = ({
           )}
         </Autocomplete>
         <LocationAutocomplete
+          selectedKey={`${selectedPlace.city}, ${selectedPlace.region}, ${selectedPlace.country}`}
+          inputValue={selectedPlace.city}
           errorState={{
-            city: formState.city,
-            country: formState.country,
-            region: formState.region,
+            city: product ? editProductState.city : formState.city,
+            region: product ? editProductState.region : formState.region,
+            country: product ? editProductState.country : formState.country,
           }}
           name="location"
           setSelectedPlace={setSelectedPlace}
         />
         <Input
-          isInvalid={!!formState.price}
-          errorMessage={formState.price}
+          isInvalid={product ? !!editProductState.price : !!formState.price}
+          errorMessage={product ? editProductState.price : formState.price}
           label="Enter price"
           type="number"
           min={0}
@@ -105,8 +125,12 @@ const AddProductForm = ({
           color="success"
         />
         <Textarea
-          isInvalid={!!formState.description}
-          errorMessage={formState.description}
+          isInvalid={
+            product ? !!editProductState.description : !!formState.description
+          }
+          errorMessage={
+            product ? editProductState.description : formState.description
+          }
           label="Enter description"
           name="description"
           defaultValue={product?.description || ""}
@@ -119,24 +143,10 @@ const AddProductForm = ({
           allowMultiple
           name="images"
         />
-        <input
-          type="hidden"
-          defaultValue={product?.city}
-          name="city"
-          value={selectedPlace.city}
-        />
-        <input
-          type="hidden"
-          defaultValue={product?.country}
-          name="country"
-          value={selectedPlace.country}
-        />
-        <input
-          type="hidden"
-          defaultValue={product?.region}
-          name="region"
-          value={selectedPlace.region}
-        />
+        <input type="hidden" name="productSupplierId" value={product?.id} />
+        <input type="hidden" name="city" value={selectedPlace.city} />
+        <input type="hidden" name="country" value={selectedPlace.country} />
+        <input type="hidden" name="region" value={selectedPlace.region} />
         <div className="flex justify-center pt-4">
           <SubmitButton>
             {product ? "Edit Product" : "Add Product"}
@@ -147,4 +157,4 @@ const AddProductForm = ({
   );
 };
 
-export default AddProductForm;
+export default ProductForm;
