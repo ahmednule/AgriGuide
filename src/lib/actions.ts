@@ -6,6 +6,7 @@ import {
   addProductFormSchema,
   contactFormSchema,
   editPestFormSchema,
+  editProductFormSchema,
   registerSupplierFormSchema,
 } from "./schemas";
 import {
@@ -13,6 +14,7 @@ import {
   initialAddProductFormState,
   initialDiseaseFormState,
   initialEditPestFormState,
+  initialEditProductFormState,
   initialFormState,
   initialSupplierFormState,
   ScanStatus,
@@ -23,6 +25,7 @@ import {
   AddProductForm,
   ContactForm,
   EditPestForm,
+  EditProductForm,
   RegisterSupplierForm,
   ResourceType,
 } from "./types";
@@ -35,7 +38,11 @@ import prisma from "./prisma";
 import { Role, ScanType, SupplierStatus } from "@prisma/client";
 import { supabase } from "./supabase";
 import removeMarkdown from "remove-markdown";
-import { getResourceDescription, getResourceName } from "./utils";
+import {
+  arraysAreEqualUnordered,
+  getResourceDescription,
+  getResourceName,
+} from "./utils";
 import { redirect } from "next/navigation";
 
 export const scanPestImage = async (
@@ -915,14 +922,11 @@ export const deleteSupplier = async (id: string) => {
         id,
       },
     });
-    await prisma.supplier.delete({
-      where: {
-        id,
-      },
-    });
   } catch (error) {
-    if (error instanceof Error)
-      throw new Error("Failed to delete supplier" + error.message);
+    throw new Error(
+      "Failed to delete supplier: " +
+        (error instanceof Error ? error.message : "Unknown error")
+    );
   }
 
   revalidatePath("/resources/suppliers");
@@ -1075,7 +1079,7 @@ export async function addProduct(prevState: any, formData: FormData) {
   const productSupplier = await prisma.productSupplier.findFirst({
     where: {
       product: {
-        name
+        name,
       },
       city,
       country,
@@ -1146,7 +1150,7 @@ export async function addProduct(prevState: any, formData: FormData) {
       },
     });
 
-    revalidatePath("/supplier/add-product");
+    revalidatePath("/");
 
     return {
       ...initialAddProductFormState,
@@ -1203,3 +1207,231 @@ export const deleteProduct = async ({
 
   revalidatePath("/supplier/view-products");
 };
+
+export async function editProduct(
+  prevState: any,
+  formData: FormData
+): Promise<EditProductForm> {
+  const name = formData.get("name") as string;
+  const price = formData.get("price") as string;
+  const description = formData.get("description") as string;
+  const images = formData.getAll("images") as any;
+  const city = formData.get("city") as string;
+  const productSupplierId = formData.get("productSupplierId") as string;
+  const country = formData.get("country") as string;
+  const region = formData.get("region") as string;
+
+  const session = await auth();
+  const user = session?.user;
+
+  const { success, data, error } = editProductFormSchema.safeParse({
+    name,
+    price,
+    description,
+    images,
+    city,
+    country,
+    region,
+    productSupplierId,
+  });
+
+  if (!success) {
+    return {
+      ...initialEditProductFormState,
+      productSupplierId:
+        error.flatten().fieldErrors.productSupplierId?.[0] ?? "",
+      name: error.flatten().fieldErrors.name?.[0] ?? "",
+      price: error.flatten().fieldErrors.price?.[0] ?? "",
+      description: error.flatten().fieldErrors.description?.[0] ?? "",
+      images: error.flatten().fieldErrors.images?.[0] ?? "",
+      city: error.flatten().fieldErrors.city?.[0] ?? "",
+      country: error.flatten().fieldErrors.country?.[0] ?? "",
+      region: error.flatten().fieldErrors.region?.[0] ?? "",
+    };
+  }
+
+  // check if the database values are the same as the form values
+  const productSupplier = await prisma.productSupplier.findFirst({
+    where: {
+      id: productSupplierId,
+    },
+    include: {
+      product: true,
+    },
+  });
+
+  const imageUrlToBase64 = async (imageUrl: string) => {
+    const response = await fetch(imageUrl);
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    return base64;
+  };
+
+  const base64Images = await Promise.all(
+    productSupplier?.images.map(async (imageUrl) => {
+      return await imageUrlToBase64(imageUrl);
+    }) || []
+  );
+
+  const imageData = images.map((image: any) => {
+    const parsedImage = JSON.parse(image);
+    return parsedImage.data;
+  });
+
+  console.log({
+    images: imageData,
+    dbImages: base64Images,
+  });
+
+  // if values are the same, return
+  if (
+    productSupplier?.id === productSupplierId &&
+    productSupplier?.price === parseFloat(price) &&
+    productSupplier?.description === description &&
+    productSupplier?.city === city &&
+    productSupplier?.country === country &&
+    productSupplier?.region === region &&
+    productSupplier?.supplierId === user?.id &&
+    arraysAreEqualUnordered(imageData, base64Images)
+  ) {
+    return {
+      ...initialEditProductFormState,
+      db: "No changes were made.",
+    };
+  }
+
+  // Check if the product with the same details exists but is not the current product
+  const existingProductSupplier = await prisma.productSupplier.findFirst({
+    where: {
+      product: {
+        id: productSupplier?.productId,
+      },
+      city,
+      country,
+      region,
+      supplierId: user?.id!,
+      id: {
+        not: productSupplierId,
+      },
+    },
+  });
+
+  if (existingProductSupplier) {
+    return {
+      ...initialEditProductFormState,
+      db: "A product in that location already exists.",
+    };
+  }
+
+  const imageBuffers = images.map((image: any) => {
+    const parsedImage = JSON.parse(image);
+    return Buffer.from(parsedImage.data, "base64");
+  });
+
+  try {
+    // delete existing images first
+    const existingImages = productSupplier?.images || [];
+    const newImages = images || [];
+
+    // Find images that exist in existingImages but not in newImages
+    const imagesToDelete = existingImages.filter(
+      (img) => !newImages.includes(img)
+    );
+
+    await Promise.all(
+      imagesToDelete?.map(async (imageUrl) => {
+        const fileName = imageUrl.split("/").pop();
+        if (!fileName) console.warn(`Skipping invalid image URL: ${imageUrl}`);
+
+        const { error: deleteError } = await supabase.storage
+          .from("images")
+          .remove([`products/${productSupplier?.product.name}/${fileName}`]);
+        if (deleteError) {
+          console.error(
+            `Failed to delete image ${fileName}: ${deleteError.message}`
+          );
+        }
+      }) || []
+    );
+    // upload new images
+    const folderName = `products/${name}`;
+    const imageUrls = await Promise.all(
+      imageBuffers.map(async (imageBuffer: any) => {
+        const fileName = `${folderName}/${Date.now()}_${Math.random()}.jpeg`;
+        const { data: imageData, error } = await supabase.storage
+          .from("images")
+          .upload(fileName, imageBuffer, {
+            contentType: "image/jpeg",
+          });
+
+        if (error) throw error;
+
+        return `https://cbrgfqvmkgowzerbzued.supabase.co/storage/v1/object/public/${imageData.fullPath}`;
+      })
+    );
+
+    // Check if product exists, if not create it
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productSupplier?.productId,
+      },
+    });
+
+    let productId = product?.id;
+
+    if (!product) {
+      const { id } = await prisma.product.create({
+        data: {
+          name,
+        },
+      });
+
+      productId = id;
+      // Check that there is no supplier linking to the previous product, if so delete the product
+      const productSupplierCount = await prisma.productSupplier.count({
+        where: {
+          productId: productSupplier?.productId,
+        },
+      });
+
+      if (productSupplierCount === 0) {
+        await prisma.product.delete({
+          where: {
+            id: productSupplier?.productId,
+          },
+        });
+      }
+    }
+
+    // Update the product supplier record
+    await prisma.productSupplier.update({
+      where: {
+        id: productSupplierId,
+      },
+      data: {
+        price: parseFloat(data.price),
+        description: data.description,
+        images: imageUrls,
+        city: data.city,
+        country: data.country,
+        region: data.region,
+        supplierId: user?.id!,
+        productId,
+      },
+    });
+
+    revalidatePath("/");
+
+    return {
+      ...initialEditProductFormState,
+      db: "success",
+    };
+  } catch (error) {
+    return {
+      ...initialEditProductFormState,
+      db:
+        "Error updating product: " +
+        (error instanceof Error ? error.message : "Unknown error"),
+    };
+  }
+}
