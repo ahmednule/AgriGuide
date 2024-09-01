@@ -1,5 +1,5 @@
 // ImageUpload.tsx
-import React, { useRef, forwardRef, useImperativeHandle } from "react";
+import React, { useRef, forwardRef, useImperativeHandle, ForwardedRef } from "react";
 import { FilePond, registerPlugin } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
@@ -17,22 +17,13 @@ registerPlugin(
   FilePondPluginFileValidateSize
 );
 
-const ImageUpload = forwardRef(({ name, allowMultiple = false}: { name: string, allowMultiple?: boolean }, ref?) => {
-  const pondRef = useRef<FilePond>(null);
-
-  useImperativeHandle(ref, () => ({
-    reset: () => {
-      if (pondRef.current) {
-        pondRef.current.removeFiles();
-      }
-    },
-  }));
-
+const ImageUpload = forwardRef(({ name, allowMultiple = false, files}: { files?: string[], name: string, allowMultiple?: boolean }, ref: ForwardedRef<FilePond>) => {
   return (
     <div className="cursor-pointer">
       <FilePond
-        ref={pondRef}
+        ref={ref}
         required
+        files = {files}
         allowReorder={allowMultiple}
         acceptedFileTypes={["image/*"]}
         name={name}
