@@ -51,3 +51,7 @@ export const addProductFormSchema = z.object({
   city: z.string().min(1, "City is required"),
   db: z.string().optional(),
 });
+
+export const editProductFormSchema = addProductFormSchema.extend({
+  productSupplierId: z.string().min(1, "ID is required"),
+});
