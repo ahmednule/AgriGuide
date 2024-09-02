@@ -4,13 +4,15 @@ import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { Autocomplete, AutocompleteItem, Image } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import debounce from "lodash.debounce";
+import { getCurrencySymbol } from "@/lib/utils";
 
 interface City {
   id: string;
   country: string;
   region: string;
   city: string;
-  countryCode?: string;
+  currencySymbol: string;
+  countryCode: string;
 }
 
 const LocationAutocomplete = ({
@@ -25,6 +27,8 @@ const LocationAutocomplete = ({
       city: string;
       country: string;
       region: string;
+      countryCode: string;
+      currencySymbol: string;
     }>
   >;
   name: string;
@@ -42,7 +46,6 @@ const LocationAutocomplete = ({
   const [selectedKey, setSelectedKey] = useState<string | null>(
     defaultSelectedKey
   );
-
 
   const fetchCities = useCallback(async (query: string) => {
     if (!query) {
@@ -66,21 +69,30 @@ const LocationAutocomplete = ({
         throw new Error();
       }
       const data = await response.json();
+
       if (data.data) {
-        setCities(
-          data.data.map((location: City) => ({
-            id: location.id,
-            city: location.city,
-            country: location.country,
-            region: location.region,
-            countryCode: location.countryCode,
-          }))
+        const locations = await Promise.all(
+          data.data.map(async (location: any) => {
+            const currencySymbol = await getCurrencySymbol(location.country);
+            return {
+              id: location.id,
+              city: location.city || "Unknown City",
+              country: location.country || "Unknown Country",
+              region: location.region || "Unknown Region",
+              countryCode: location.countryCode || "unknown",
+              currencySymbol,
+            };
+          })
         );
+
+        if (locations?.length > 0) {
+          setCities(locations);
+        }
       }
     } catch (error) {
       toast.error(
         "Error fetching cities: " +
-          (error instanceof Error ? error.message : 'Unknown error')
+          (error instanceof Error ? error.message : "Unknown error")
       );
     } finally {
       setLoading(false);
@@ -101,12 +113,16 @@ const LocationAutocomplete = ({
       city: "",
       country: "",
       region: "",
+      countryCode: "",
+      currencySymbol: "",
     });
     if (!newValue) {
       setSelectedPlace({
         city: "",
         country: "",
         region: "",
+        currencySymbol: "",
+        countryCode: "",
       });
       setSelectedKey(null);
     } else {
@@ -118,13 +134,15 @@ const LocationAutocomplete = ({
     if (selectedItem) {
       setInputValue(selectedItem.split(",")[0]);
       setSelectedKey(selectedItem);
-      const [city, region, country] = selectedItem
+      const [city, region, country, countryCode, currencySymbol] = selectedItem
         .split(",")
         .map((s) => s.trim());
       setSelectedPlace({
         city,
         region,
         country,
+        currencySymbol,
+        countryCode,
       });
     } else {
       setInputValue("");
@@ -133,6 +151,8 @@ const LocationAutocomplete = ({
         city: "",
         country: "",
         region: "",
+        currencySymbol: "",
+        countryCode: "",
       });
       setCities([]);
     }
@@ -164,7 +184,7 @@ const LocationAutocomplete = ({
     >
       {(item: City) => (
         <AutocompleteItem
-          key={`${item.city}, ${item.region}, ${item.country}`}
+          key={`${item.city}, ${item.region}, ${item.country}, ${item.countryCode}, ${item.currencySymbol}`}
           textValue={`${item.city}`}
         >
           <div className="flex items-center">
