@@ -1,21 +1,25 @@
-import { GEOLOCATION_API } from "@/lib/constants";
 import { NextResponse } from "next/server";
+import { GEOLOCATION_API } from "@/lib/constants";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    if (!GEOLOCATION_API) {
-      throw new Error("GEOLOCATION_API key is not set");
+    const { searchParams } = new URL(request.url);
+    const lat = searchParams.get("lat");
+    const lon = searchParams.get("lon");
+
+    if (!lat || !lon) {
+      throw new Error("Latitude and longitude are required");
     }
 
     const response = await fetch(
-      `https://api.ipgeolocation.io/ipgeo?apiKey=${GEOLOCATION_API}`
+      `https://api.ipgeolocation.io/ipgeo?apiKey=${GEOLOCATION_API}&lat=${lat}&long=${lon}`
     );
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`API error: ${errorText}`);
       return NextResponse.json(
-        { message: "Failed to fetch location data" },
+        { message: "Failed to fetch location details" },
         { status: response.status }
       );
     }
