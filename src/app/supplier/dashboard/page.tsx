@@ -7,26 +7,16 @@ import { IpInfo } from "@/lib/types";
 import {
   faArrowRight,
   faBoxes,
-  faBoxesStacked,
   faCoins,
   faReceipt,
-  faUser,
-  faUserDoctor,
-  faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, CardBody, CardHeader, User } from "@nextui-org/react";
-import { Role } from "@prisma/client";
+import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
 
 const SupplierDashboard = async () => {
   const users = await prisma.user.findMany();
-  const customers = users.filter((user) => user.role === Role.CUSTOMER);
-  const consultants = users.filter((user) => user.role === Role.CONSULTANT);
-  const admins = users.filter((user) => user.role === Role.ADMIN);
-  const suppliers = users.filter((user) => user.role === Role.SUPPLIER);
-
   const session = await auth();
   const user = session!.user;
 
@@ -38,46 +28,66 @@ const SupplierDashboard = async () => {
     currency: { symbol },
   }: IpInfo = await res.json();
 
-  const products = await prisma.productSupplier.findMany({
-    where: { supplierId: user.id },
-  });
-
-  const productNameWithCount = await prisma.productSupplier.groupBy({
-    by: ["productId"],
-    _count: {
-      _all: true,
-    },
-    where: {
-      supplierId: user.id,
-    },
-    orderBy: {
-      _count: {
-        productId: "desc",
+  const product = await prisma.product.findMany({
+      where: {
+        ProductSupplier: {
+          some: {
+            supplierId: user.id,
+          },
+        },
       },
-    },
-  });
-
-  // Fetch product names separately
-  const productNames = await prisma.product.findMany({
-    where: {
-      id: {
-        in: productNameWithCount.map((p) => p.productId),
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: { ProductSupplier: true },
+        },
       },
-    },
-    select: {
-      id: true,
-      name: true,
-    },
-  });
+      orderBy: {
+        ProductSupplier: {
+          _count: "desc",
+        },
+      },
+    })
 
-  // Combine product names with counts
-  const productsWithNameAndCount = productNameWithCount.map((product) => ({
-    ...product,
-    name:
-      productNames.find((p) => p.id === product.productId)?.name ||
-      "Unknown Product",
-  }));
+      // const productsWithNameAndCount = await prisma.productSupplier.groupBy({
+      //   by: ["productId"],
+      //   _count: {
+      //     _all: true,
+      //   },
+      //   where: {
+      //     supplierId: user.id,
+      //   },
+      //   orderBy: {
+      //     _count: {
+      //       productId: "desc",
+      //     },
+      //   },
+      // });
 
+      // const productIds = productsWithNameAndCount.map((p) => p.productId);
+
+      // const productNames = await prisma.product.findMany({
+      //   where: {
+      //     id: {
+      //       in: productIds,
+      //     },
+      //   },
+      //   select: {
+      //     id: true,
+      //     name: true,
+      //   },
+      // });
+
+      // const productNameMap = new Map(productNames.map((p) => [p.id, p.name]));
+
+      // const productsWithDetails = productsWithNameAndCount.map((p) => ({
+      //   productId: p.productId,
+      //   name: productNameMap.get(p.productId) || "Unknown Product",
+      //   count: p._count._all,
+      // }));
+
+  
   return (
     <>
       <MobileNav />
@@ -91,16 +101,16 @@ const SupplierDashboard = async () => {
                 <h2>Products</h2>
               </div>
               <span className="font-bold text-xl rounded-full p-3 mr-2 bg-emerald-300">
-                {products.length}
+                {product.length}
               </span>
             </CardHeader>
-            <CardBody className="text-emerald-800 p-10 ">
+            <CardBody className="text-emerald-800 p-5 ">
               <div className="flex flex-col">
                 <div className="flex justify-between flex-wrap gap-10">
-                  {productsWithNameAndCount.map((product) => (
-                    <p key={product.productId}>
+                  {product.map((product) => (
+                    <p key={product.id}>
                       <span className="font-bold text-xl rounded-full p-3 mr-2 bg-emerald-300">
-                        {product._count._all}
+                        {product._count.ProductSupplier}
                       </span>
                       {product.name}
                     </p>
@@ -126,7 +136,7 @@ const SupplierDashboard = async () => {
               <FontAwesomeIcon icon={faCoins} className="mr-4 text-2xl" />
               <h2>Sales</h2>
             </CardHeader>
-            <CardBody className="text-emerald-800 text-center p-10 space-y-10">
+            <CardBody className="text-emerald-800 text-center p-5 space-y-10">
               <div className="flex justify-between items-center">
                 <p>
                   <span className="font-bold text-xl rounded-full p-3 mr-2 bg-emerald-300">
@@ -154,7 +164,7 @@ const SupplierDashboard = async () => {
               <FontAwesomeIcon icon={faReceipt} className="mr-4 text-2xl" />
               <h2>Orders</h2>
             </CardHeader>
-            <CardBody className="text-emerald-800 text-center p-10 space-y-10">
+            <CardBody className="text-emerald-800 text-center p-5 space-y-10">
               <div className="flex flex-col">
                 <div className="flex justify-between flex-wrap gap-10">
                   <p>
@@ -208,8 +218,8 @@ const SupplierDashboard = async () => {
       <section className="mt-10 space-y-2">
         <h2 className="text-xl font-bold mb-5 text-emerald-900">User Growth</h2>
         <div className="space-y-4">
-          <UserDataChart label="Products Added" users={customers} />
-          <UserDataChart label="Sales Made" users={consultants} />
+          <UserDataChart label="Products Added" users={[]} />
+          <UserDataChart label="Sales Made" users={[]} />
           <UserDataChart label="Orders Made" users={[]} />
           <UserDataChart label="Completed Orders" users={[]} />
           <UserDataChart label="Pending Orders" users={[]} />
