@@ -23,7 +23,7 @@ const AdminSupplierProductsPage = async ({
     },
   });
 
-  if(!supplier) notFound();
+  if (!supplier) notFound();
 
   const supplierName = supplier?.name || "Supplier";
 
@@ -36,6 +36,31 @@ const AdminSupplierProductsPage = async ({
     },
   });
 
+  const uniqueSupplierProducts = await prisma.productSupplier.findMany({
+    where: {
+      supplierId: id,
+    },
+    select: {
+      product: true,
+    },
+    distinct: ["productId"],
+  });
+
+  const uniqueProductLocations = await prisma.productSupplier.findMany({
+    where: {
+      supplierId: id,
+    },
+    select: {
+      city: true,
+      region: true,
+      country: true,
+      countryCode: true,
+      currencySymbol: true,
+      id: true,
+    },
+    distinct: ["city", "region", "country"],
+  });
+
   return (
     <>
       <MobileNav />
@@ -43,7 +68,13 @@ const AdminSupplierProductsPage = async ({
         <SectionHeader as="h1" className="m-0 text-left">
           {supplierName}&apos;s Products
         </SectionHeader>
-        {products.length > 0 && <ProductsList products={products} />}
+        {products.length > 0 && (
+          <ProductsList
+            uniqueProductLocations={uniqueProductLocations}
+            uniqueSupplierProducts={uniqueSupplierProducts}
+            products={products}
+          />
+        )}
         {products.length === 0 && (
           <p className="text-center text-gray-500 mt-10">No products found</p>
         )}
