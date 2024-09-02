@@ -1,17 +1,31 @@
-import { ProductWithSuppliers } from "@/lib/types";
 import { Button, Chip } from "@nextui-org/react";
 import React from "react";
-import { symbol } from "zod";
 
 const ProductDetailsCard = ({
   productData,
   currencySymbol,
 }: {
-  productData: ProductWithSuppliers | null;
+  productData: {
+    id: string;
+    country: string;
+    city: string;
+    price: number;
+    description: string;
+    images: string[];
+    product: {
+      id: string;
+      name: string;
+    };
+    supplier: {
+      id: string;
+      name: string;
+    };
+  } | null;
   currencySymbol: string;
 }) => {
-  const { city, country, price, product, supplier, description } = productData ?? {};
- const supplierName = supplier?.name;
+  const { city, country, price, product, supplier, description } =
+    productData ?? {};
+  const supplierName = supplier?.name;
   const productName = product?.name;
 
   return (
@@ -25,7 +39,9 @@ const ProductDetailsCard = ({
       <h1 className="text-2xl font-bold my-4 text-emerald-800">
         {productName}
       </h1>
-      <span className="text-xl text-emerald-900">{currencySymbol}{price}</span>
+      <span className="text-xl text-emerald-900">
+        {currencySymbol} {price}
+      </span>
       <p className="my-4 text-emerald-900">{description}</p>
       <footer className="mt-8">
         <Button className="bg-emerald-700 text-white">Contact supplier</Button>
