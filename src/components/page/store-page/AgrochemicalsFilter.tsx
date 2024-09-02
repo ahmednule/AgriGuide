@@ -37,7 +37,7 @@ const AgrochemicalsFilter = ({
   productsWithSuppliers: Omit<ProductWithSuppliers, "description">[];
 }) => {
   const {
-    location: { country_name: country, city, state_prov: region } = {},
+    location: { countryName: country, city, principalSubdivision: region } = {},
     isLoading,
   } = useGeolocation();
 
@@ -136,35 +136,6 @@ const AgrochemicalsFilter = ({
           <AutocompleteItem key="" />
         </Autocomplete>
       )}
-      {!locationFilter && !isLoading && (
-        <Autocomplete
-          allowsCustomValue
-          color="success"
-          className="max-w-xs"
-          name="location"
-          isLoading={isLoading}
-          isDisabled={isLoading}
-          onInputChange={setLocationFilter}
-          defaultItems={uniqueProductLocations}
-          defaultSelectedKey={locationFilter}
-          label="Filter location"
-        >
-          {({ city, country, region, countryCode }) => (
-            <AutocompleteItem
-              startContent={
-                <Image
-                  src={`https://flagcdn.com/48x36/ke.png`}
-                  alt={`${city}, ${region}, ${country}`}
-                  className="w-5 h-5 rounded-full mr-2"
-                />
-              }
-              key={`${city}, ${region}, ${country}`}
-            >
-              {`${city}, ${region}, ${country}`}
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
-      )}
       {!isLoading && locationFilter && (
         <Autocomplete
           allowsCustomValue
@@ -181,7 +152,7 @@ const AgrochemicalsFilter = ({
             <AutocompleteItem
               startContent={
                 <Image
-                  src={`https://flagcdn.com/48x36/ke.png`}
+                  src={`https://flagcdn.com/48x36/${countryCode.toLowerCase()}.png`}
                   alt={`${city}, ${region}, ${country}`}
                   className="w-5 h-5 rounded-full mr-2"
                 />
