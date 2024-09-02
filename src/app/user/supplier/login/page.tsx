@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import SupplierForm from "@/components/page/admin-page/SupplierForm";
 import SectionHeader from "@/components/ui/SectionHeader";
 import prisma from "@/lib/prisma";
+import { Card } from "@nextui-org/react";
 import { Role, SupplierStatus } from "@prisma/client";
 import { notFound, redirect } from "next/navigation";
 
@@ -66,12 +67,12 @@ const SupplierLogin = async () => {
 
   return (
     <main className="min-h-[93vh] pt-20 pb-10">
-      <div className="rounded-xl p-6 max-w-2xl mx-auto bg-gradient-to-t from-emerald-700/20 to-emerald-500/20 border border-emerald-600">
+      <Card className=" p-8 mx-auto max-w-xl space-y-4">
         <SectionHeader as="h1" className="mt-0 mb-10">
           Supplier Registration
         </SectionHeader>
         <SupplierForm user={dbUser!} />
-      </div>
+      </Card>
     </main>
   );
 };
