@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { Product, ProductSupplier } from "@prisma/client";
 import { FilePond } from "react-filepond";
+import { TLocation } from "@/lib/types";
 
 const ProductForm = ({
   products,
@@ -34,10 +35,12 @@ const ProductForm = ({
     city: product?.city || "",
     country: product?.country || "",
     region: product?.region || "",
+    countryCode: product?.countryCode || "",
+    currencySymbol: product?.currencySymbol || "",
   });
 
   const [selectedProduct, setSelectedProduct] = useState(
-    product?.product.name || ""
+    product?.product.name
   );
 
   const [formState, addProductAction] = useFormState(
@@ -51,13 +54,13 @@ const ProductForm = ({
   );
 
   const formRef = useRef<HTMLFormElement>(null);
-  const imageRef = useRef<FilePond>(null);
+  const imageRef = useRef<any>(null);
 
   useEffect(() => {
     if (formState.db)
       if (formState.db === "success") {
         toast.success("Product successfully added.");
-        imageRef.current?.removeFiles();
+        imageRef.current?.reset();
         formRef.current?.reset();
       } else toast.error(formState.db);
     formState.db = undefined;
@@ -102,7 +105,7 @@ const ProductForm = ({
           )}
         </Autocomplete>
         <LocationAutocomplete
-          selectedKey={`${selectedPlace.city}, ${selectedPlace.region}, ${selectedPlace.country}`}
+          selectedKey={`${selectedPlace.city}, ${selectedPlace.region}, ${selectedPlace.country}, ${selectedPlace.countryCode}, ${selectedPlace.currencySymbol}`}
           inputValue={selectedPlace.city}
           errorState={{
             city: product ? editProductState.city : formState.city,
@@ -115,10 +118,10 @@ const ProductForm = ({
         <Input
           isInvalid={product ? !!editProductState.price : !!formState.price}
           errorMessage={product ? editProductState.price : formState.price}
-          label="Enter price"
+          label={`Enter price ${selectedPlace.currencySymbol && `(${selectedPlace.currencySymbol})`}`}
           type="number"
           min={0}
-          defaultValue={product?.price.toString() || ""}
+          defaultValue={product?.price.toString()}
           max={10000}
           isRequired
           name="price"
@@ -133,7 +136,7 @@ const ProductForm = ({
           }
           label="Enter description"
           name="description"
-          defaultValue={product?.description || ""}
+          defaultValue={product?.description}
           isRequired
           color="success"
         />
@@ -145,6 +148,8 @@ const ProductForm = ({
         />
         <input type="hidden" name="productSupplierId" value={product?.id} />
         <input type="hidden" name="city" value={selectedPlace.city} />
+        <input type="hidden" name="currencySymbol" value={selectedPlace.currencySymbol} />
+        <input type="hidden" name="countryCode" value={selectedPlace.countryCode} />
         <input type="hidden" name="country" value={selectedPlace.country} />
         <input type="hidden" name="region" value={selectedPlace.region} />
         <div className="flex justify-center pt-4">
