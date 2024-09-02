@@ -10,6 +10,7 @@ const StorePage = async () => {
       price: true,
       city: true,
       country: true,
+      region: true,
       images: true,
       product: {
         select: {
@@ -20,17 +21,34 @@ const StorePage = async () => {
       supplier: {
         select: {
           name: true,
+          id: true,
         },
       },
     },
   });
+
+    const uniqueProductLocations = await prisma.productSupplier.findMany({
+      select: {
+        id: true,
+        city: true,
+        region: true,
+        country: true,
+        countryCode: true,
+        currencySymbol: true,
+      },
+      distinct: ["city", "region", "country"],
+    });
+
   return (
     <main className="min-h-[93vh] pt-20">
       <SectionHeader as="h1" className="m-0">
         Shop Agrochemicals
       </SectionHeader>
       <LocationDisplay />
-      <AgrochemicalProducts productsWithSupplier={productsWithSupplier} />
+      <AgrochemicalProducts
+        uniqueProductLocations={uniqueProductLocations}
+        productsWithSupplier={productsWithSupplier}
+      />
     </main>
   );
 };
