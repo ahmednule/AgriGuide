@@ -48,6 +48,8 @@ export const addProductFormSchema = z.object({
   images: z.array(z.string()).or(z.string()),
   country: z.string().min(1, "Country is required"),
   region: z.string().min(1, "Region is required"),
+  countryCode: z.string().min(1, "Country code is required"),
+  currencySymbol: z.string().min(1, "Currency symbol is required"),
   city: z.string().min(1, "City is required"),
   db: z.string().optional(),
 });
