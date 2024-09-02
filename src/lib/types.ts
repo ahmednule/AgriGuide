@@ -145,9 +145,10 @@ export type CustomerScan = {
 };
 
 export type TLocation = {
-  id: string
-  countryCode?: string;
+  id: string;
+  countryCode: string;
+  currencySymbol: string;
   city: string;
   country: string;
   region: string;
-}
+};
