@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import AddProductForm from "@/components/page/supplier-page/AddProductForm";
 import MobileNav from "@/components/ui/MobileNav";
+import ProductForm from "@/components/ui/ProductForm";
 import prisma from "@/lib/prisma";
 import React from "react";
 
@@ -21,7 +21,7 @@ const AddProductPage = async () => {
     <>
       <MobileNav />
       <section>
-        <AddProductForm products={products}/>
+        <ProductForm products={products} />
       </section>
     </>
   );
