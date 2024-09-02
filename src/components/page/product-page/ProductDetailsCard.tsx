@@ -3,7 +3,6 @@ import React from "react";
 
 const ProductDetailsCard = ({
   productData,
-  currencySymbol,
 }: {
   productData: {
     id: string;
@@ -11,6 +10,7 @@ const ProductDetailsCard = ({
     city: string;
     price: number;
     description: string;
+    currencySymbol: string;
     images: string[];
     product: {
       id: string;
@@ -21,9 +21,8 @@ const ProductDetailsCard = ({
       name: string;
     };
   } | null;
-  currencySymbol: string;
 }) => {
-  const { city, country, price, product, supplier, description } =
+  const { city, country, price, product, supplier, description, currencySymbol } =
     productData ?? {};
   const supplierName = supplier?.name;
   const productName = product?.name;

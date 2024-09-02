@@ -14,6 +14,7 @@ const ProductPage = async ({ params: { id } }: { params: { id: string } }) => {
       price: true,
       city: true,
       description: true,
+      currencySymbol: true,
       country: true,
       images: true,
       product: {
@@ -24,14 +25,6 @@ const ProductPage = async ({ params: { id } }: { params: { id: string } }) => {
       },
     },
   });
-
-  const response = await fetch(
-    `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.GEOLOCATION_API}`
-  );
-  const data = (await response.json()) as IpInfo;
-  const {
-    currency: { symbol },
-  } = data;
 
   const productsWithSupplier = await prisma.productSupplier.findMany({
     where: {
@@ -61,7 +54,6 @@ const ProductPage = async ({ params: { id } }: { params: { id: string } }) => {
         <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-8  px-4 md:px-8 lg:px-16 max-w-7xl">
           <ProductImageAside images={productData?.images} />
           <ProductDetailsCard
-            currencySymbol={symbol}
             productData={productData}
           />
         </div>
