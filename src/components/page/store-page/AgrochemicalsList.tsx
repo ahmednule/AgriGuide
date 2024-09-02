@@ -14,7 +14,20 @@ import { useRouter } from "next/navigation";
 const AgrochemicalsList = ({
   productsWithSupplier,
 }: {
-  productsWithSupplier: Omit<ProductWithSuppliers, "description">[];
+  productsWithSupplier: {
+    city: string;
+    country: string;
+    price: number;
+    product: {
+      id: string;
+      name: string;
+    };
+    supplier: {
+      name: string;
+    };
+    id: string;
+    images: string[];
+  }[];
 }) => {
   const router = useRouter();
 
