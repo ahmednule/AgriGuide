@@ -7,6 +7,7 @@ const useClientGeolocation = () => {
     country_name?: string;
     country_flag?: string;
     city?: string;
+    state_prov?: string;
   }>();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
