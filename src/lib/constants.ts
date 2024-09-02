@@ -25,6 +25,8 @@ export const initialAddProductFormState: AddProductForm = {
   name: "",
   price: "",
   description: "",
+  countryCode: "",
+  currencySymbol: "",
   images: [""],
   country: "",
   region: "",
