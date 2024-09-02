@@ -20,7 +20,7 @@ const LocationDisplay = () => {
       <div className="flex items-center justify-center mt-1 mb-8">
         <Skeleton
           isLoaded={!isLoading}
-          className=" h-6 w-36 rounded bg-emerald-100"
+          className=" h-6 w-48 rounded bg-emerald-100"
         />
       </div>
     );
