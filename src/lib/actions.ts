@@ -244,7 +244,7 @@ export const scanDiseaseImage = async (
         },
       });
 
-    revalidatePath("/");
+    revalidatePath("/resources");
 
     return res;
   } catch (error) {
