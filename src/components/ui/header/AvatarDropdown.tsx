@@ -84,9 +84,9 @@ const AvatarDropdown = ({
                 ? "/customer/scan-history"
                 : userRole === Role.CONSULTANT
                 ? "/consultant/dashboard"
-                : userRole === Role.SUPPLIER
-                ? "/supplier/dashboard"
-                : "/admin/dashboard"
+                : userRole === Role.ADMIN
+                ? "/admin/dashboard"
+                : "/supplier/dashboard"
             }
             `}
           >
@@ -94,11 +94,9 @@ const AvatarDropdown = ({
               ? "Customer Panel"
               : userRole === Role.CONSULTANT
               ? "Consultant Panel"
-              : userRole === Role.SUPPLIER
-              ? "Supplier Panel"
               : userRole === Role.ADMIN
               ? "Admin Panel"
-              : ""}
+              : "Supplier Panel"}
           </DropdownItem>
         </DropdownSection>
         <DropdownSection aria-label="logout">
