@@ -8,10 +8,16 @@ import React, { PropsWithChildren } from "react";
 
 const layout = async ({ children }: PropsWithChildren) => {
   const session = await auth();
-  if (session?.user.role !== Role.SUPPLIER) notFound();
+
+  const user = session?.user;
+
+  if(!user?.role) redirect("/user/supplier/login");
+  if (user?.role !== Role.SUPPLIER) notFound();
+
   const supplier = await prisma.supplier.findUnique({
-    where: { id: session.user.id },
+    where: { id: user.id },
   });
+
 
   if (supplier?.status === SupplierStatus.PENDING) {
     redirect("/#pending");
