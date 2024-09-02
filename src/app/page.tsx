@@ -1,4 +1,5 @@
 import Carousel from "@/components/page/home-page/Carousel";
+import ChatUI from "@/components/page/home-page/ChatUI";
 import FAQ from "@/components/page/home-page/FAQ";
 import Features from "@/components/page/home-page/Features";
 import Partnerships from "@/components/page/home-page/Partnerships";
@@ -14,6 +15,7 @@ const Home = () => {
       <Testimonials />
       <Partnerships />
       <FAQ />
+      <ChatUI />
     </main>
   );
 };

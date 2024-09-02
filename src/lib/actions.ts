@@ -1048,6 +1048,8 @@ export async function addProduct(prevState: any, formData: FormData) {
   const city = formData.get("city") as string;
   const country = formData.get("country") as string;
   const region = formData.get("region") as string;
+  const countryCode = formData.get("countryCode") as string;
+  const currencySymbol = formData.get("currencySymbol") as string;
 
   const session = await auth();
   const user = session?.user;
@@ -1060,6 +1062,8 @@ export async function addProduct(prevState: any, formData: FormData) {
     city,
     country,
     region,
+    countryCode,
+    currencySymbol,
   });
 
   if (!success) {
@@ -1072,6 +1076,8 @@ export async function addProduct(prevState: any, formData: FormData) {
       city: error.flatten().fieldErrors.city?.[0] ?? "",
       country: error.flatten().fieldErrors.country?.[0] ?? "",
       region: error.flatten().fieldErrors.region?.[0] ?? "",
+      countryCode: error.flatten().fieldErrors.countryCode?.[0] ?? "",
+      currencySymbol: error.flatten().fieldErrors.currencySymbol?.[0] ?? "",
     };
   }
 
@@ -1147,6 +1153,8 @@ export async function addProduct(prevState: any, formData: FormData) {
         region: data.region,
         supplierId: user?.id!,
         productId: productId!,
+        countryCode: data.countryCode,
+        currencySymbol: data.currencySymbol,
       },
     });
 
@@ -1220,6 +1228,8 @@ export async function editProduct(
   const productSupplierId = formData.get("productSupplierId") as string;
   const country = formData.get("country") as string;
   const region = formData.get("region") as string;
+  const countryCode = formData.get("countryCode") as string;
+  const currencySymbol = formData.get("currencySymbol") as string;
 
   const session = await auth();
   const user = session?.user;
@@ -1233,6 +1243,8 @@ export async function editProduct(
     country,
     region,
     productSupplierId,
+    countryCode,
+    currencySymbol,
   });
 
   if (!success) {
@@ -1247,6 +1259,8 @@ export async function editProduct(
       city: error.flatten().fieldErrors.city?.[0] ?? "",
       country: error.flatten().fieldErrors.country?.[0] ?? "",
       region: error.flatten().fieldErrors.region?.[0] ?? "",
+      countryCode: error.flatten().fieldErrors.countryCode?.[0] ?? "",
+      currencySymbol: error.flatten().fieldErrors.currencySymbol?.[0] ?? "",
     };
   }
 
@@ -1278,14 +1292,9 @@ export async function editProduct(
     return parsedImage.data;
   });
 
-  console.log({
-    images: imageData,
-    dbImages: base64Images,
-  });
-
   // if values are the same, return
   if (
-    productSupplier?.id === productSupplierId &&
+    productSupplier?.product.name === name &&
     productSupplier?.price === parseFloat(price) &&
     productSupplier?.description === description &&
     productSupplier?.city === city &&
@@ -1319,7 +1328,7 @@ export async function editProduct(
   if (existingProductSupplier) {
     return {
       ...initialEditProductFormState,
-      db: "A product in that location already exists.",
+      db: "A similar product in that location already exists.",
     };
   }
 
@@ -1373,7 +1382,7 @@ export async function editProduct(
     // Check if product exists, if not create it
     const product = await prisma.product.findUnique({
       where: {
-        id: productSupplier?.productId,
+        name,
       },
     });
 
@@ -1417,6 +1426,8 @@ export async function editProduct(
         region: data.region,
         supplierId: user?.id!,
         productId,
+        countryCode: data.countryCode,
+        currencySymbol: data.currencySymbol,
       },
     });
 
@@ -1427,6 +1438,7 @@ export async function editProduct(
       db: "success",
     };
   } catch (error) {
+    console.error(error);
     return {
       ...initialEditProductFormState,
       db:
@@ -1435,3 +1447,37 @@ export async function editProduct(
     };
   }
 }
+
+export const sendMessage = async (message: string) => {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API,
+  });
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an agricultural AI assistant known as AgriAI here to help farmers with their agricultural crop challenges that including crop pests and crop diseases, nothing else.",
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: message,
+            },
+          ],
+        },
+      ],
+    });
+    return response.choices[0].message.content as string;
+  } catch (error) {
+    throw new Error(
+      "Failed to send message: " +
+        (error instanceof Error ? error.message : "Unknown error")
+    );
+  }
+};
