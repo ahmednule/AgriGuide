@@ -167,6 +167,8 @@ model ProductSupplier {
   country     String
   city        String
   region      String
+  countryCode String
+  currencySymbol String
   price       Float
   description String
   images      String[]
