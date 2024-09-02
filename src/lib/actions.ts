@@ -1158,7 +1158,7 @@ export async function addProduct(prevState: any, formData: FormData) {
       },
     });
 
-    revalidatePath("/");
+    revalidatePath("/store", "layout");
 
     return {
       ...initialAddProductFormState,
