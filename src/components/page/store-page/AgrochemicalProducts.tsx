@@ -1,60 +1,88 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AgrochemicalsList from "./AgrochemicalsList";
-import { ProductWithSuppliers } from "@/lib/types";
+import { ProductWithSuppliers, TLocation } from "@/lib/types";
 import AgrochemicalsFilter from "./AgrochemicalsFilter";
 import useGeolocation from "@/lib/hooks/useGeolocation";
 import { Skeleton } from "@nextui-org/react";
+import { initialPriceRange } from "@/lib/constants";
 
 const AgrochemicalProducts = ({
   productsWithSupplier,
+  uniqueProductLocations,
 }: {
   productsWithSupplier: Omit<ProductWithSuppliers, "description">[];
+  uniqueProductLocations: TLocation[];
 }) => {
-  const [filterName, setFilterName] = useState<Set<string>>(new Set([]));
-  const [filterSupplier, setFilterSupplier] = useState<Set<string>>(
-    new Set([])
-  );
-  const [filterPrice, setFilterPrice] = useState<Set<string>>(new Set([]));
+  const {
+    isLoading,
+  } = useGeolocation();
 
-  const { location, isLoading } = useGeolocation();
-   const country = location?.country_name;
-   const city = location?.city;
-   
+ const [nameFilter, setNameFilter] = useState("");
+ const [supplierFilter, setSupplierFilter] = useState("");
+ const [priceRange, setPriceRange] = useState<number | number[]>(
+   initialPriceRange
+ );
+  const [locationFilter, setLocationFilter] = useState("");
+
   if (productsWithSupplier.length === 0)
     return (
-      <p className="text-emerald-700 mt-20 text-center">
+      <p className="text-gray-500 mt-20 text-center">
         No products currently available 😢
       </p>
     );
+  let filteredProducts = productsWithSupplier;
 
-  const filteredProducts = productsWithSupplier
-    .filter(
+  if (nameFilter) {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.product.name.toLowerCase().includes(nameFilter.toLowerCase())
+    );
+  }
+
+  if (typeof priceRange === "number") {
+    filteredProducts = filteredProducts.filter(
+      (product) => product.price <= priceRange
+    );
+  } else {
+    filteredProducts = filteredProducts.filter(
       (product) =>
-        !filterSupplier.size ||
-        product.supplier.name === Array.from(filterSupplier)[0]
-    )
-    ?.filter(
-      (product) =>
-        !filterName.size || product.product.name === Array.from(filterName)[0]
-    )
-    ?.filter(
-      (product) =>
-        !filterPrice.size ||
-        product.price.toString() === Array.from(filterPrice)[0]
-    )
-    .filter((product) => product.city === city && product.country === country);
+        product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
+  }
+
+  if (locationFilter) {
+    filteredProducts = filteredProducts.filter((product) =>
+      `${product.city}, ${product.region}, ${product.country}`
+        .toLowerCase()
+        .includes(locationFilter.toLowerCase())
+    );
+  }
+
+  if(supplierFilter) {
+    filteredProducts = filteredProducts.filter((product) =>
+      product.supplier.name.toLowerCase().includes(supplierFilter.toLowerCase())
+    );
+  }
+
+  // if(typeFilter) {
+  //   filteredProducts = filteredProducts.filter((product) =>
+  //     product.product.type.toLowerCase().includes(typeFilter.toLowerCase())
+  // }
+
 
   return (
     <div className="px-10">
       <AgrochemicalsFilter
-        filterName={filterName}
-        setFilterName={setFilterName}
-        filterSupplier={filterSupplier}
-        setFilterSupplier={setFilterSupplier}
-        filterPrice={filterPrice}
-        setFilterPrice={setFilterPrice}
+        locationFilter={locationFilter}
+        setLocationFilter={setLocationFilter}
+        nameFilter={nameFilter}
+        uniqueProductLocations={uniqueProductLocations}
+        setNameFilter={setNameFilter}
+        supplierFilter={supplierFilter}
+        setSupplierFilter={setSupplierFilter}
+        priceRange={priceRange}
+        setPriceRange={setPriceRange}
         productsWithSuppliers={productsWithSupplier}
       />
       {isLoading ? (
