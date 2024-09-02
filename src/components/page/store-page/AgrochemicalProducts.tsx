@@ -24,7 +24,7 @@ const AgrochemicalProducts = ({
  const [priceRange, setPriceRange] = useState<number | number[]>(
    initialPriceRange
  );
-  const [locationFilter, setLocationFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState<string | null>(null);
 
   if (productsWithSupplier.length === 0)
     return (

@@ -26,8 +26,8 @@ const AgrochemicalsFilter = ({
   productsWithSuppliers,
 }: {
   nameFilter: string;
-  locationFilter: string;
-  setLocationFilter: React.Dispatch<React.SetStateAction<string>>;
+  locationFilter: string | null;
+  setLocationFilter: React.Dispatch<React.SetStateAction<string | null>>;
   setNameFilter: any;
   supplierFilter: string;
   setSupplierFilter: any;
@@ -136,7 +136,7 @@ const AgrochemicalsFilter = ({
           <AutocompleteItem key="" />
         </Autocomplete>
       )}
-      {!isLoading && locationFilter && (
+      {!isLoading && locationFilter !== null && (
         <Autocomplete
           allowsCustomValue
           color="success"
