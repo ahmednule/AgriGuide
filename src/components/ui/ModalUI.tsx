@@ -22,6 +22,11 @@ import ChipUI from "./ChipUI";
 import ScanResponse from "./ScanResponse";
 import ScanButton from "./ScanButton";
 
+// Define the type for tag objects
+type Tag = {
+  tag: string | null;
+};
+
 const ModalUI = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [pestFormState, pestFormAction] = useFormState(scanPestImage, "");
@@ -50,7 +55,8 @@ const ModalUI = () => {
 
   const [choice, setChoice] = useState("");
 
-  const [tags, setTags] = useState([]);
+  // Fix: Properly type the tags state
+  const [tags, setTags] = useState<Tag[]>([]);
 
   useEffect(() => {
     getTags().then((tags) => setTags(tags || []));
