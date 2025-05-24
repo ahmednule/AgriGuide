@@ -55,7 +55,6 @@ const ModalUI = () => {
 
   const [choice, setChoice] = useState("");
 
-  // Fix: Properly type the tags state
   const [tags, setTags] = useState<Tag[]>([]);
 
   useEffect(() => {
